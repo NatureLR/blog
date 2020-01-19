@@ -1,5 +1,5 @@
 ---
-title: POD
+title: POD管理
 date: 2020-01-17 15:33:12
 tags: k8s
 categories: 
