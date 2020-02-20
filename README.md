@@ -22,5 +22,3 @@
 * /_config.yml hexo配置文件
 
 * /source/CNAME gitlab Pags的域名
-
-* /source/README.md gitlab Pages的README
