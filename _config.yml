@@ -4,7 +4,7 @@
 
 # Site
 title: Nature丿灵然
-subtitle: ''
+subtitle: '尽人事听天命'
 description: ''
 keywords:
 author: Nature丿灵然
@@ -13,7 +13,7 @@ timezone: 'Asia/Shanghai'
 
 # URL
 ## If your site is put in a subdirectory, set url as 'http://yoursite.com/child' and root as '/child/'
-url: http://yoursite.com
+url: http://blog.naturelingran.xyz
 root: /
 permalink: :year/:month/:day/:title/
 permalink_defaults:
