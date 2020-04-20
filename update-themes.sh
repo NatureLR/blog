@@ -8,7 +8,7 @@ oldTheme=$theme-old
 cd themes
 
 echo  将原来的主题文件夹改名
-mv next $oldTheme
+mv $theme $oldTheme
 
 echo 下载最新的主题
 git clone $themeAddress $theme
