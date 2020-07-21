@@ -6,14 +6,18 @@
 ## 常用操作
 
 * 增加博文 hexo new <文章名字>
-
+ 
 * 生成静态文件 hexo generate 缩写 hexo g
 
 * 开启本地服务 hexo server 缩写 hexo s
 
 * 清理文件 hexo clean
 
+* 如果是本地服务器可以在127.0.0.1:4000/admin中进行写作
+
 * 升级主题 sh update-themes.sh
+
+* hexo d 发布到github page
 
 ## 目录说明
 
