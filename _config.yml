@@ -100,12 +100,22 @@ theme: next
 deploy:
   type: git
   repo: https://github.com/NatureLingRan/NatureLingRan.github.io
+
+# hexo-admin authentification
+admin:
+  #username: admin
+  #password_hash: $2a$10$GoFznLB4NoAAKdNU/uE7aeP2NzG9WjwjNKTIVLevdl7cLzkiHIrHO
+  #secret: hew7MfB18xS3jTv4
+  deployCommand: "hexo d"
+
 # Search 
 search:
   path: ./public/search.xml
   field: all
   format: html
   limit: 10000
+
+#看板娘
 live2d:
   enable: true
   scriptFrom: local
