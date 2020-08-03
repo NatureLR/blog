@@ -15,7 +15,7 @@
 
 * 如果是本地服务器可以在127.0.0.1:4000/admin中进行写作
 
-* 升级主题 sh update-themes.sh
+* 升级主题`./update-themes.sh`
 
 * <http://localhost:4000/admin/>进去hexo-admin后台界面
 
