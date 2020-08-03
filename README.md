@@ -17,7 +17,7 @@
 
 * 升级主题 sh update-themes.sh
 
-* hexo d 发布到github page
+* hexo d 发布到github page,或者在hexo-admin中的`deploy`中执行deploy
 
 ## 目录说明
 
@@ -26,3 +26,5 @@
 * /_config.yml hexo配置文件
 
 * /source/CNAME gitlab Pags的域名
+
+* /deploy.sh hexo-admin执行发布的脚本

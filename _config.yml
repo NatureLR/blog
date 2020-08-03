@@ -103,10 +103,11 @@ deploy:
 
 # hexo-admin authentification
 admin:
+  # hexo后台管理设置
   #username: admin
   #password_hash: $2a$10$GoFznLB4NoAAKdNU/uE7aeP2NzG9WjwjNKTIVLevdl7cLzkiHIrHO
   #secret: hew7MfB18xS3jTv4
-  deployCommand: "hexo d"
+  deployCommand: ./deploy.sh
 
 # Search 
 search:
