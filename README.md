@@ -6,7 +6,7 @@
 ## 常用操作
 
 * 增加博文 hexo new <文章名字>
- 
+
 * 生成静态文件 hexo generate 缩写 hexo g
 
 * 开启本地服务 hexo server 缩写 hexo s
@@ -16,6 +16,8 @@
 * 如果是本地服务器可以在127.0.0.1:4000/admin中进行写作
 
 * 升级主题 sh update-themes.sh
+
+* <http://localhost:4000/admin/>进去hexo-admin后台界面
 
 * hexo d 发布到github page,或者在hexo-admin中的`deploy`中执行deploy
 
@@ -28,3 +30,5 @@
 * /source/CNAME gitlab Pags的域名
 
 * /deploy.sh hexo-admin执行发布的脚本
+
+* /_admin-config.yml hexo-admin的一些配置
