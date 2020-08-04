@@ -22,6 +22,7 @@ pretty_urls:
   trailing_html: true # Set to false to remove trailing '.html' from permalinks
 
 # Directory
+## 这里是设定一些基本文件夹的名称，如资源文件夹等
 source_dir: source
 public_dir: public
 tag_dir: tags
@@ -29,6 +30,8 @@ archive_dir: archives
 category_dir: categories
 code_dir: downloads/code
 i18n_dir: :lang
+## skip_render 是为了避免在执行 'hexo generate' 命令后将一些你不想转义的文件转成 HTML 格式。
+## 比如 README.md，你可以将这些文件名填写在括号内，格式为 [README.md, Post1.md, Post2.md]
 skip_render: [README.md]
 
 # Writing
@@ -41,12 +44,15 @@ external_link:
   exclude: ''
 filename_case: 0
 render_drafts: false
+## post_asset_folder 设置为 true 后，当你新建一个 post 的时候，会在同级目录生成一个相同名字的文件夹
 post_asset_folder: false
 relative_link: false
 future: true
+## 代码高亮设置
 highlight:
   enable: true
   line_number: true
+  ## 代码自动高亮
   auto_detect: false
   tab_replace: ''
   wrap: true
@@ -101,15 +107,16 @@ deploy:
   type: git
   repo: https://github.com/NatureLingRan/NatureLingRan.github.io
 
-# hexo-admin authentification
+# hexo-admin设置
 admin:
   # hexo后台管理设置
   #username: admin
   #password_hash: $2a$10$GoFznLB4NoAAKdNU/uE7aeP2NzG9WjwjNKTIVLevdl7cLzkiHIrHO
   #secret: hew7MfB18xS3jTv4
-  deployCommand: ./deploy.sh
+  ##自动发布执行的命令
+  deployCommand: ./deploy.sh 
 
-# Search 
+# 搜索设置
 search:
   path: ./public/search.xml
   field: all
