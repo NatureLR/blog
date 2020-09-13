@@ -23,8 +23,6 @@
 
 ## 目录说明
 
-* /update-themes.sh 升级next主题
-
 * /_config.yml hexo配置文件
 
 * /source/CNAME gitlab Pags的域名
