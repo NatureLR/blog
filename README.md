@@ -15,18 +15,21 @@
 
 * 如果是本地服务器可以在127.0.0.1:4000/admin中进行写作
 
-* 升级主题`./update-themes.sh`
-
 * <http://localhost:4000/admin/>进去hexo-admin后台界面
 
 * hexo d 发布到github page,或者在hexo-admin中的`deploy`中执行deploy
 
 ## 目录说明
 
-* /_config.yml hexo配置文件
-
-* /source/CNAME gitlab Pags的域名
-
-* /deploy.sh hexo-admin执行发布的脚本
-
-* /_admin-config.yml hexo-admin的一些配置
+```directory
+├── README.md
+├── _admin-config.yml  # Hexo-admin插件配置文件
+├── _config.next.yml   # next主题配置文件
+├── _config.yml        # hexo配置文件
+├── db.json
+├── deploy.sh*         # hexo-admin执行发布的脚本
+├── package-lock.json
+├── package.json
+├── scaffolds/
+├── source/CNAME       # gitlab Pags的域名
+```
