@@ -3,7 +3,7 @@ author: Nature丿灵然
 tags:
   - linux
 categories:
-  - linux
+  - 运维
 date: 2020-08-03 14:51:00
 ---
 ssh每次登录的时候显示一些信息

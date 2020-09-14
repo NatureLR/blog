@@ -3,7 +3,7 @@ author: Nature丿灵然
 tags:
   - linux
 categories:
-  - linux
+  - 运维
 date: 2020-08-04 16:42:00
 ---
 #### linux 删除文件之后磁盘没释放
