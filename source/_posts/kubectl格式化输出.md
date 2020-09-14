@@ -2,7 +2,8 @@ title: kubectl格式化输出
 author: Nature丿灵然
 tags:
   - k8s
-categories: []
+categories: 
+  - 运维
 date: 2020-07-21 14:16:00
 ---
 有时候需要输出一些k8s的资源信息为一个表格比如统计资源你的数量
