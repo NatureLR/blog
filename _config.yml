@@ -5,14 +5,14 @@
 # Site
 title: Nature丿灵然
 subtitle: '尽人事听天命'
-description: ''
+description: 'Nature丿灵然的博客'
 keywords:
 author: Nature丿灵然
 language: zh-CN
 timezone: 'Asia/Shanghai'
 
 # URL
-## If your site is put in a subdirectory, set url as 'http://yoursite.com/child' and root as '/child/'
+## If your site is put in a subdirectory, set url as 'http://example.com/child' and root as '/child/'
 url: http://blog.naturelingran.xyz
 root: /
 permalink: :year/:month/:day/:title/
@@ -52,11 +52,15 @@ future: true
 highlight:
   enable: true
   line_number: true
-  ## 代码自动高亮
-  auto_detect: false
+  auto_detect: true
   tab_replace: ''
   wrap: true
-  hljs: false
+  hljs: true
+prismjs:
+  enable: false
+  preprocess: true
+  line_number: true
+  tab_replace: ''
 
 # Home page setting
 # path: Root path for your blogs index page. (default = '')
@@ -82,8 +86,8 @@ meta_generator: true
 ## http://momentjs.com/docs/#/displaying/format/
 date_format: YYYY-MM-DD
 time_format: HH:mm:ss
-## Use post's date for updated date unless set in front-matter
-updated_option: false
+## updated_option supports 'mtime', 'date', 'empty'
+updated_option: 'mtime'
 
 # Pagination
 ## Set per_page to 0 to disable pagination
@@ -102,10 +106,10 @@ ignore:
 theme: next
 
 # Deployment
-## Docs: https://hexo.io/docs/deployment.html
+## Docs: https://hexo.io/docs/one-command-deployment
 deploy:
   type: git
-  repo: https://github.com/NatureLingRan/NatureLingRan.github.io
+  repo: git@github.com:NatureLingRan/NatureLingRan.github.io.git
 
 # hexo-admin设置
 admin:
