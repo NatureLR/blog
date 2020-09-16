@@ -122,10 +122,10 @@ admin:
 
 # 搜索设置
 search:
-  path: ./public/search.xml
-  field: all
+  path: search.xml
+  field: post
+  content: true
   format: html
-  limit: 10000
 
 #看板娘
 live2d:
