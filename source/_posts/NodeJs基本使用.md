@@ -1,4 +1,4 @@
-title: NodeJs基本使用
+title: NodeJS基本使用
 author: Nature丿灵然
 tags:
   - node
@@ -7,7 +7,7 @@ categories:
   - 运维
 date: 2020-09-22 17:09:00
 ---
-nodejs和先关组件常见的命令记录
+nodejS和相关组件常见的命令记录
 <!--more-->
 ##### 安装Node.js
 
