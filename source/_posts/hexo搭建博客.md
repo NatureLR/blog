@@ -47,10 +47,4 @@ npm install hexo-theme-next
 
 hexo admin 是一个可以直接在网页上写文章且实时预览的插件
 
-执行`npm install --save hexo-admin`安装，localhost:4000/admin打开
-
-
-
-
-
-
+执行`npm install --save hexo-admin`安装,访问<http://localhost:4000/admin>

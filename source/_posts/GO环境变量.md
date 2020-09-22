@@ -40,4 +40,4 @@ GOOS       |编译出文件的类型             |当前系统        |通过改
 GOPATH     |go的项目存放目录             |$HOME/go      |在没使用gomod的时候安装的代码就存放在此
 GOBIN      |`go instlal`安装的文件目录   |-             |一般将此目录加入PATH,`export PATH=$PATH:$GOBIN>$HOME/.zshrc`
 GO111MODULE|go mod 开关                |自动           |
-GOPROXY    |go mod的代理地址国内         |-             |推荐使用<https://goproxy.cn,direct>
+GOPROXY    |go mod的代理地址            |-             |国内推荐使用<https://goproxy.cn,direct>

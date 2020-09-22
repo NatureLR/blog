@@ -5,8 +5,6 @@ categories:
   - 运维
 date: 2020-01-17 15:33:00
 ---
-
-
 ###### 一键删除pod状态为Terminating的POD
 <!--more-->
     kubectl get pods |grep Terminating |awk -F " " '{print$1}'|xargs -n 1 kubectl delete pods --force --grace-period 0
@@ -15,7 +13,7 @@ date: 2020-01-17 15:33:00
 
 横向扩容有两种方式，使用命令或yaml文件
 
-###### 手动库容
+###### 手动扩容
 
     kubectl scale <资源类型> <资源名字> --replicas <副本数量> 将pod的副本书保持到指定数量
 
