@@ -10,34 +10,38 @@ date: 2020-09-16 18:20:00
 <!--more-->
 
 #### 安装 Node.js
+
 ```bash
 brew install node
 ```
+
 当前版本的hexo在node14中会有告警，建议安装12并使用nvm管理node版本
 
-#### 安装 Hexo 
+#### 安装 Hexo
 
 ```bash
 npm install hexo-cli -g
 ```
 
-#### 初始化Hexo 
+#### 初始化Hexo
 
 ```bash
 mkdir blog &&cd blog # 创建文件夹并进入
 hexo init            # 初始化 hexo
 ```
+
 这个时候执行`hexo g && hexo s`就可以使用localhost:4000打开一个blog，此时这个主题是默认的
 
-##### 配置Hexo 
+##### 配置Hexo
 
 - blog根目录目录下的`_config.yaml`是hexo的配置文件，自定义的相关设置需要修改此文件
 
 #### 安装 Next主题
 
 ```bash
-npm install hexo-theme-next 
+npm install hexo-theme-next
 ```
+
 ##### 配置Next主题
 
 - 配置主题为next，在`_config.yaml`中查找`theme`并修改为next
