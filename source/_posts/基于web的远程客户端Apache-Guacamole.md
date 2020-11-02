@@ -23,7 +23,8 @@ Apache Guacamole是一个基于web的远程终端支持vpn，ssh，rdp等协议
 
 ##### 部署guacamole
 
-```yaml
+```shell
+cat <<EOF | kubectl apply -f -
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -69,11 +70,13 @@ spec:
   selector:
     app: guacamole
   type: NodePort # 使用nodeport进行访问，也可以用ingress
+EOF
 ```
 
 ##### 部署guacd
 
-```yaml
+```shell
+cat <<EOF | kubectl apply -f -
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -104,13 +107,15 @@ spec:
   ports:
   - port: 4822
     targetPort: 4822
+EOF
 ```
 
 ##### 部署mysql
 
 > mysql可以使用已经有的,且以下资源未做持久化重启之后数据会丢失不要用于生产！！！
 
-```yaml
+```shell
+cat <<EOF | kubectl apply -f -
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -144,6 +149,7 @@ spec:
   ports:
   - port: 3306
     targetPort: 3306
+EOF
 ```
 
 ##### 初始化mysql
@@ -172,3 +178,11 @@ spec:
 ![upload successful](/images/pasted-5.png)
 
 进入配置界面配置根据目标主机的情况填写
+
+![upload successful](/images/pasted-6.png)
+
+这个时候首页就出现了可以连接的机器，点击即可连接此机器
+
+![upload successful](/images/pasted-7.png)
+
+Ctrl + Alt + Shift 可以打开控制面板，复制文件也可以直接拖进去
