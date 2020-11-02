@@ -6,7 +6,7 @@ categories:
   - 运维
 date: 2020-10-29 14:35:00
 ---
-Apache Guacamole是一个基于web的远程终端支持vpn，ssh，rdp等协议
+Apache Guacamole是一个基于web的远程终端支持ssh,vnc,rdp等协议
 <!--more-->
 
 #### 架构图如下
