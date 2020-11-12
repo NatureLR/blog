@@ -10,11 +10,19 @@ date: 2020-08-03 17:35:00
 
 <!--more-->
 
-安装 dnf -y install cockpit
+##### 安装
 
-启动 systemctl start cockpit
+    dnf -y install cockpit
 
-开机自动启动 systemctl enable cockpit
+##### 启动
+
+    systemctl start cockpit
+
+##### 开机自动启动
+
+    systemctl enable cockpit
+
+##### 访问
 
 在浏览器中输入<服务器的IP:9090>即可登录到web界面
 
@@ -22,4 +30,4 @@ date: 2020-08-03 17:35:00
 
 ![upload successful](/images/pasted-2.png)
 
-端口号可以在 `/usr/lib/systemd/system/cockpit.socket`中修改
+> 端口号可以在 `/usr/lib/systemd/system/cockpit.socket`中修改

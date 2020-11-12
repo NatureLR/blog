@@ -1,4 +1,4 @@
-title: Linux的/proc/sys/kernel/sysrq
+title: Linux "/proc/sys/kernel/sysrq"魔法键
 author: Nature丿灵然
 tags:
   - linux
@@ -25,15 +25,15 @@ SysRq也称为魔法键，可以使用键盘快捷键的，但还是使用命令
 
 可以使用下面你的命令设置
 
-  echo \<number> >/proc/sys/kernel/sysrq
+	echo <number> >/proc/sys/kernel/sysrq
 
 或者使用sysctl
 
-  sysctl -w kernel.sysrq=\<number>
+	sysctl -w kernel.sysrq=<number>
   
 ###### 使用SysRq
 
-  echo \<command> > /proc/sysrq-trigger
+	echo <command> > /proc/sysrq-trigger
 
 常用的command如下
 
