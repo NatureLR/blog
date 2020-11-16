@@ -14,7 +14,9 @@ kubectx是个可以快速的切换集群且能设置namespace的官方[地址](h
 
 ##### 安装
 
-    brew install kubectx
+```shell
+brew install kubectx
+```
 
 为了能够使用模糊推查找荐安装[fzf](https://github.com/junegunn/fzf)
 
@@ -28,7 +30,7 @@ kubectx是个可以快速的切换集群且能设置namespace的官方[地址](h
 kubectx 所有解决了多个环境和命名空间的问题，但是没能解决快速添加集群
 利用kubectl的环境变量拿到所有的环境然后通过`kubectl config view --raw`合并成为一个config文件，脚本如下：
 
-```bash
+```shell
 #! /bin/bash
 # 合并$HOME/.kube/configs目录下的文件到$HOME/.kube/config
 # 配合kubectx工具进行环境切换

@@ -16,10 +16,12 @@ date: 2020-08-04 16:42:00
 `
 正确是置空文件，命令如下
 
-
-```cat /dev/null>xxx.log```
-
+```shell
+cat /dev/null>xxx.log
+```
 
 可以用下面的命令查找一下类似的文件然后重启对应的读取即可
 
-```lsof | grep deleted```
+```shell
+lsof | grep deleted
+```

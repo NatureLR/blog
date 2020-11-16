@@ -18,15 +18,14 @@ go 有很多的环境变量记录一下常用的变量
 
 - go help environment 查看各个环境变量的作用
 
-
 #### 修改环境变量
 
 - go 1.13以上推荐使用 go env -w NAME=VALUE 来设置环境变量
 
 - go env -w 设置的变量根据`os.UserConfigDir()`返回的值来确定存在哪
-	- Linux在$HOME/.config
-    - Darwin在$HOME/Library/Application Support
-    - Windows在%AppData%
+  - Linux在$HOME/.config
+  - Darwin在$HOME/Library/Application Support
+  - Windows在%AppData%
 
 - go 1.13以下使用export NAME=VALUE 写profile来设置，如.bashrc,.zshrc等
 
