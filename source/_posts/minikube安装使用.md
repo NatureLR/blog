@@ -15,23 +15,21 @@ date: 2020-09-14 19:28:00
 
 ##### 下载阿里云版本二进制文件
 
-    这是是1.13.0版本
-
 ###### Macos
 
     curl -Lo minikube https://kubernetes.oss-cn-hangzhou.aliyuncs.com/minikube/releases/v1.13.0/minikube-darwin-amd64 && chmod +x minikube && sudo mv minikube /usr/local/bin/
 
 ###### Linux
 
-    curl -Lo minikube https://kubernetes.oss-cn-hangzhou.aliyuncs.com/minikube/releases/v1.13.0/minikube-linux-amd64 && chmod +x minikube && sudo mv minikube /usr/local/bin/
+    curl -Lo minikube https://kubernetes.oss-cn-hangzhou.aliyuncs.com/minikube/releases/v1.14.2/minikube-linux-amd64 && chmod +x minikube && sudo mv minikube /usr/local/bin/
 
 ##### 验证安装
 
-执行```shell minikube version```验证安装
+执行`minikube version`验证安装
 
 #### 启动Minikube
 
-  minikube start --driver=docker --image-mirror-country cn
+    minikube start --driver=docker --image-mirror-country cn
 
 这样就启动一个使用docker作为驱动的minikube，稍等一会就会启动成功，并且将`kubectl`设置为minikube
 再次启动是只需要执行`minikube start`即可
