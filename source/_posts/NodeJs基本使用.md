@@ -24,7 +24,7 @@ date: 2020-09-22 17:09:00
 node --version
 ```
 
-###### 安装NVM管理Nodejs版本
+##### 安装NVM管理Nodejs版本
 
 有些node代码有版本要求，nvm可以在各个版本时间切换
 
@@ -36,11 +36,7 @@ node --version
 
 `nvm version`
 
-###### 安装NCU检查模块更新
-
-`npm install -g npm-check-updates`
-
-###### 配置淘宝源
+##### 配置淘宝源
 
 查看源
 
@@ -50,12 +46,20 @@ node --version
 
 `npm config set registry http://registry.npm.taobao.org/`
 
+
+##### 安装NCU检查模块更新
+
+`npm install -g npm-check-updates`
+
 ##### 常用命令
 
 - npm 命令
   - npm install xxx 安装到当前目录
-  - npm install -g xxx 安装到全局系统
+  - npm install -g xxx 安装全局模块
   - npm uninstall xxx 卸载模块
+  - npm uninstall -g  xxx 卸载全局模块
+  - npm moudles npm list --depth=0 查看所有高级的模块
+  - npm list --depth=0 -global 查看所有全局安装的模块
 - nvm
   - nvm install xxx 安装指定版本的node
   - nvm ls 查看现在node版本情况
