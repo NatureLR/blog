@@ -11,7 +11,7 @@
 
 3. 初始化npm:在当前目录下执行 `npm install`
 
-4. 安装hexo客户端`npm install hexo -g `
+4. 安装hexo客户端`npm install hexo-cli -g`
 
 ## 常用操作
 
