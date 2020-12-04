@@ -53,35 +53,39 @@ iptables是大多数发型版本中支持的防火墙
 ##### 返回说明
 
 - 红色部分：
-	- chain：链名，括号里的policy默认策略这里是drop
-	- packets：默认策略匹配到的包的数量
-	- bytes：当前链默认策略匹配到的所有包的大小总和
+  - chain：链名，括号里的policy默认策略这里是drop
+  - packets：默认策略匹配到的包的数量
+  - bytes：当前链默认策略匹配到的所有包的大小总和
 - 绿色部分：
- 	- bytes:对应匹配到的报文包的大小总和
- 	- target:规则对应的target，往往表示规则对应的"动作"，即规则匹配成功后需要采取的措施
- 	- prot:表示规则对应的协议，是否只针对某些协议应用此规则
- 	- opt:表示规则对应的选项
- 	- in:表示数据包由哪个接口(网卡)流入
- 	- out:表示数据包由哪个接口(网卡)流出
- 	- source:表示规则对应的源头IP或网段
- 	- destination:表示规则对应的目标IP或网段
+  - bytes:对应匹配到的报文包的大小总和
+  - target:规则对应的target，往往表示规则对应的"动作"，即规则匹配成功后需要采取的措施
+  - prot:表示规则对应的协议，是否只针对某些协议应用此规则
+  - opt:表示规则对应的选项
+  - in:表示数据包由哪个接口(网卡)流入
+  - out:表示数据包由哪个接口(网卡)流出
+  - source:表示规则对应的源头IP或网段
+  - destination:表示规则对应的目标IP或网段
 - 黄色部分：规则序列号
 
 ##### 查看所有规则
 
 查看所有链所有表的规则
+
 ```shell
 iptables --line-numbers -nvL
 ```
+
 ##### 查看指定规则
 
 查看指定表，默认链
+
 ```shell
 # iptables --line-numbers -nvL -t <表>
 iptables --line-numbers -nvL -t nat
 ```
 
 查看INPUT链的nat表
+
 ```shell
 # iptables --line-numbers -nvL <链> -t <表>
 # iptables --line-numbers -nv -L <链> -t <表>
@@ -89,6 +93,7 @@ iptables --line-numbers -nv -L INPUT -t nat
 ```
 
 查看INPUT链的nat表的序列号是3的规则
+
 ```shell
 # iptables --line-numbers -nvL <链> 3-t <表>
 # iptables --line-numbers -nv -L <链> 3 -t <表>
@@ -99,18 +104,21 @@ iptables --line-numbers -nv -L INPUT 3 -t nat
 
 > iptables是自上而下匹配规则的所以顺序很重要 \
 > -A 尾部增加 \
-> -I 头部增加 后面加上序列号则是指定序列号位置 
+> -I 头部增加 后面加上序列号则是指定序列号位置
 
 ##### 尾部增加规则
 
 在 filter表INPUT链中`尾部`增加一条丢弃从192.168.1.1发送过来数据的规则
+
 ```Shell
 # iptables -t <表名> -A <链名> <匹配条件> -j <动作>
 iptables -t filter -A INPUT -s 192.168.1.1 -j DROP
-``` 
+```
+
 ##### 头部增加规则
 
 在 filter表INPUT链中`头部`增加一条丢弃从192.168.1.2发送过来数据的规则
+
 ```shell
 # iptables -t <表名> -I <链名> <匹配条件> -j <动作>
 iptables -t filter -I INPUT -s 192.168.1.2 -j DROP
@@ -119,6 +127,7 @@ iptables -t filter -I INPUT -s 192.168.1.2 -j DROP
 ##### 指定位置增加规则
 
 在 filter表INPUT链中`指定位置`增加一条丢弃从192.168.1.3发送过来数据的规则
+
 ```shell
 # iptables -t <表名> -I <链名> <规则序号>  <匹配条件> -j <动作>
 iptables -t filter -I INPUT  3 -s 192.168.1.2 -j DROP
@@ -127,18 +136,22 @@ iptables -t filter -I INPUT  3 -s 192.168.1.2 -j DROP
 #### 修改规则
 
 将序列号为2的规则的动作修改为accept
+
 ```shell
 # iptables -t <表名> -R <链名> <规则序号> <原本的匹配条件> -j <动作>
 iptables -t filter -R INPUT 2 -s 192.168.1.146 -j ACCEPT
 ```
+
 ##### 修改默认规则
 
 将INPUT链默认策略设置为DROP,注意不要在生产环境执行此规则会断网
+
 ```shell
 # iptables -t <表> -P <链> <动作>
 # iptables  -P <链> <动作> 表可省略
 iptables -t filter -P INPUT DROP
 ```
+
 #### 删除规则
 
 ##### 按照规则序号删除规则
@@ -147,20 +160,25 @@ iptables -t filter -P INPUT DROP
 # iptables -t <表名> -D <链名> <规则序号>
 iptables -t filter -D INPUT 3
 ```
+
 ##### 按照具体的匹配条件与动作删除规则
+
 ```Shell
 # iptables -t <表名> -D <链名> <匹配条件> -j <动作>
 iptables -t filter -D INPUT -s 192.168.1.2 -j DROP
 ```
+
 ##### 删除所有规则
 
 > 谨慎操作！！！
 
 清除filter表
+
 ```Shell
 # iptables -t <表名> -F
 iptables -t filter -F
 ```
+
 #### 处理动作
 
 > 处理动作在iptables中被称为target，动作也可以分为基本动作和扩展动作默认动作如下
@@ -240,4 +258,3 @@ iptables -t filter -I OUTPUT -p icmp ! -o enp0s3 -j DROP
 #### 参考资料
 
 [朱双印个人博客](http://www.zsythink.net/archives/category/%e8%bf%90%e7%bb%b4%e7%9b%b8%e5%85%b3/iptables/)
-
