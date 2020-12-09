@@ -255,6 +255,32 @@ iptables -t filter -I OUTPUT -p icmp -o enp0s3 -j DROP
 iptables -t filter -I OUTPUT -p icmp ! -o enp0s3 -j DROP
 ```
 
+#### 规则保存导出和还原
+
+##### 保存规则
+
+> centos7以上没有安装`iptables-services`
+
+```shell
+# 安装iptables-services
+yum install -y iptables-services
+
+# 保存规则
+service iptables save
+```
+
+##### 导出规则
+
+```shell
+iptables-restore > iptable
+```
+
+##### 还原规则
+
+```shell
+iptables-save < iptable
+```
+
 #### 参考资料
 
 [朱双印个人博客](http://www.zsythink.net/archives/category/%e8%bf%90%e7%bb%b4%e7%9b%b8%e5%85%b3/iptables/)
