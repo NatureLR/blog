@@ -34,6 +34,7 @@ rsyslogd是syslog的改进版本，可以将日志通过`syslog`协议发送到�
 #### 配置文件
 
 > syslog的配置目录在`/etc/rsyslog.conf`和`/etc/rsyslog.d/`之中，`/etc/rsyslog.conf`是默认配置的文件
+> 下面以`centos8`为例解释
 
 ```conf
 #### MODULES ####                                                                                      # 模块设置
