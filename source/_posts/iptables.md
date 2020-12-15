@@ -255,6 +255,46 @@ iptables -t filter -I OUTPUT -p icmp -o enp0s3 -j DROP
 iptables -t filter -I OUTPUT -p icmp ! -o enp0s3 -j DROP
 ```
 
+#### 自定义链
+
+> 在规则比较多时方便管理规则，自定义链需要被默认链引用才能生效
+
+##### 创建自定义链
+
+> 创建一个filter表名字叫TEST的链
+
+```shell
+# iptables -t <表> -N <链名>
+iptables -t filter -N TEST
+```
+
+##### 引用自定义链
+
+> 引用的时候只需要将动作使用自定义链名 \
+> 在默认链INPUT中插入一条目标端口是80协议是tcp动作是自定义链TEST的规则
+
+```shell
+iptables -t filter -I INPUT -p tcp --dport 80 -j TEST
+```
+
+##### 重命名自定义链
+
+> 将TEST自定义链改为TEST2
+
+```shell
+# iptables -E <原自定义链名> <目标自定义链名>
+iptables -E TEST TEST2
+```
+
+##### 删除自定义链
+
+> 删除TEST2的自定义链名
+
+```shell
+# iptables -X <自定义链名>
+iptables -X TEST2
+```
+
 #### 规则保存导出和还原
 
 ##### 保存规则
