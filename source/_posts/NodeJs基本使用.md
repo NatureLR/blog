@@ -7,10 +7,10 @@ categories:
   - 运维
 date: 2020-09-22 17:09:00
 ---
-nodejS和相关组件常见的命令记录
+nodejS和相关组件常见的命令记录
 <!--more-->
 
-> 中文官方：https://nodejs.org/zh-cn/
+> 中文官方：<https://nodejs.org/zh-cn>
 
 ##### 安装Node.js
 
