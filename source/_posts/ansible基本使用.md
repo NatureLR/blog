@@ -362,6 +362,8 @@ ansbile <主机组> -m <模块> -a <参数> --limit <主机1：主机2> 只在�
 
 ##### 变量
 
+> 变量非常常用
+
 ```yaml
 ---
 - hosts: test
@@ -376,7 +378,7 @@ ansbile <主机组> -m <模块> -a <参数> --limit <主机1：主机2> 只在�
         state: touch
 ```
 
-##### DEBUG
+###### DEBUG
 
 > 调试打印
 
@@ -400,9 +402,525 @@ ansbile <主机组> -m <模块> -a <参数> --limit <主机1：主机2> 只在�
         msg: this is debug info,The test file has been touched
 ```
 
+###### 注册变量
+
+> 将模块运行的返回值进行赋值
+
+```yaml
+---
+- hosts: test
+  remote_user: root
+  tasks:
+  - name: test shell
+    shell: "cat /etc/hosts"
+    register: testvar
+  - name: shell 模块返回值
+    debug:
+      var: testvar
+  - name: 指定shell模块的返回
+    debug:
+      msg: "{{testvar.stdout}}"
+```
+
+###### 交互
+
+> 命令行交互输入的变脸类似c语言的scan函数
+
+```yaml
+---
+- hosts: test
+  remote_user: root
+  vars_prompt:
+    - name: "user"
+      prompt: "请选择帐号 \n
+      root \n
+      poweruser \n
+      test \n
+      "
+      private: no # 输入的字符显示出来
+      default: root # 默认值
+    - name: "passwd"
+      prompt: "请输入密码"
+  tasks:
+   - name: 输出变量
+     debug:
+      msg: 你的帐号：{{user}};你的密码：{{passwd}}
+```
+
+###### 命令行传值
+
+> 通过命令行输入变量的值
+
+```yaml
+---
+- hosts: test
+  remote_user: root
+  vars:
+    var2: default
+  tasks:
+  - name: "通过命令行传值"
+    debug:
+      msg: var的值是：{{var}};var2的值： {{var2}}
+```
+
+将上面的yaml保存为test.yaml然后执行 `ansible-playbook -i inventories test.yaml --extra-vars "var=test" -e "var2=test2"`,-e是--extra-vars的缩写，`命令行的值会覆盖默认值`
+还可以使用`@`传变量文件
+
+###### 主机(组)变量
+
+> 为每个主机（组）设置的变量，当使用次主机时变量生效
+
+```ini
+[test]
+
+localhost hostvar1=test_host_var hostvar2=host_var_test
+
+[test:vars]
+groupvar=testgroupvar
+```
+
+```yaml
+---
+- hosts: test
+  remote_user: root
+  tasks:
+  - name: "主机变量"
+    debug:
+      msg: hostvar1的值是：{{hostvar1}};hostvar2的值： {{hostvar2}}
+  - name: "主机组变量"
+    debug:
+      msg: test组的变量是：{{groupvar}}
+```
+
+###### set_fact定义变量
+
+> 通过set_fact模块配置变量
+
+```yaml
+---
+- hosts: test
+  remote_user: root
+  tasks:
+  - set_fact:
+      testvasr: testvas
+  - name: 打印值
+    debug:
+      msg: "{{testvasr}}"
+```
+
+###### 内置变量
+
+> ansible有一些保留变量
+
+- ansible_version
+- hostvars
+- inventory_hostname
+- inventory_hostname_short
+- play_hosts
+- groups
+- group_names
+
 ##### 循环
 
+###### with_items
+
+> 以条目为单位循环with_items下的的元素
+
+```yaml
+- hosts: test
+  gather_facts: false
+  tasks:
+  - name: 循环打印变量
+    debug:
+      msg: "{{item}}"
+    with_items:
+     - 1
+     - 2
+     - 3
+  - name: 循环打印kv变量
+    debug:
+      msg: "k的值是：{{item.k}}:v的值是：{{item.v}}"
+    with_items:
+      - { k: 1, v: 2 }
+      - { k: 3, v: 4 }
+```
+
+###### with_list
+
+> 以list为单位循环元素,也即是一次性答应出一个list而不是list里面的元素
+
+```yaml
+- hosts: test
+  gather_facts: false
+  tasks:
+  - name: 循环打印变量
+    debug:
+      msg: "{{item}}"
+    with_items:
+      - [1,2,3]
+      - [a,b]
+  - name : 循环打印list
+    debug:
+      msg: "{{item}}"
+    with_items:
+      - [1,2,3]
+      - [a,b]
+```
+
+###### with_flattened
+
+> 和with_item很像将item一个元素一个元素的打印出来
+
+```yaml
+- hosts: test
+  gather_facts: false
+  tasks:
+  - name: 循环打印item
+    debug:
+      msg: "{{item}}"
+    with_items:
+      - [1,2,3]
+      - [a,b,c]
+  - name : 循环打印list
+    debug:
+      msg: "{{item}}"
+    with_list:
+      - [1,2,3]
+      - [a,b,c]
+  - name : 循环打印flattened
+    debug:
+      msg: "{{item}}"
+    with_flattened:
+      - [1,2,3]
+      - [a,b,c]
+```
+
+###### with_together
+
+> 将list的元素纵排打印
+
+```yaml
+- hosts: test
+  gather_facts: false
+  tasks:
+  - name: 循环打印item
+    debug:
+      msg: "{{item}}"
+    with_items:
+      - [1,2,3]
+      - [a,b,c]
+  - name : 循环打印together
+    debug:
+      msg: "{{item}}"
+    with_together:
+      - [1,2,3]
+      - [a,b,c]
+
+```
+
+###### with_cartesian
+
+> 将list的元素交叉打印出来
+
+```yaml
+- hosts: test
+  gather_facts: false
+  tasks:
+  - name : 循环打印with_cartesian
+    debug:
+      msg: "{{item}}"
+    with_cartesian:
+      - [1,2,3]
+      - [a,b,c]
+```
+
+###### with_indexed_items
+
+> 将所有list变成一个大的list然后将这个大的list按顺序从0开始添加索引和值
+
+```yaml
+- hosts: test
+  gather_facts: false
+  tasks:
+  - name : 循环打印with_indexed_items
+    debug:
+      msg: "{{item}}"
+    with_indexed_items:
+      - [1,2,3]
+      - [a,b,c]
+```
+
+###### with_sequence
+
+> 类似golang序言的for循环，定义步长开始值，结束值
+
+```yaml
+- hosts: test
+  gather_facts: false
+  tasks:
+  - name : with_sequence
+    debug: 
+      msg: "{{ item }}"
+    with_sequence: start=1 end=10 stride=2
+```
+
+###### with_dict
+
+> 顾名思义是循环处理字典的
+
+```yaml
+- hosts: test
+  gather_facts: false
+  vars:
+    account:
+      user: root
+      passwd: 123456
+  tasks:
+  - name : with_dict
+    debug: 
+      msg: "键是：{{ item.key }} ；值是：{{ item.value }}"
+    with_dict: "{{account}}"
+```
+
+###### with_subelements
+
+> 也是对字典镜像操作，制定的字段作为key把其他字段作为value
+
+```yaml
+- hosts: test
+  gather_facts: false
+  vars:
+    account:
+      root:
+        user: root
+        passwd: 123456
+        open: 
+          - tmp
+          - server
+      test:
+        user: test
+        passwd: abc
+        open: 
+          - hosts
+          - log
+  tasks:
+  - name : with_sequence
+    debug: 
+      msg: "{{ item }}"
+    with_subelements: 
+      - "{{account}}"
+      - open
+```
+
+###### with_file
+
+> 按行读取一个文件的内容
+
+```yaml
+- hosts: test
+  gather_facts: false
+  tasks:
+  - name : with_file
+    debug: 
+      msg: "{{ item }}"
+    with_file: 
+      - /etc/hosts
+```
+
+###### with_fileglob
+
+> 读取文件名字
+
+```yaml
+- hosts: test
+  gather_facts: false
+  tasks:
+  - name : with_fileglob
+    debug: 
+      msg: "{{ item }}"
+    with_fileglob: 
+      - /etc/*
+```
+
 ##### 判断
+
+###### 比较符
+
+- == 相等
+- != 不等
+- \> 大于
+- <  小于
+- \>=小于等于
+- <=大于等于
+
+###### 逻辑运算符
+
+- and 与
+- or 或
+- not 非
+- () 组合
+
+```yaml
+- hosts: test
+  gather_facts: false
+  tasks:
+  - name : 判断
+    debug: 
+      msg: "{{ item }}"
+    with_items:
+      - 1
+      - 2
+      - 3
+    when: item > 2
+```
+
+###### 文件判断
+
+- is exists 如果文件存在则为真
+- is not exists  如果文件不存在则为假
+- not \<path> is exists 和is not相同
+
+```yaml
+- hosts: test
+  #gather_facts: false
+  vars:
+    testpath: /tmp/test
+  tasks:
+  - name: 判断/tmp/test文件是否存在
+    debug: 
+      msg: 是centos
+    when:  testpath is not exists
+```
+
+###### 变量判断
+
+- is defined 定义则为真
+- is undefined 没定义则为真
+- is none 为空则为真
+
+```yaml
+- hosts: test
+  #gather_facts: false
+  vars:
+    testpath: /tmp/test
+  tasks:
+  - name: 判断testpath是否存在
+    debug: 
+      msg: testpath文件存在
+    when: testpath is defined
+```
+
+###### 执行结果判断
+
+- success 或 succeeded 执行成功则返回真
+- failure 或 failed    执行失败则返回真
+- change 或 changed    执行状态为changed则返回真
+- skip 或 skipped      没有满足条件，而被跳过执行时，则返回真
+
+```yaml
+- hosts: test
+  #gather_facts: false
+  tasks:
+  - shell: cat /etc/hosts
+    register: ret
+  - debug:
+      msg: "执行成功"
+    when: ret is success
+```
+
+###### 文件类型判断
+
+- file 是文件则为真
+- directory 是目录则为真
+- link 软连接则为真
+- mount 挂载点则为真
+- exists 存在则为真
+
+```yaml
+- hosts: test
+  #gather_facts: false
+  vars:
+    path: /etc/hosts
+  tasks:
+  - debug:
+      msg: "{{ path }} 是个文件" 
+    when: path is file
+```
+
+###### 字符串判断
+
+- lower 字符为小写则为真
+- upper 字符为大写则为真
+
+```yaml
+- hosts: test
+  #gather_facts: false
+  vars:
+    path: TEST
+  tasks:
+  - debug:
+      msg: "{{ path }} 是大写" 
+    when: path is upper
+```
+
+###### 整除判断
+
+- even  偶数为真
+- odd  奇数为真
+- divisibleby(num) 整除则为真
+
+```yaml
+- hosts: test
+  gather_facts: false
+  vars:
+    X: 5
+    Y: 6
+    Z: 66
+  tasks:
+  - debug:
+      msg: "{{ X }} 是奇数" 
+    when: X is odd
+  - debug:
+      msg: "{{ Y }} 是偶数" 
+    when: Y is even
+  - debug:
+      msg: "{{ Z }} 能被66整除" 
+    when: Z is divisibleby(66)
+```
+
+###### 其他判断
+
+- version 判断版本大小
+- string 是字符则为真
+- number 是数字则为真
+- subset 一个list是另一个list的子集则为真
+- superset 一个list`不`是另一个list的子集则为真
+
+```yaml
+- hosts: test
+  gather_facts: false
+  vars:
+    Versions: 1.2.4
+    A:
+    - 2
+    - 3
+    B: [1,2,3,4,5]
+    str: test
+    str2: 2
+  tasks:
+  - debug:
+      msg: "{{ Versions }} 版本是否大于1.2.1" 
+    when: Versions is version("1.2.1",">")
+  - debug:
+      msg: b是a的子集
+    when: B is subset(A)
+  - debug:
+      msg: str是字符串
+    when: str is string
+  - debug:
+      msg: str2 是数字
+    when: str2 is number
+```
 
 ##### handler
 
@@ -526,5 +1044,6 @@ ansbile <主机组> -m <模块> -a <参数> --limit <主机1：主机2> 只在�
 
 #### 参考资料
 
+<http://www.zsythink.net/archives/category/%e8%bf%90%e7%bb%b4%e7%9b%b8%e5%85%b3/ansible/>
 <https://docs.ansible.com/>
 <http://www.ansible.com.cn/>
