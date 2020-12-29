@@ -296,6 +296,14 @@ ansbile <主机组> -m <模块> -a <参数> --limit <主机>  指定执行主机
 ansbile <主机组> -m <模块> -a <参数> --limit <!主机> 排除执行的主机
 ansbile <主机组> -m <模块> -a <参数> --limit <主机1：主机2> 只在主机1和主机2中执行
 
+##### 一步一步的执行且确认
+
+在执行 剧本的时候加上 --step，每执行一个任务就询问一次
+
+```shell
+ansible-playbook  -i inventories test.yaml --step
+```
+
 #### playbook
 
 > 剧本就是一系列ansible命令组合类似shell脚本和shell命令
@@ -1041,6 +1049,132 @@ groupvar=testgroupvar
   register: ps
 - debug: msg={{ ps.stdout }}
 ```
+
+##### 模版
+
+> 有些时候应用的配置文件会根据部署的机器调整一些参数，但是大部分参数不需要调整额这个时候就需要模版来处理 \
+> ansibel的template`模块`使用python的jinja2模版引擎
+
+- 参数:
+  - owner  在目标主机上通过模版生成的文件的所属者
+  - group  在目标主机上通过模版生成的文件的所属组
+  - mode   在目标主机上通过模版生成的文件的权限
+  - force  目标主机上已经有了文件是否强制覆盖
+  - backup 目标主机上已经有了文件是否覆盖
+
+###### 占位符
+
+- {{ }} 表达式，比如变量、运算表达式、比较表达式等写法参考[比较符](#比较符)
+- {% %} 控制语句,如if控制结构，for循环控制结构
+- {# #} 注释，模板文件被渲染后，注释不会包含在最终生成的文件中
+
+###### 例子
+
+模版文件：
+
+```j2
+基本变量替换
+{{ testvar }}
+
+逻辑计算
+
+{{ number > 1 }}
+
+{{ number is defined }}
+
+{{ '/tmp' is exists  }}
+
+数据结构取值
+{{ account.user }}
+{{ numbers.1 }}
+
+{# 这个是注释 #}
+{# 
+这个是多行注释，
+不会在生成的末班中显示
+#}
+
+判断
+{% if numbers.1>1 %}
+嘿嘿嘿
+{% endif %}
+
+循环
+{% for i in [3,14,15,9,26] -%}
+{{ i }} {{' '}}
+{%- endfor %}
+```
+
+playbook如下：
+
+```yaml
+- hosts: test
+  gather_facts: false
+  vars:
+    testvar: footest
+    number: 3
+    account:
+        user: root
+        passwd: 123456
+    numbers:
+      - 1
+      - 2
+      - 3
+  tasks:
+  - debug:
+      msg: "test" 
+  - template:
+      src: test.j2
+      dest: /tmp/test
+```
+
+执行 `ansible-playbook  -i inventories test.yaml`
+
+##### 角色
+
+> 当任务越来越多时一个文件放这么多有些不一样配合include和import分门别类的存放ansible资源文件
+
+###### 目录结构
+
+> 每个目录下都有an.yaml用语导入此目录其他的yaml
+
+```dir
+.
+├── inventories
+├── roles
+│   ├── defaults
+│   ├── files       # 文件的目录
+│   ├── handlers    # handler目录
+│   ├── meta        # 特殊设定及其依赖关系
+│   ├── tasks       # 存放task的目录
+│   ├── templates   # 存放模版
+│   └── vars        # 存放变量
+└── test.yaml       # 剧本文件
+```
+
+###### 角色例子
+
+在和roles文件同级目录创建剧本
+
+```yaml
+---
+- hosts: test
+  gather_facts: false
+  roles:
+    - role: roles
+
+```
+
+在roles文件夹的task中创建task
+
+```yaml
+---
+- debug: 
+    msg: hahaha
+
+```
+
+运行`ansible-playbook  -i inventories test.yaml`
 
 #### 参考资料
 

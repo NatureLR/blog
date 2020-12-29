@@ -68,8 +68,9 @@ node --version
   - nvm ls 查看现在node版本情况
   - nvm use xxx 使用某个版本的node
   - nvm use system 使用系统安装的node
-  - nvm uninstall xxx 卸载某个版
+  - nvm uninstall xxx 卸载某个模块
 - ncu
   - ncu 插件模块是否有更新
   - ncu -g 检查全局模块是否有更新
   - ncu -u 更新到package.json
+  

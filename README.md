@@ -38,6 +38,7 @@
 ├── _config.yml        # hexo配置文件
 ├── db.json
 ├── deploy.sh*         # hexo-admin执行发布的脚本
+├── drawio             # drawio图片文件
 ├── package-lock.json
 ├── package.json
 ├── scaffolds/
