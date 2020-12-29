@@ -1176,6 +1176,23 @@ playbook如下：
 
 运行`ansible-playbook  -i inventories test.yaml`
 
+##### 过滤器
+
+> 对一些数据进行处理
+
+```yaml
+---
+- hosts: test
+  remote_user: root
+  vars:
+    testvar: haha
+  tasks:
+  - debug:
+      msg: "{{ testvar | upper }}"    # 将全部字母转换成大写
+```
+
+基本格式就像上面一样其他功能只需要将`upper`替换为其他的字段即可
+
 #### 参考资料
 
 <http://www.zsythink.net/archives/category/%e8%bf%90%e7%bb%b4%e7%9b%b8%e5%85%b3/ansible/>
