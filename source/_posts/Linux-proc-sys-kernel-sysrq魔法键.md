@@ -7,7 +7,7 @@ categories:
 date: 2020-09-29 17:34:00
 ---
 利用`/proc/sys/kernel/sysrq`处理Linux系统不能正常响应用户请求，比如不能重启这时可以使用
-强制重启`echo b >/proc/sys/kernel/sysrq`，
+强制重启`echo b >/proc/sys/kernel/sysrq`
 <!--more-->
 SysRq也称为魔法键，可以使用键盘快捷键的，但还是使用命令明确一些
 
