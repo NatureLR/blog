@@ -33,26 +33,35 @@ node --version
 
 执行下面的命令安装：
 
-`curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.1/install.sh | bash`
+```shell
+curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.1/install.sh | bash
+```
 
 安装确认：
 
-`nvm version`
+```shell
+nvm version
+```
 
 ##### 配置淘宝源
 
 查看源
 
-`npm get registry`
+```shell
+npm get registry
+```
 
 查看修改为淘宝
 
-`npm config set registry http://registry.npm.taobao.org/`
-
+```shell
+npm config set registry http://registry.npm.taobao.org/
+```
 
 ##### 安装NCU检查模块更新
 
-`npm install -g npm-check-updates`
+```shell
+npm install -g npm-check-updates
+```
 
 ##### 常用命令
 
