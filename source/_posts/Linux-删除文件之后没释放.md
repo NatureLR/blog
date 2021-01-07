@@ -1,4 +1,4 @@
-title: linux 删除文件之后磁盘没释放
+title: Linux 删除文件之后磁盘没释放
 author: Nature丿灵然
 tags:
   - linux
@@ -6,7 +6,7 @@ categories:
   - 运维
 date: 2020-08-04 16:42:00
 ---
-记一下linux删除文件之后磁盘没释放
+记一下Linux删除文件之后磁盘没释放
 <!--more-->
 
 #### linux 删除文件之后磁盘没释放

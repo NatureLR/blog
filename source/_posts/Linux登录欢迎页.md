@@ -1,4 +1,4 @@
-title: linux登录欢迎页
+title: Linux登录欢迎页
 author: Nature丿灵然
 tags:
   - linux

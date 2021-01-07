@@ -1,4 +1,4 @@
-title: iptables
+title: Iptables
 author: Nature丿灵然
 tags:
   - linux
@@ -8,7 +8,7 @@ categories:
 date: 2020-12-03 17:16:00
 ---
 
-iptables是大多数发型版本中支持的防火墙
+Iptables是大多数发型版本中支持的防火墙
 
 <!--more-->
 

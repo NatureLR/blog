@@ -1,4 +1,4 @@
-title: logrotate
+title: Logrotate
 author: Nature丿灵然
 tags:
   - log

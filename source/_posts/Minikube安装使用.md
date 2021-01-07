@@ -1,4 +1,4 @@
-title: minikube安装使用
+title: Minikube安装使用
 author: Nature丿灵然
 tags:
   - minikube

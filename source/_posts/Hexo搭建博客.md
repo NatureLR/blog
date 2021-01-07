@@ -1,4 +1,4 @@
-title: hexo搭建博客
+title: Hexo搭建博客
 author: Nature丿灵然
 tags:
   - hexo
