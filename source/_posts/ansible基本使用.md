@@ -41,7 +41,7 @@ pip install ansible
 
 ##### 连续IP
 
-```conf
+```ini
 # 等价于 192.168.1.1 192.168.1.2 192.168.1.2 192.168.1.3 192.168.1.4等等
 192.168.1.[1:4]
 
@@ -51,7 +51,7 @@ server[1:3].example.com
 
 ##### 参数
 
-```conf
+```ini
 192.168.1.1 ansible_ssh_user=root ansible_ssh_pass=root
 ```
 
@@ -70,13 +70,13 @@ server[1:3].example.com
 
 ##### 别名
 
-```conf
+```ini
 test1 ansible_ssh_port=22 ansible_ssh_host=192.168.1.1 ansible_ssh_user=root  　　# 别名test1
 ```
 
 ##### 主机组
 
-```conf
+```ini
 [foo]
 192.168.1.1
 192.168.2.1
@@ -84,7 +84,7 @@ test1 ansible_ssh_port=22 ansible_ssh_host=192.168.1.1 ansible_ssh_user=root  �
 
 ##### 主机组嵌套
 
-```conf
+```ini
 [db]
 192.168.1.1
 
@@ -98,7 +98,7 @@ server
 
 ##### 主机组参数
 
-```conf
+```ini
 [test]
 name1 ansible_ssh_host=192.168.1.[1:3]
 
