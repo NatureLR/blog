@@ -50,14 +50,14 @@ relative_link: false
 future: true
 ## 代码高亮设置
 highlight:
-  enable: true
+  enable: false
   line_number: true
   auto_detect: true
   tab_replace: ''
   wrap: true
   hljs: true
 prismjs:
-  enable: false
+  enable: true
   preprocess: true
   line_number: true
   tab_replace: ''

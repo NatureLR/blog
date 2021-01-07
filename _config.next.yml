@@ -356,11 +356,11 @@ codeblock:
   # Code Highlight theme
   # All available themes: https://theme-next.js.org/highlight/
   theme:
-    light: atom-one-dark
-    dark: atom-one-dark
+    light: default
+    dark: tomorrow-night
   prism:
-    light: prism-okadia
-    dark: prism-okadia
+    light: prism-shades-of-purple
+    dark: prism-shades-of-purple
   # Add copy button on codeblock
   copy_button:
     enable: true
