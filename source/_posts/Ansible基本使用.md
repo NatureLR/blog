@@ -1193,6 +1193,34 @@ playbook如下：
 
 基本格式就像上面一样其他功能只需要将`upper`替换为其他的字段即可
 
+##### 在本地本地&&只执行一次
+
+> 有些时候一些剧本在本地执行，就像本地执行shell一样,由于在本地执行所以需要搭配`run_once`
+
+```yaml
+- hosts: localhost
+  connection: local
+  remote_user: root
+  run_once: true
+  gather_facts: no
+  tasks:
+     - shell: echo "test" > /tmp/test
+```
+
+##### 并行执行
+
+> 在机器比较多时一台一台执行太慢`serial`可以指定并行执行的数量
+
+```yaml
+- hosts: test
+  remote_user: root
+  serial: 1
+  #serial: 20% 按百分比
+  gather_facts: no
+  tasks:
+     - shell: echo "test" > /tmp/test
+```
+
 #### 参考资料
 
 <http://www.zsythink.net/archives/category/%e8%bf%90%e7%bb%b4%e7%9b%b8%e5%85%b3/ansible/>
