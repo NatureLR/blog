@@ -1219,8 +1219,6 @@ playbook如下：
     file: '{{ lookup("file", "/etc/hosts") }}'
 ```
 
-yaml: '{{ lookup("template", "etcd-backup/etcd-backup.yaml.j2") }}'  
-
 ##### 在本地&&只执行一次
 
 > 有些时候一些剧本在本地执行，就像本地执行shell一样,由于在本地执行所以需要搭配`run_once`
