@@ -1193,7 +1193,35 @@ playbook如下：
 
 基本格式就像上面一样其他功能只需要将`upper`替换为其他的字段即可
 
-##### 在本地本地&&只执行一次
+常用过滤器
+
+- upper 字符转换为大写
+- lower 字符转换为小写
+- indent 设置缩进
+- json_query 将字符串作为json
+- dirname 路径字符串的路径名
+- hash() 进行hash处理
+- password_hash 密码专用的hash
+- checksum  计算md5
+- ipaddr() 需要安装netaddr，针对ip地址处理
+
+##### lookup
+
+> 上面的过滤器和lookup其实都是插件具体介绍:<https://docs.ansible.com/ansible/latest/plugins/plugins.html>
+
+```yaml
+---
+- name: 渲染模版到变量
+  set_fact:
+    yaml: '{{ lookup("template", "test.j2") }}'
+- name: 读取文件到变量
+  set_fact:
+    file: '{{ lookup("file", "/etc/hosts") }}'
+```
+
+yaml: '{{ lookup("template", "etcd-backup/etcd-backup.yaml.j2") }}'  
+
+##### 在本地&&只执行一次
 
 > 有些时候一些剧本在本地执行，就像本地执行shell一样,由于在本地执行所以需要搭配`run_once`
 
