@@ -9,7 +9,7 @@
     "server": "hexo server"
   },
   "hexo": {
-    "version": "5.3.0"
+    "version": "5.2.0"
   },
   "dependencies": {
     "hexo": "^5.4.0",
@@ -27,6 +27,6 @@
     "hexo-server": "^2.0.0",
     "hexo-theme-next": "^8.2.2",
     "live2d-widget-model-shizuku": "^1.0.5",
-    "prism-themes": "^1.5.0"
+    "prism-themes": "^1.6.0"
   }
 }
