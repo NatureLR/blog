@@ -1,10 +1,13 @@
 layout: draft
-title: K8s准入控制
+title: K8s动态准入控制开发
 author: Nature丿灵然
-date: 2021-03-19 11:28:01
 tags:
+  - k8s
+categories:
+  - 开发
+date: 2021-03-19 11:28:00
 ---
-<简介，将显示在首页>
+准入控制是k8s
 
 <!--more-->
 

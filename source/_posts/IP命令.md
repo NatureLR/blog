@@ -135,6 +135,9 @@ default via 192.168.32.2 dev ens33 proto static metric 100
 
 #显示vip这个路由表的路由
 ip route show table vip
+
+# 查看某个地址走那条路由
+ip route get 114.114.114.114
 ```
 
 - proto：此路由的路由协定，主要有redirect,kernel,boot,static,ra等，其中kernel是直接由核心判断自动设定。
