@@ -6,7 +6,7 @@ tags:
   - 虚拟化
 categories:
   - 运维
-date: 2021-05-23 00:00:00
+date: 2021-05-22 22:00:00
 ---
 kvm基于linux内核的虚拟化
 
@@ -34,12 +34,12 @@ KVM acceleration can be used
 sudo apt install qemu-kvm libvirt-daemon-system libvirt-clients bridge-utils virtinst virt-manager
 ```
 
-* qemu-kvm -为KVM管理程序提供硬件仿真的软件。
-* libvirt-daemon-system -用于将libvirt守护程序作为系统服务运行的配置文件。
-* libvirt-clients -用于管理虚拟化平台的软件。
-* bridge-utils -一组用于配置以太网桥的命令行工具。
-* virtinst -一组用于创建虚拟机的命令行工具。
-* virt-manager -易于使用的GUI界面和支持命令行工具，用于通过libvirt管理虚拟机。
+- qemu-kvm -为KVM管理程序提供硬件仿真的软件。
+- libvirt-daemon-system -用于将libvirt守护程序作为系统服务运行的配置文件。
+- libvirt-clients -用于管理虚拟化平台的软件。
+- bridge-utils -一组用于配置以太网桥的命令行工具。
+- virtinst -一组用于创建虚拟机的命令行工具。
+- virt-manager -易于使用的GUI界面和支持命令行工具，用于通过libvirt管理虚拟机。
 
 查看运行状态
 
@@ -91,7 +91,7 @@ sudo systemctl status libvirtd
 
 ![upload successful](/images/pasted-22.png)
 
-### 命令行创建
+#### 命令行创建
 
 > 创建一个磁盘容量为15g，类型为qcow2，名字叫centos7.qcow2的虚拟磁盘
 
@@ -153,3 +153,4 @@ virsh edit xxx        |编辑配置文件（一般是在刚定义完虚拟机之
 #### 参考资料
 
 <https://www.iplayio.cn/post/92661051>
+<https://www.cnblogs.com/saryli/p/11827903.html>
