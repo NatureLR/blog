@@ -85,6 +85,25 @@ select * from dns_resolvers
  .help
 ```
 
+##### 常用sql
+
+```sql
+# 负载
+select period,average from load_average;
+
+# 内存
+select memory_total,memory_free,swap_cached,active from memory_info;
+
+# 磁盘
+select path,type,blocks,blocks_free from mounts where blocks!=0;
+
+# 查询监听0.0.0.0的进程的名字，端口和pid
+SELECT DISTINCT processes.name, listening_ports.port, processes.pid
+  FROM listening_ports JOIN processes USING (pid)
+  WHERE listening_ports.address = '0.0.0.0';
+
+```
+
 #### 参考资料
 
 <https://osquery.io/>
