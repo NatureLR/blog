@@ -23,4 +23,5 @@ date: 2021-03-19 11:28:00
 
 #### 参考资料
 
-<http://blog.naturelingran.xyz>
+<https://kubernetes.io/zh/docs/reference/access-authn-authz/admission-controllers/>
+<https://kubernetes.io/zh/docs/reference/access-authn-authz/extensible-admission-controllers/>
