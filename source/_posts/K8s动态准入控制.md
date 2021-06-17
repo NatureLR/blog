@@ -1,11 +1,11 @@
 layout: draft
-title: K8s动态准入控制开发
+title: K8s动态准入控制
 author: Nature丿灵然
 tags:
   - k8s
 categories:
   - 开发
-date: 2021-03-19 11:28:00
+date: 2021-06-17 11:28:00
 ---
 准入控制是k8s中用来提供安全控制的一个控制器，而动态控制则是用户定制的安全策略
 
@@ -36,12 +36,7 @@ Validating主要为验证性质的，主要看是不是符合条件集群要求�
 
 > 创建证书的的程序很多比较出名的是`openssl`，这里我们使用rancher提供的一个自动生成证书的脚本
 
-1. 将下面的脚本保存为`create_self-signed-cert.sh`
-
-2. 然后执行 ./create_self-signed-cert.sh --ssl-domain=admission-example.admission-example.svc.cluster.local  --ssl-trusted-domain=admission-example,admission-example.admission-example.
-svc -ssl-trusted-ip=127.0.0.1
-
-3. 会在目录里生成一套证书和秘钥
+###### 1. 将下面的脚本保存为`create_self-signed-cert.sh`
 
 ```shell
 #!/bin/bash -e
@@ -203,6 +198,19 @@ echo "cp ${SSL_DOMAIN}.crt tls.crt"
 cp ${SSL_DOMAIN}.crt tls.crt
 
 ```
+
+###### 2. 然后执行下面的命令
+
+```shell
+./create_self-signed-cert.sh --ssl-domain=admission-example.admission-example.svc.cluster.local  --ssl-trusted-domain=admission-example,admission-example.admission-example.svc -ssl-trusted-ip=127.0.0.1
+```
+
+###### 3. 会在目录里生成一套证书和秘钥
+
+- .key的为秘钥
+- .crt为域名的证书
+- csr文件为证书申请文件
+- ca开头的为根证书和秘钥
 
 ##### 编写yaml文件
 
