@@ -429,6 +429,8 @@ func validate(w http.ResponseWriter, r *http.Request) {
   w.Write(resp)
 ```
 
+完整项目在<https://github.com/NatureLR/admission-example>
+
 ##### 测试验证
 
 - 在打了`admission-webhook-example: enabled`标签下的ns中随便创建一个应用会发现被拒绝
