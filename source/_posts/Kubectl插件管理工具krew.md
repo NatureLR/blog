@@ -24,6 +24,7 @@ krew是一个kubectl的插件管理系统
   "$KREW" install krew
 )
 ```
+
 > 添加环境变量
 
 ```shell
@@ -32,13 +33,13 @@ export PATH="${KREW_ROOT:-$HOME/.krew}/bin:$PATH"
 
 ##### 常用命令
 
-* kubectl krew install xxx 安装插件
+- kubectl krew install xxx 安装插件
 
-* kubectl krew uninstall xxx 卸载插件
+- kubectl krew uninstall xxx 卸载插件
 
-* kubectl krew list xxx 查看插件
+- kubectl krew list xxx 查看插件
 
-* kubectl krew update xxx 升级插件
+- kubectl krew update xxx 升级插件
 
 #### 参考资料
 
