@@ -82,31 +82,46 @@ helm list -A
 获取安装时的设置值
 
 ```shell
-helm get values cilium > tmp.yaml
+helm get values <应用> > tmp.yaml
 ```
 
 升级配置或者版本
 
 ```shell
-helm upgrade cilium cilium/cilium -f tmp.yaml
+helm upgrade <应用> <应用仓库> -f tmp.yaml
 ```
 
 升级指定版本
 
 ```shell
-helm upgrade cilium cilium/cilium --version vx.y.z
+helm upgrade <应用> <应用仓库> --version vx.y.z
+```
+
+例子
+
+```shell
+helm get values cilium > tmp.yaml
+helm upgrade cilium cilium/cilium -f tmp.yaml
 ```
 
 ##### 回滚应用
 
 ```shell
 helm rollback <应用>
-````
+```
 
 ##### 卸载应用
 
 ```shell
 helm uninstall <名字>
+```
+
+##### 下载应用包
+
+将在本地生成一个包里面是这个应用得chart文件
+
+```shell
+helm fetch <应用仓库>
 ```
 
 #### 仓库操作
