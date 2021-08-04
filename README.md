@@ -27,7 +27,7 @@
 
 * 如果是本地服务器可以在127.0.0.1:4000/admin中进行写作
 
-* <http://localhost:4000/admin/>进去hexo-admin后台界面
+* <http://localhost:4000/admin/>进入hexo-admin后台界面
 
 ## 目录说明
 

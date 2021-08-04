@@ -194,7 +194,7 @@ iptables -t filter -F
 
 #### 条件匹配
 
-> 如果有多个规则，则规则时间是`与`关系
+> 如果有多个规则，则规则之间是`与`关系
 
 ##### 源地址匹配
 
@@ -293,6 +293,36 @@ iptables -E TEST TEST2
 ```shell
 # iptables -X <自定义链名>
 iptables -X TEST2
+```
+
+#### 扩展模块
+
+> iptables支持使用扩展模块来进行功能的扩展
+
+##### comment
+
+> 注释模块，顾名思义对规则进行说明
+
+```shell
+-m comment --comment "comment" 
+
+iptables -t filter -I INPUT -s 192.168.1.0/24 -m comment --comment "xxxx" -j ACCEPT
+```
+
+##### multiport
+
+> 多端口模块，可以设置一条规则匹配多个端口
+
+```shell
+-m multiport --dports <端口号>,<端口号>
+```
+
+##### ipset
+
+> 可以一条规则匹配ipset里面的地址
+
+```shell
+-m set --match-set <ipset名字>
 ```
 
 #### 规则保存导出和还原
