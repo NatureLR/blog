@@ -57,6 +57,47 @@ npm get registry
 npm config set registry http://registry.npm.taobao.org/
 ```
 
+###### 使用nrm管理源
+
+安装nrm
+
+```shell
+npm install -g nrm
+```
+
+查看源
+
+```shell
+nrm ls
+
+  npm -------- https://registry.npmjs.org/
+  yarn ------- https://registry.yarnpkg.com/
+  cnpm ------- http://r.cnpmjs.org/
+* taobao ----- https://registry.npm.taobao.org/
+  nj --------- https://registry.nodejitsu.com/
+  npmMirror -- https://skimdb.npmjs.com/registry/
+  edunpm ----- http://registry.enpmjs.org/
+```
+
+切换源
+
+```shell
+# 切换到淘宝
+nrm use taobao
+```
+
+删除源
+
+```shell
+nrm del taobao
+```
+
+增加源
+
+```shell
+nrm add <仓库名字> <仓库地址>
+```
+
 ##### 安装NCU检查模块更新
 
 ```shell

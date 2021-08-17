@@ -38,7 +38,7 @@ yum install iproute2
 ip link show
 
 详细显示
-ip -s  link show
+ip -s link show
 ```
 
 ##### 操作设备
@@ -123,7 +123,7 @@ ip addr del 192.168.1.1/24 dev ens33
 # 显示系统路由
 ip route show
 
-#简写
+# 简写
 ip r
 
 default via 192.168.32.2 dev ens33 proto static metric 100                      
@@ -133,7 +133,7 @@ default via 192.168.32.2 dev ens33 proto static metric 100
 192.168.49.0/24 dev br-e6a94a27c143 proto kernel scope link src 192.168.49.1    
 192.168.122.0/24 dev virbr0 proto kernel scope link src 192.168.122.1 linkdown  
 
-#显示vip这个路由表的路由
+# 显示vip这个路由表的路由
 ip route show table vip
 
 # 查看某个地址走那条路由
