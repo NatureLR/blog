@@ -29,7 +29,7 @@ kub-proxy有目前主要有三种
 - ipvs: 和iptables类似只不过使用了ipvs
 - ebpf: 最新的技术速度快效率高，但对内核版本要求比较高
 
-目前默认使用iptables，所以主要说iptables
+目前主流使用iptables和ipvs，所以主要说iptables和ipvs
 
 ![upload successful](/images/pasted-26.png)
 
