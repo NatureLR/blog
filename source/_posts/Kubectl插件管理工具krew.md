@@ -1,5 +1,5 @@
 layout: draft
-title: Kubectl插件管理工具krew
+title: kubectl插件管理工具krew
 author: Nature丿灵然
 tags:
   - k8s

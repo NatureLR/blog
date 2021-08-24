@@ -1,4 +1,4 @@
-title: Syslog
+title: syslog
 author: Nature丿灵然
 tags:
   - 日志

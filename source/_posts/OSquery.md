@@ -1,5 +1,5 @@
 layout: draft
-title: OSquery
+title: osquery
 author: Nature丿灵然
 tags: []
 categories:

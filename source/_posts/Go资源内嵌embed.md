@@ -1,7 +1,8 @@
 layout: draft
-title: Go资源内嵌embed
+title: go资源内嵌embed
 author: Nature丿灵然
-tags: []
+tags: 
+  - go
 categories:
   - 开发
 date: 2021-03-19 11:30:00

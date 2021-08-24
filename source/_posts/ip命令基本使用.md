@@ -1,7 +1,8 @@
 layout: draft
-title: IP命令基本使用
+title: ip命令基本使用
 author: Nature丿灵然
-tags: []
+tags: 
+  - 网络
 categories:
   - 运维
 date: 2021-05-02 23:26:00

@@ -1,5 +1,5 @@
 layout: draft
-title: K8s动态准入控制
+title: k8s动态准入控制
 author: Nature丿灵然
 tags:
   - k8s

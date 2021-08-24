@@ -1,5 +1,5 @@
 layout: draft
-title: Kustomize
+title: kustomize
 author: Nature丿灵然
 tags:
   - k8s

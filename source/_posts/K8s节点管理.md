@@ -1,4 +1,4 @@
-title: K8s节点管理
+title: k8s节点管理
 tags:
   - k8s
 categories:

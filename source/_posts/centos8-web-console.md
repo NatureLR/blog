@@ -1,4 +1,4 @@
-title: Centos8 安装web console(cockpit)
+title: Centos8 web console(cockpit)
 author: Nature丿灵然
 tags:
   - linux

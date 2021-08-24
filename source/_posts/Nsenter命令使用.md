@@ -1,5 +1,5 @@
 layout: draft
-title: Nsenter命令使用
+title: nsenter命令使用
 author: Nature丿灵然
 tags: []
 categories:

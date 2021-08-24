@@ -1,4 +1,4 @@
-title: Iptables
+title: iptables
 author: Nature丿灵然
 tags:
   - linux

@@ -1,4 +1,4 @@
-title: POD管理
+title: pod管理
 tags:
   - k8s
 categories:

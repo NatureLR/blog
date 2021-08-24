@@ -1,4 +1,4 @@
-title: Linux "/proc/sys/kernel/sysrq"魔法键
+title: linux魔法键
 author: Nature丿灵然
 tags:
   - linux
