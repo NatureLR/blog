@@ -18,14 +18,14 @@ k8s service是对一组pod进行抽象的方法
 
 service的vip是虚拟的他的具体实现程序是`kube-proxy`
 
-![upload successful](/images/pasted-24.png)
+![upload successful](/images/pasted-124.png)
 
 如图，流量被service给负载到后端当中，对于用户来说只要访问service即可
 
 kub-proxy有目前主要有三种
 
-- 用户空间: 所有策略都在用户空间效率比较差
-- iptables: iptables在内核空间，由于iptables是一个一个匹配所有规则多时效果延迟比较大
+- 用户空间: 早起的方案，所有策略都在用户空间效率比较差
+- iptables: iptables在内核空间，主要通过nat实现，由于iptables是一个一个匹配所有规则多时效果延迟比较大
 - ipvs: 和iptables类似只不过使用了ipvs
 - ebpf: 最新的技术速度快效率高，但对内核版本要求比较高
 
