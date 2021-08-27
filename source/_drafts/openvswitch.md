@@ -15,6 +15,38 @@ ovs是一个开源的虚拟交换机，具有强大的功能
 
 #### 安装
 
+apt
+
+```shell
+sudo apt install openvswitch-switch 
+```
+
+yum
+
+官方未提供yum源需要编译安装
+
+```shell
+# 安装编译依赖
+yum install wget openssl-devel python-sphinx gcc make python-deve
+
+# 创建并切换到ovs用户
+useradd ovs && su - ovs 
+
+# 创建编译的文件夹
+mkdir -p ~/rpmbuild/SOURCES
+wget https://www.openvswitch.org/releases/openvswitch-2.16.0.tar.gz
+cp openvswitch-2.9.2.tar.gz ~/rpmbuild/SOURCES/
+tar xfz openvswitch-2.9.2.tar.gz
+
+# 创建rpm
+rpmbuild -bb --nocheck openvswitch-2.9.2/rhel/openvswitch-fedora.spec
+yum localinstall /home/ovs/rpmbuild/RPMS/x86_64/openvswitch-2.9.2-1.el7.x86_64.rpm -y
+
+# 启动服务
+systemctl start openvswitch
+systemctl enable openvswitch
+```
+
 #### bridge
 
 查看
@@ -83,6 +115,27 @@ ovs-ofctl del-flows vbr0
 ```shell
 ovs-ofctl dump-groups vbr0
 ```
+
+增加流表
+
+```shell
+ovs-ofctl add-flow vbr0 "table=0, priority=0 actions=NORMAL"
+```
+
+基本
+- duration_sec – 
+- table_id – 所属表项
+- priority – 优先级
+- n_packets – 处理的数据包数量
+- idle_timeout – 空闲超时时间（秒），超时则自动删除该表规则，0 表示该流规则永不过期。
+idle_timeout 不包含在 ovs-ofctl dump-flows br_name 的输出。
+
+条件
+
+actions:动作
+  - NORMAL 和普通交换机一样正常转发
+  - OUTPUT 转发到某个端口
+  
 
 ##### group
 
