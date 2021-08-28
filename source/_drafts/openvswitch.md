@@ -23,24 +23,52 @@ sudo apt install openvswitch-switch
 
 yum
 
-官方未提供yum源需要编译安装
+官方未提供yum源需要编译安装
 
 ```shell
+
 # 安装编译依赖
-yum install wget openssl-devel python-sphinx gcc make python-deve
+yum -y install 
+gcc  \
+gcc-c++ \
+autoconf  \
+automake  \
+libtool \
+systemd-units  \
+openssl \
+openssl-devel \
+python3-devel \
+desktop-file-utils \
+groff  \
+graphviz \
+checkpolicy \
+selinux-policy-devel \
+python3-sphinx \
+procps-ng \
+libcap-ng \
+libcap-ng-devel \
+libpcap-devel  \
+numactl-devel \
+dpdk-devel \
+libbpf-devel \
+numactl-devel \
+unbound  \
+unbound-devel
 
 # 创建并切换到ovs用户
 useradd ovs && su - ovs 
 
 # 创建编译的文件夹
 mkdir -p ~/rpmbuild/SOURCES
+cd  ~/rpmbuild/SOURCES
 wget https://www.openvswitch.org/releases/openvswitch-2.16.0.tar.gz
-cp openvswitch-2.9.2.tar.gz ~/rpmbuild/SOURCES/
 tar xfz openvswitch-2.9.2.tar.gz
 
-# 创建rpm
+# 编译为rpm
 rpmbuild -bb --nocheck openvswitch-2.9.2/rhel/openvswitch-fedora.spec
-yum localinstall /home/ovs/rpmbuild/RPMS/x86_64/openvswitch-2.9.2-1.el7.x86_64.rpm -y
+
+# 安装rpm
+yum -y install openvswitch-2.16.0-1.el7.x86_64.rpm
 
 # 启动服务
 systemctl start openvswitch
