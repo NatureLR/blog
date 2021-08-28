@@ -68,6 +68,9 @@ ip link set ens33 name eth0
 
 # 修改网卡的MAC地址
 ip link set ens33 address aa:aa:aa:aa:aa:aa
+
+# 将 ens33 连接到vbr0网桥
+ip link set ens33 master vbr0
 ```
 
 #### IP相关配置
@@ -188,6 +191,12 @@ ip netns add test
 ```shell
 # 删除一个叫test的网络命名空间
 ip netns del test
+```
+##### 操作
+
+```shell
+# 在 test ns 下执行ip addr
+ip netns exec test ip addr
 ```
 
 #### 参考资料
