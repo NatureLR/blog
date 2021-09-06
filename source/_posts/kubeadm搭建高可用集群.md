@@ -11,7 +11,7 @@ kubeadm是官方的一个用来管理k8s集群的工具
 
 <!--more-->
 
-> xxxx
+> kubeadm，虽然是官方的是使用起来也不是很方便，他需要在每个节点上进行安装，在大规模的时候需要借助其他工具
 
 #### 节点初始化
 
@@ -144,10 +144,10 @@ kubeadm token create --print-join-command --ttl 0
 
 # 将获取的key组合成添加master的命令
 kubeadm join k8s-api:6443 
---token guke67.qbqotvs5pndd5vk3 
---discovery-token-ca-cert-hash sha256:b6d4d752543f1435751d4aad83c46571ac9fe21bdbd87c2b9b009f2dd2eef24b 
---control-plane 
---certificate-key a3a3eabf81b1463f984bad94b7b6852acd01535784d83b06ae0178d770d5a3b3 
+--token <token> \
+--discovery-token-ca-cert-hash <cert>\
+--control-plane \
+--certificate-key <key> \
 --v=6
 ```
 
