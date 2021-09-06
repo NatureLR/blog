@@ -1,4 +1,4 @@
-title: 基于web的远程客户端Apache Guacamole
+title: Apache Guacamole
 author: Nature丿灵然
 tags:
   - 终端
