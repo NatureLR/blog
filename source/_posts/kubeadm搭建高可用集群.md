@@ -74,12 +74,8 @@ EOF
 ##### 安装docker
 
 ```shell
-curl -fsSL https://get.docker.com | bash -s docker --mirror Aliyun
+# 添加配置文件
 
-systemctl restart docker && systemctl enable docker
-```
-
-```shell
 cat <<EOF > /etc/docker/daemon.json 
     "oom-score-adjust": -1000,
     "log-driver": "json-file",
@@ -97,6 +93,12 @@ cat <<EOF > /etc/docker/daemon.json
     ]
 }
 EOF
+
+# 安装docker
+curl -fsSL https://get.docker.com | bash -s docker --mirror Aliyun
+
+# 重启docker
+systemctl restart docker && systemctl enable docker
 ```
 
 ##### 安装k8s组件
@@ -109,6 +111,56 @@ systemctl enable kubelet && systemctl start kubelet
 #### 初始化master
 
 ```shell
+# 执行master节点初始化
+kubeadm init \
+    --control-plane-endpoint "k8s-api:6443" \
+    --upload-certs \
+    --image-repository registry.aliyuncs.com/google_containers \
+    --pod-network-cidr=172.16.1.0/16 \
+    --v=6
+
+# 初始化完成之后会打印出加入集群的命令
+
+```
+
+#### cni
+
+> k8s支持很多cni，这里使用了最简单的flannel
+
+```shell
+kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
+```
+
+#### metrics-server
+
+> metrics-server提供了最基础的metrics手机，使用`kubectl top`和hpa时需要他，当然也可以使用kube-prometheus代理
+
+```shell
+kubectl apply -f https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml
+```
+
+#### ingress
+
+> ingress官方只是定义了crd，具体实现由第三方实现，这里使用了常见的nginx-ingreses
+
+```shell
+kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.0.0/deploy/static/provider/baremetal/deploy.yaml
+
+# 使用helm
+helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
+helm repo update
+helm install ingress-nginx ingress-nginx/ingress-nginx
+```
+
+#### dashboard
+
+```shell
+kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/v2.3.1/aio/deploy/recommended.yaml
+```
+
+#### kubeadm常用命令
+
+```shell
 # 打印默认的初始化配置
 kubeadm config print init-defaults > kubeadm-config.yaml
 
@@ -118,23 +170,11 @@ kubeadm init --config kubeadm-config.yaml
 # 查看所需要的镜像列表
 kubeadm config images list
 
-# 提前下载镜像
+# 下载默认配置的镜像
 kubeadm config images pull
 
 # 由于国内无法访问gcr.io，可以指定仓库，这里使用了阿里的镜像
 kubeadm config images pull --image-repository registry.aliyuncs.com/google_containers --kubernetes-version latest
-```
-
-```shell
-# 执行master节点初始化
-kubeadm init \
-    --control-plane-endpoint "k8s-api:6443" \
-    --upload-certs \
-    --image-repository registry.aliyuncs.com/google_containers \
-    --pod-network-cidr=192.16.1.0/16 \
-    --v=6
-
-# 初始化完成之后会打印出加入集群的命令
 
 # 获取key
 kubeadm init phase upload-certs --upload-certs
@@ -149,22 +189,9 @@ kubeadm join k8s-api:6443
 --control-plane \
 --certificate-key <key> \
 --v=6
+
 ```
-
-#### cni
-
-> k8s支持很多cni，这里使用了最简单的flannel
-
-```shell
-kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
-```
-
-#### metrics-server
-
-#### ingress
-
-#### dashboard
 
 #### 参考资料
 
-<http://blog.naturelr.cc>
+<https://kubernetes.io/zh/docs/setup/production-environment/tools/kubeadm/create-cluster-kubeadm/>
