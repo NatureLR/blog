@@ -30,13 +30,19 @@ sed -ri 's/.*swap.*/#&/' /etc/fstab
 ##### 关闭selinux
 
 ```shell
-setenforce 0 && sed -i 's/SELINUX=permissive/SELINUX=enforcing/g' /etc/selinux/config
+setenforce 0 && sed -i 's/^SELINUX=.*/SELINUX=disable/g' /etc/selinux/config
 ```
 
 ##### 关闭防火墙
 
 ```shell
 systemctl stop firewalld && systemctl disable firewalld
+```
+
+##### 同步时间
+
+```shell
+ sudo ntpdate cn.pool.ntp.org
 ```
 
 ##### yum源
@@ -74,9 +80,10 @@ EOF
 ##### 安装docker
 
 ```shell
-# 添加配置文件
+# 添加配置文件
 
 cat <<EOF > /etc/docker/daemon.json 
+{
     "oom-score-adjust": -1000,
     "log-driver": "json-file",
     "log-opts": {
@@ -94,10 +101,10 @@ cat <<EOF > /etc/docker/daemon.json
 }
 EOF
 
-# 安装docker
+# 安装docker
 curl -fsSL https://get.docker.com | bash -s docker --mirror Aliyun
 
-# 重启docker
+# 重启docker
 systemctl restart docker && systemctl enable docker
 ```
 
@@ -121,6 +128,23 @@ kubeadm init \
 
 # 初始化完成之后会打印出加入集群的命令
 
+```
+
+加入集群的命令可以使用kubeadm重新获取,参考后面kubeadm
+
+##### 其他两个master节点
+
+```shell
+ kubeadm join k8s-api:6443 --token iq5o5t.8mtwj9117qhed25p \
+        --discovery-token-ca-cert-hash sha256:95fda448e3cb56303efc3bccbc785e000c3124a9a045ff2ed33c854cb9ee3108 \
+        --control-plane --certificate-key f075fe20e799440297bf9bd48942134da1c95f1c00ef94d7d208a2a66ce87bda
+```
+
+##### 节点上执行
+
+```shell
+kubeadm join k8s-api:6443 --token iq5o5t.8mtwj9117qhed25p \
+        --discovery-token-ca-cert-hash sha256:95fda448e3cb56303efc3bccbc785e000c3124a9a045ff2ed33c854cb9ee3108
 ```
 
 #### cni
@@ -189,6 +213,9 @@ kubeadm join k8s-api:6443
 --control-plane \
 --certificate-key <key> \
 --v=6
+
+# kubeadm init 和 kubeadm join 如果cpu配置太低可以使用下面的参数忽略
+--ignore-preflight-errors=Mem,NumCPU
 
 ```
 
