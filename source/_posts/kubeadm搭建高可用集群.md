@@ -137,7 +137,7 @@ systemctl enable kubelet && systemctl start kubelet
 yum install -y ipvsadm
 ```
 
-#### 初始化master
+#### 安装master
 
 ```shell
 # 执行master节点初始化
@@ -162,7 +162,7 @@ kubeadm init \
         --control-plane --certificate-key f075fe20e799440297bf9bd48942134da1c95f1c00ef94d7d208a2a66ce87bda
 ```
 
-##### 节点上执行
+#### 安装工作节点
 
 ```shell
 kubeadm join k8s-api:6443 --token iq5o5t.8mtwj9117qhed25p \
