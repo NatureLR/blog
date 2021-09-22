@@ -13,9 +13,27 @@ kubeadm是官方的一个用来管理k8s集群的工具
 
 > kubeadm，虽然是官方的是使用起来也不是很方便，他需要在每个节点上进行安装，在大规模的时候需要借助其他工具
 
+#### 环境信息说明
+
+- 4台2c2g虚拟机,官方要求最少2c4g但是我的机器没这么高配置，如果仅仅是学习的话够用了
+- 系统为centos7
+- lb方案为了方便使用hosts文件，生产环境请使用lvs,haproxy,nginx等方案
+- 默认为最新版本
+
 #### 节点初始化
 
 > 所有节点无论master和node
+
+##### 设置主机名字和PS1为主机IP
+
+> 为了方便统一设置主机名为ip地址
+
+```shell
+echo 'export PS1="[\u@\H \W]\$ "' >> .bashrc
+
+IP=$(ip addr show $(ip route |grep default |awk '{print$5}') |grep -w inet |awk -F '[ /]+' '{print $3}')
+hostnamectl set-hostname $IP
+```
 
 ##### 关闭swap交换分区
 
@@ -42,7 +60,7 @@ systemctl stop firewalld && systemctl disable firewalld
 ##### 同步时间
 
 ```shell
- sudo ntpdate cn.pool.ntp.org
+ntpdate cn.pool.ntp.org
 ```
 
 ##### yum源
@@ -91,6 +109,7 @@ cat <<EOF > /etc/docker/daemon.json
         "max-file": "3"
     },
     "exec-opts": ["native.cgroupdriver=systemd"],
+    "live-restore": true,
     "max-concurrent-downloads": 10,
     "max-concurrent-uploads": 10,
     "registry-mirrors": ["http://hub-mirror.c.163.com","https://registry.docker-cn.com","https://docker.mirrors.ustc.edu.cn"],
@@ -113,6 +132,9 @@ systemctl restart docker && systemctl enable docker
 ```shell
 yum install -y kubelet kubeadm kubectl
 systemctl enable kubelet && systemctl start kubelet
+
+# ipvs模式推荐安装
+yum install -y ipvsadm
 ```
 
 #### 初始化master
@@ -182,6 +204,111 @@ helm install ingress-nginx ingress-nginx/ingress-nginx
 kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/v2.3.1/aio/deploy/recommended.yaml
 ```
 
+##### 删除清理
+
+> master要保持奇数！
+
+- 驱逐节点上的pod
+
+```shell
+kubectl drain <节点> --delete-local-data --force --ignore-daemonsets
+```
+
+- 删除节点
+
+```shell
+kubectl delete <节点>
+```
+
+- 在要删除的节点上执行
+
+```shell
+kubeadm reset
+```
+
+- 清理iptables规则
+
+```shell
+iptables -F && iptables -t nat -F && iptables -t mangle -F && iptables -X
+```
+
+- 如果使用了ipvs模式
+
+```shell
+ipvsadm -C
+```
+
+- 清理安装目录和文件
+
+```shell
+rm -rf ~/.kube
+rm -rf /opt/cni
+rm -rf /etc/cni
+rm -rf /etc/kubernetes
+rm -rf /var/etcd # master节点才有
+```
+
+- 卸载组件
+
+```shell
+yum remove kube*
+```
+
+- 重启
+
+```shell
+reboot
+```
+
+##### 升级版本
+
+> k8s升级版本最大不能跨越两个次版本，其版本通过二进制的版本来确定要通过kubeadm去每个节点上执行
+
+###### master节点
+
+```shell
+yum -y update kubeadm kubelet kubectl
+
+# 验证版本
+kubeadm version
+
+# 查看升级计划
+kubeadm upgrade plan
+
+# 执行升级
+sudo kubeadm upgrade apply v1.y.x
+
+# 其他的master
+sudo kubeadm upgrade node
+```
+
+###### 工作节点
+
+- 驱逐节点上pod
+
+```shell
+kubectl drain <节点> --delete-local-data --force --ignore-daemonsets
+```
+
+- 升级节点
+
+```shell
+yum update -y kubelet
+
+systemctl restart kubelet
+```
+
+- 恢复节点
+
+```shell
+kubectl uncordon <节点>
+```
+
+###### 其他
+
+- 查看cni是不是需要根据版本升级
+- dashboard等k8s应用升级
+
 #### kubeadm常用命令
 
 ```shell
@@ -222,3 +349,4 @@ kubeadm join k8s-api:6443
 #### 参考资料
 
 <https://kubernetes.io/zh/docs/setup/production-environment/tools/kubeadm/create-cluster-kubeadm/>
+<https://kubernetes.io/zh/docs/tasks/administer-cluster/kubeadm/kubeadm-upgrade/>
