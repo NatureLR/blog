@@ -1,7 +1,7 @@
 # blog
 
 使用hexo的next主题,生成的web资源上传到github另一个[pages项目](https://github.com/NatureLR/NatureLR.github.io)
-效果预览<https://blog.naturelr.xyz>
+效果预览<https://blog.naturelr.cc>
 
 ## 安装
 
