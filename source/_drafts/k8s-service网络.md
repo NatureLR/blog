@@ -152,3 +152,4 @@ spec:
 #### 参考资料
 
 <https://kubernetes.io/zh/docs/concepts/services-networking/service/>
+<https://draveness.me/kubernetes-service/>
