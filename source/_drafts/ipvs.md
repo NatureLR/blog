@@ -22,7 +22,7 @@ yum install ipvsadm
 #### 技术术语
 
 |缩写|全写|说明|
-|-----------|----------|--------------|
+|---|------------------|--------------|
 |CIP|Client IP         |客户端ip
 |vip|Virtual IP        |虚拟ip
 |DIP|Director Server IP|负载均衡ip
@@ -121,6 +121,3 @@ ipvsadm -d -t 10.0.0.1:80 -r 192.168.32.129:80
 
 <https://www.cnblogs.com/laolieren/p/lvs_explained.html>
 <https://www.cnblogs.com/klb561/p/9215667.html>
-
-
-ip addr add 10.0.0.1/32 broadcast 10.0.0.1/32 dev ens33 label ens33:0
