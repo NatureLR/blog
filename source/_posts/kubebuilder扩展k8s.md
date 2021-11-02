@@ -36,7 +36,7 @@ sepc:               # 加上下放的 spec 就是 Resource了
 
 根据GVK K8s就能找到你到底要创建什么类型的资源，根据你定义的Spec创建好资源之后就成为了Resource，也就是GVR。GVK/GVR就是K8s资源的坐标，是我们创建/删除/修改/读取资源的基础
 
-类似这样的关系/version/group/kind
+类似这样的关系/group/version/kind
 
 ### 项目初始化
 
