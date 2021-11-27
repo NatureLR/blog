@@ -177,6 +177,14 @@ kubeadm join k8s-api:6443 --token iq5o5t.8mtwj9117qhed25p \
 kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
 ```
 
+#### 清理master上的污点
+
+> 默认安装完成之后master是有污点的
+
+```shell
+kubectl taint nodes <节点名字> node-role.kubernetes.io/master:NoSchedule-
+```
+
 #### metrics-server
 
 > metrics-server提供了最基础的metrics手机，使用`kubectl top`和hpa时需要他，当然也可以使用kube-prometheus代理
