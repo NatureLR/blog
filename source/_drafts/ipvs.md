@@ -57,6 +57,8 @@ echo "i am  rs 192.168.32.129" > /var/www/html/index.html
 
 ###### fullnat
 
+> 默认的不支持fullnat，需要安装补丁
+
 ###### dr
 
 ###### 隧道(IPIP)

@@ -32,9 +32,9 @@ kub-proxy有目前主要有四种
 
 ![upload successful](/images/pasted-26.png)
 
-##### kube-proxy
+##### kube-proxy
 
-#### 使用
+#### 使用
 
 ```yaml
 apiVersion: v1
@@ -52,7 +52,7 @@ spec:
 
 将上面的保存为foo.yaml然后执行`kubectl apply -f foo.yaml`即可创建一个svc
 
-#### 类型
+#### 类型
 
 k8s的服务类型拥有很多种，根据实际情况选择
 
