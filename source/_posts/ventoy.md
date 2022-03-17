@@ -26,7 +26,9 @@ ventoy是一个国人开发的使用usb安装系统的工具
 
 #### 写到U盘
 
-注意:安装的时候会格式化磁盘
+{% note warning %}
+安装的时候会格式化磁盘
+{% endnote %}
 
 ![upload successful](/images/ventoy-1.png)
 
