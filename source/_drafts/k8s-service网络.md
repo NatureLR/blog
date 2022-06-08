@@ -147,6 +147,10 @@ spec:
 
 ##### iptables
 
+```shell
+iptables -nvL PREROUTING  -t nat
+```
+
 ##### ipvs
 
 #### 参考资料
