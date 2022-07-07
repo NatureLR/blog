@@ -25,14 +25,12 @@ helm repo add jetstack https://charts.jetstack.io
 # 更新仓库
 helm repo update
 
-# 创建cert-manager的namespace
-kubectl create namespace cert-manager
-
 # 使用helm安装cert-manager
 helm install \
  cert-manager jetstack/cert-manager \
  --namespace cert-manager \
- --set installCRDs=true
+ --set installCRDs=true \
+ --create-namespace
 ```
 
 ###### 使用helm安装rancher
@@ -41,13 +39,11 @@ helm install \
 # 添加rancher的repo仓库，这里是用latest，生产环境推荐使用stable，尝鲜使用alpha
 helm repo add rancher-latest http://rancher-mirror.oss-cn-beijing.aliyuncs.com/server-charts/latest
 
-# 为rancher创建namespace
-kubectl create namespace cattle-system
-
 # 安装rancher
 helm install rancher rancher-latest/rancher \
  --namespace cattle-system \
- --set hostname=<域名>
+ --set hostname=<域名> \
+ --create-namespace
 ```
 
 ##### 单节点安装
