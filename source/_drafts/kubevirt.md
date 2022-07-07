@@ -59,17 +59,22 @@ chmod +x virtctl
 sudo install virtctl /usr/local/bin
 ```
 
-#### cdi
+#### 卸载
 
-> 导入镜像创建虚拟机，使用pvc提供虚拟机磁盘
+{% note warning %}
+卸载有顺序先删除自动以资源,再删除oper，强制删除ns会导致ns处于Terminating状态
+{% endnote %}
 
 ```shell
-export VERSION=$(curl -s https://github.com/kubevirt/containerized-data-importer/releases/latest | grep -o "v[0-9]\.[0-9]*\.[0-9]*")
-kubectl apply -f https://github.com/kubevirt/containerized-data-importer/releases/download/$VERSION/cdi-operator.yaml
-kubectl apply -f https://github.com/kubevirt/containerized-data-importer/releases/download/$VERSION/cdi-cr.yaml
+export RELEASE=v0.54.0
+kubectl delete -n kubevirt kubevirt kubevirt --wait=true # --wait=true should anyway be default
+kubectl delete apiservices v1alpha3.subresources.kubevirt.io # this needs to be deleted to avoid stuck terminating namespaces
+kubectl delete mutatingwebhookconfigurations virt-api-mutator # not blocking but would be left over
+kubectl delete validatingwebhookconfigurations virt-api-validator # not blocking but would be left over
+kubectl delete -f https://github.com/kubevirt/kubevirt/releases/download/${RELEASE}/kubevirt-operator.yaml --wait=false
 ```
 
-### 管理虚拟机
+#### 管理虚拟机
 
 ```shell
 kubectl apply -f https://kubevirt.io/labs/manifests/vm.yaml
@@ -105,6 +110,18 @@ virtctl console testvm
 
 ```shell
 kubectl delete vm testvm
+```
+
+### cdi
+
+> 导入镜像创建虚拟机，使用pvc提供虚拟机磁盘
+
+#### 安装cdi
+
+```shell
+export VERSION=$(curl -s https://github.com/kubevirt/containerized-data-importer/releases/latest | grep -o "v[0-9]\.[0-9]*\.[0-9]*")
+kubectl apply -f https://github.com/kubevirt/containerized-data-importer/releases/download/$VERSION/cdi-operator.yaml
+kubectl apply -f https://github.com/kubevirt/containerized-data-importer/releases/download/$VERSION/cdi-cr.yaml
 ```
 
 #### 参考资料
