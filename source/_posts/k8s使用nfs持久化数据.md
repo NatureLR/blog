@@ -56,6 +56,13 @@ showmount -e 192.168.32.133
 官方默认的镜像在国内是无法访问，需要转储到国内的仓库里，建议找台香港的机器或者科学上网
 {% endnote %}
 
+```shell
+registry.k8s.io/sig-storage/csi-provisioner:v3.2.0
+registry.k8s.io/sig-storage/livenessprobe:v2.7.0
+registry.k8s.io/sig-storage/csi-node-driver-registrar:v2.5.1
+gcr.io/k8s-staging-sig-storage/nfsplugin:canary
+```
+
 ##### 在线安装
 
 ```shell
