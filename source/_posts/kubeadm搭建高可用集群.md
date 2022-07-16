@@ -95,7 +95,13 @@ gpgkey=https://mirrors.aliyun.com/kubernetes/yum/doc/yum-key.gpg https://mirrors
 EOF
 ```
 
-##### 安装docker
+##### 安装CRI
+
+###### 安装docker
+
+{% note warning %}
+k8s 1.24之后无法直接支持docker,需要安装[cri-dockerd](https://github.com/Mirantis/cri-dockerd)
+{% endnote %}
 
 ```shell
 # 添加配置文件
@@ -125,6 +131,26 @@ curl -fsSL https://get.docker.com | bash -s docker --mirror Aliyun
 
 # 重启docker
 systemctl restart docker && systemctl enable docker
+```
+
+###### 安装containerd
+
+```shell
+# 加载内核模块
+cat << EOF > /etc/modules-load.d/containerd.conf
+overlay
+br_netfilter
+EOF
+
+modprobe overlay
+modprobe br_netfilter
+```
+
+```shell
+# 使用阿里的源
+wget -O /etc/yum.repos.d/docker-ce.repo https://mirrors.aliyun.com/docker-ce/linux/centos/docker-ce.repo
+
+yum install containerd.io-1.6.6-3.1.el7.x86_64.rpm
 ```
 
 ##### 安装k8s组件
@@ -352,9 +378,12 @@ kubeadm join k8s-api:6443
 # kubeadm init 和 kubeadm join 如果cpu配置太低可以使用下面的参数忽略
 --ignore-preflight-errors=Mem,NumCPU
 
+# 查看证书时间
+kubeadm  certs check-expiration
 ```
 
 #### 参考资料
 
 <https://kubernetes.io/zh/docs/setup/production-environment/tools/kubeadm/create-cluster-kubeadm/>
 <https://kubernetes.io/zh/docs/tasks/administer-cluster/kubeadm/kubeadm-upgrade/>
+<https://kubernetes.io/docs/setup/production-environment/container-runtimes/#docker>
