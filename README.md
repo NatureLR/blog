@@ -45,3 +45,14 @@
 ├── drawio             # drawio图片文件
 ├── LICENSE            # 许可
 ```
+
+```shell
+查看所有kubeadm相关的rpm
+yum search --showduplicates kubeadm
+
+# 降级安装
+yum downgrade kubeadm-1.20.15-0.x86_64
+
+# 下载
+yumdownloader kubelet
+```
