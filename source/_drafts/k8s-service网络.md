@@ -15,7 +15,7 @@ k8s service是对一组pod进行抽象的方法
 
 #### 实现方式
 
-service的vip是虚拟的他的具体实现程序是`kube-proxy`
+service的ip是虚拟的他的具体实现程序是`kube-proxy`
 
 ![upload successful](/images/pasted-124.png)
 
