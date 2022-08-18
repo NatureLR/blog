@@ -187,10 +187,25 @@ iptables -t filter -F
 - DROP：丢弃数据包,客户端会等待
 - REJECT：拒绝数据包通过，客户端会立即发现拒绝
 - SNAT：源地址转换
-- MASQUERADE：是SNAT的一种特殊形式，适用于动态的、临时会变的ip上
 - DNAT：目标地址转换
+- MASQUERADE：是SNAT的一种特殊形式，适用于动态的、临时会变的ip上
 - REDIRECT：在本机做端口映射
 - LOG：在/var/log/messages文件中记录日志信息，然后传给下一条
+
+##### 日志
+
+> 日志模块一般用于调试
+
+```shell
+# 开启日志
+iptables -A INPUT -j LOG
+
+# 设置日志级别
+iptables -A INPUT -s 192.168.1.0/24 -j LOG --log-level 7
+
+# 在日志加上前缀
+iptables -A INPUT -s 192.168.1.0/24 -j LOG --log-prefix "iptables log: "
+```
 
 #### 条件匹配
 
