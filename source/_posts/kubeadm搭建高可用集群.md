@@ -3,6 +3,7 @@ title: kubeadm搭建高可用集群
 author: Nature丿灵然
 tags:
   - k8s
+  - kubeadm
 categories:
   - 运维
 date: 2021-09-04 21:36:00
