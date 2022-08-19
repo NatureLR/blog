@@ -37,6 +37,8 @@ Iptables是大多数发型版本中支持的防火墙
 
 ![images](/images/pasted-11.png)
 
+![images](/images/iptables_traverse.jpeg)
+
 #### 查看规则
 
 ![images](/images/pasted-10.png)
@@ -369,3 +371,4 @@ iptables-save < iptable
 #### 参考资料
 
 [朱双印个人博客](http://www.zsythink.net/archives/category/%e8%bf%90%e7%bb%b4%e7%9b%b8%e5%85%b3/iptables/)
+<https://www.frozentux.net/iptables-tutorial/iptables-tutorial.html>
