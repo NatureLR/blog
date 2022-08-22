@@ -147,7 +147,7 @@ make -j 8
 make modules_install install
 ```
 
-##### 设置启动
+##### 设置开机启动
 
 ```shell
 # 查看启动顺序
@@ -187,3 +187,5 @@ reboot
 
 <https://ahelpme.com/linux/centos7/how-to-install-new-gcc-and-development-tools-under-centos-7/>
 <https://nestealin.com/8bab8c2c/>
+<https://github.com/torvalds/linux>
+<https://www.kernel.org/doc/html/latest>
