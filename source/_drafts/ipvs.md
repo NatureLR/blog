@@ -77,10 +77,6 @@ i am rs 10-23-39-137
 i am rs 10-23-218-86
 ```
 
-ip r add 192.168.1.1/32 via 10.23.105.123 dev eth0
-ip r add 192.168.1.1/32 via 10.23.234.104 dev eth0
-ip link add ipvs  type dummy
-
 ##### DR
 
 - rs和ds需要在一个二层中
@@ -148,11 +144,35 @@ i am rs 10-23-133-111
 
 ##### 隧道(IPIP)
 
+- DR配置
+
 ```shell
 ipvsadm -A -t 10.23.20.112:80 -s rr
 ipvsadm -a -t 10.23.20.112:80 -r 10.23.102.39:80  -i
 ipvsadm -a -t 10.23.20.112:80 -r 10.23.133.111:80 -i
 ```
+
+- RS
+
+```shell
+# 加载内部模块
+modprobe ipip
+
+# 将vip添加到ipip隧道网卡
+ip addr add 10.23.20.112/32 dev tunl0
+ip link set tunl0 up
+
+# 修改内核参数
+echo "1" >/proc/sys/net/ipv4/conf/tunl0/arp_ignore
+echo "2" >/proc/sys/net/ipv4/conf/tunl0/arp_announce
+echo "1" >/proc/sys/net/ipv4/conf/all/arp_ignore
+echo "2" >/proc/sys/net/ipv4/conf/all/arp_announce
+
+echo "0" > /proc/sys/net/ipv4/conf/tunl0/rp_filter
+echo "0" > /proc/sys/net/ipv4/conf/all/rp_filter
+```
+
+由于实验环境在同一个网段所以需要对arp响应进行处理
 
 #### 负载均衡算法
 
