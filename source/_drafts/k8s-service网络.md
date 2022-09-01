@@ -83,7 +83,7 @@ spec:
 
 ##### Headless
 
-和ClusterIP基本一致，只是没有虚拟ip同时失去了lb的功能
+和ClusterIP基本一致，只是没有虚拟ip同时失去了lb的功能,`kube-proxy`不会处理此svc且dns返回对应ep的所有地址，常用于`服务发现`
 
 ```yaml
 apiVersion: v1
@@ -142,6 +142,28 @@ spec:
   sessionAffinity: None
   type: ExternalName
 ```
+
+#### 流量策略
+
+流量策略主要解决在拥有众多ep的服务在转发流量时有些pod距离访问的node比较远导致延迟增大
+
+目前拥有2种策略，`cluster`和`local`
+
+cluster:会想流量转发到所有的pod当中，默认就是此模式
+
+local: 会将流量转发本地的pod上，不会转发到其他node上的pod
+
+##### 内部流量(东西流量)
+
+- 默认为Cluster
+
+- service中字段为internalTrafficPolicy
+
+##### 外部访问内部流量(南北流量)
+
+- 默认为Cluster
+
+- service中字段为externalTrafficPolicy
 
 #### 实现
 
