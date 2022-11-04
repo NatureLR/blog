@@ -19,7 +19,7 @@ ipvs是个4层负载均衡器，常常用于服务的高可用
 yum install ipvsadm
 ```
 
-#### 技术术语
+#### 术语
 
 |缩写|全写|说明|
 |---|------------------|--------------|
@@ -32,33 +32,49 @@ yum install ipvsadm
 
 #### 三种模式
 
-##### nat
+|类型|IP|
+|---|-------------|
+|CIP|10.23.18.81  |
+|VIP|10.23.59.162 |
+|DS |10.23.12.87  |
+|RS1|10.23.197.23 |
+|RS2|10.23.9.198  |
+
+##### NAT
 
 - 本质是个dnat
 - 流量出入都经过DR
-- RS的默认网关指向DS
 - 来回流量都从dr过dr会成为瓶颈
+- 同一个网段时RS的默认网关需要指向DS,且本网段的路由需要删除不然不会通过默认路由到DR
 
-> 部署步骤
+![x](/images/ipvs-nat-1.png)
 
-- 在DS设置规则，将在DS设置规则，将192.168.1.1:80轮询到10.23.218.86:80和10.23.39.137:80
+###### NAT部署
+
+- 在DS配置规则
 
 ```shell
-ipvsadm -A -t 192.168.1.1:80 -s rr
-ipvsadm -a -t 192.168.1.1:80 -r 10.9.78.125:80 -m
-ipvsadm -a -t 192.168.1.1:80 -r 10.9.79.76:80 -m
+echo 1 >/proc/sys/net/ipv4/ip_forward
+
+export VIP=10.23.59.162
+export RS1=10.23.197.23
+export RS2=10.23.9.198
+
+ipvsadm -A -t $VIP:80 -s rr
+ipvsadm -a -t $VIP:80 -r $RS1 -m
+ipvsadm -a -t $VIP:80 -r $RS2 -m
 ```
 
 - 查看规则
 
 ```shell
-ipvsadm -L -n
+[root@10-23-12-87 ~]# ipvsadm -L -n
 IP Virtual Server version 1.2.1 (size=4096)
 Prot LocalAddress:Port Scheduler Flags
-   -> RemoteAddress:Port           Forward Weight ActiveConn InActConn
-TCP  192.168.1.1:80 rr
-  -> 10.23.39.137:80              Masq    1      0          1
-  -> 10.23.218.86:80              Masq    1      0          0
+  -> RemoteAddress:Port           Forward Weight ActiveConn InActConn
+TCP  10.23.59.162:80 rr
+  -> 10.23.9.198:80               Masq    1      0          2
+  -> 10.23.197.23:80              Masq    1      0          1
 ```
 
 - 在RS上部署一个httpd用于判断访问到哪那台机器
@@ -68,14 +84,49 @@ yum -y install httpd && systemctl start httpd
 echo "i am rs $HOSTNAME" > /var/www/html/index.html
 ```
 
-此时在rs上curl`192.168.1.1`这个vip会轮询访问
+- 此时在rs上`curl 10.23.59.162`这个vip会轮询访问，此时cip是自己
 
 ```shell
-[root@10-23-234-104 ~]# curl 192.168.1.1
-i am rs 10-23-39-137
-[root@10-23-234-104 ~]# curl 192.168.1.1
-i am rs 10-23-218-86
+[root@10-23-12-87 ~]# curl 10.23.59.162
+i am rs 10-23-9-198
+[root@10-23-12-87 ~]# curl 10.23.59.162
+i am rs 10-23-197-23
+[root@10-23-12-87 ~]#
 ```
+
+###### 同一个网络说明
+
+client此时并不知道vip这个地址在哪,所以需要在dr上绑定vip,让隔壁的邻居知道vip的mac
+
+且由于vip和rs的地址都在同一个网段默认会通过二层直接到client,未经过dr的nat，导致client不认回包而被丢弃因此需要在rs上设置默认网关为dr
+
+- dr执行
+
+```shell
+ip addr add 10.23.59.162 dev eth0
+```
+
+- RS上执行,将默认路由指向dr
+
+```shell
+export DS=10.23.12.87
+
+# 设置默认路由
+ip route replace default via $DS
+# 删除路由
+ip r del 10.23.0.0/16 dev eth0 proto kernel scope link src 10.23.197.23
+```
+
+###### 流量转发路径
+
+![cl](/images/ipvs-nat-2.png)
+![dr](/images/ipvs-nat-3.png)
+![rs](/images/ipvs-nat-4.png)
+
+通过抓包我可以看到client请求vip之后，dr接受到会将vip替换成rip然后发送给rs
+rs收到之后因为会路由设置会发送给dr，dr将src地址再改回vip
+
+![rs](/images/ipvs-nat-5.png)
 
 ##### DR
 
@@ -89,25 +140,21 @@ i am rs 10-23-218-86
 
 - 不支持端口映射
 
-###### 部署步骤(cip,vip,rs同网段)
-
-|类型|IP|
-|---|--------------|
-|CIP|10.23.148.237 |
-|VIP|10.23.20.112  |
-|DS |10.23.20.111  |
-|RS1|10.23.102.39  |
-|RS2|10.23.133.111 |
+###### DR部署
 
 - DS配置
 
 ```shell
-ip link add vip  type dummy
-ip addr add 10.23.20.112 dev vip
+export VIP=10.23.59.162
+export RS1=10.23.197.23
+export RS2=10.23.9.198
 
-ipvsadm -A -t 10.23.20.112:80 -s rr
-ipvsadm -a -t 10.23.20.112:80 -r 10.23.102.39:80  -g
-ipvsadm -a -t 10.23.20.112:80 -r 10.23.133.111:80 -g
+ip link add vip type dummy
+ip addr add $VIP dev vip
+
+ipvsadm -A -t $VIP:80 -s rr
+ipvsadm -a -t $VIP:80 -r $RS1:80 -g
+ipvsadm -a -t $VIP:80 -r $RS2:80 -g
 ```
 
 - 两个RS配置
@@ -119,37 +166,59 @@ echo "i am rs $HOSTNAME" > /var/www/html/index.html
 
 # 配置arp
 echo 1 >/proc/sys/net/ipv4/conf/all/arp_ignore
-echo 2 >/proc/sys/net/ipv4/conf/all/arp_announc
+echo 2 >/proc/sys/net/ipv4/conf/all/arp_announce
+
+export VIP=10.23.59.162
 
 # 配置vip网卡(用dummy和lo都可以)
-ip link add vip  type dummy
-ip addr add 10.23.20.112 dev vip
+ip link add vip type dummy
+ip addr add $VIP dev vip
 ```
 
 - Client
 
+添加路由，原则来说因为在同一个交换机中直接通过二层,但是有些vpc的子网不是通过vpc创建的ip不会转发
+
+也可以查看云厂商的文档如vip或者辅助ip等来作为vip
+
 ```shell
-# 添加路由
-ip r add  10.23.20.112/32 via 10.23.20.111 dev eth0
+export VIP=10.23.59.162
+export DR=10.23.12.87
+
+ip r add $VIP/32 via $DR dev eth0
 ```
 
 - 测试
 
 ```shell
-[root@10-23-148-237 ~]# curl 10.23.20.112
-i am rs 10-23-102-39
-[root@10-23-148-237 ~]# curl 10.23.20.112
-i am rs 10-23-133-111
+[root@10-23-18-81 ~]# curl 10.23.59.162
+i am rs 10-23-197-23
+[root@10-23-18-81 ~]# curl 10.23.59.162
+i am rs 10-23-9-198
 ```
 
+###### 流量抓包
+
+![dr](/images/ipvs-dr-1.png)
+
+![dr](/images/ipvs-dr-2.png)
+
+图中可看出dr将mac地址换成类似rs的mac地址
+
 ##### 隧道(IPIP)
+
+###### 隧道(IPIP)部署
 
 - DR配置
 
 ```shell
-ipvsadm -A -t 10.23.20.112:80 -s rr
-ipvsadm -a -t 10.23.20.112:80 -r 10.23.102.39:80  -i
-ipvsadm -a -t 10.23.20.112:80 -r 10.23.133.111:80 -i
+export VIP=10.23.59.162
+export RS1=10.23.197.23
+export RS2=10.23.9.198
+
+ipvsadm -A -t $VIP:80 -s rr
+ipvsadm -a -t $VIP:80 -r $RS1:80 -i
+ipvsadm -a -t $VIP:80 -r $RS2:80 -i
 ```
 
 - RS
@@ -158,13 +227,15 @@ ipvsadm -a -t 10.23.20.112:80 -r 10.23.133.111:80 -i
 # 加载内部模块
 modprobe ipip
 
+export VIP=10.23.59.162
 # 将vip添加到ipip隧道网卡
-ip addr add 10.23.20.112/32 dev tunl0
+ip addr add $VIP dev tunl0
 ip link set tunl0 up
 
 # 修改内核参数
 echo "1" >/proc/sys/net/ipv4/conf/tunl0/arp_ignore
 echo "2" >/proc/sys/net/ipv4/conf/tunl0/arp_announce
+
 echo "1" >/proc/sys/net/ipv4/conf/all/arp_ignore
 echo "2" >/proc/sys/net/ipv4/conf/all/arp_announce
 
@@ -173,6 +244,12 @@ echo "0" > /proc/sys/net/ipv4/conf/all/rp_filter
 ```
 
 由于实验环境在同一个网段所以需要对arp响应进行处理
+
+#### 内核参数
+
+- arp_ignore
+- arp_announce
+- rp_filter
 
 #### 负载均衡算法
 

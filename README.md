@@ -45,3 +45,7 @@
 ├── drawio             # drawio图片文件
 ├── LICENSE            # 许可
 ```
+
+```asciidoc
+docker run -it panguolin/grapheasy:latest sh
+```

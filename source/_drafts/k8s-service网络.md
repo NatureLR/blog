@@ -149,9 +149,9 @@ spec:
 
 目前拥有2种策略，`cluster`和`local`
 
-cluster:会想流量转发到所有的pod当中，默认就是此模式
+cluster:会将流量转发到所有节点的pod当中，默认就是此模式
 
-local: 会将流量转发本地的pod上，不会转发到其他node上的pod
+local: 只会将流量转发本地的pod上，不会转发到其他node上的pod
 
 ##### 内部流量(东西流量)
 
