@@ -5,7 +5,7 @@ tags:
   - 网络
 categories:
   - 运维
-date: 2021-10-15 15:20:00
+date: 2022-11-07 15:20:00
 ---
 ipvs是个4层负载均衡器，常常用于服务的高可用
 
@@ -243,13 +243,49 @@ echo "0" > /proc/sys/net/ipv4/conf/tunl0/rp_filter
 echo "0" > /proc/sys/net/ipv4/conf/all/rp_filter
 ```
 
+###### IPIP流量分析
+
+![ipip](/images/ipvs-ipip-1.png)
+
+![ipip](/images/ipvs-ipip-2.png)
+
 由于实验环境在同一个网段所以需要对arp响应进行处理
 
 #### 内核参数
 
-- arp_ignore
-- arp_announce
-- rp_filter
+内核参数的文档
+
+<https://www.kernel.org/doc/Documentation/networking/ip-sysctl.txt>
+
+##### arp_ignore
+
+设置使用那个网卡的mac和ip用来请求arp,即arp请求的src_mac和src_ip
+
+- 0(默认):将任何网卡的地址响应出去，而不关系该ip是否在接受的网卡上
+- 1:只响应目标ip接受网卡的地址
+- 2:只响应目标ip接受网卡的地址，且需要在同网段
+- 3:请求的地址作用域为host的不响应，只有作用域为`global`和`link`的才响应
+- 4-7:保留
+- 8:任何arp都不响应
+
+在dr模式中每个rs上都配置了vip的地址如果不设置arp_ignore为1则会响应vip的arp请求使客户端的请求绕过了ds直接到了rs
+
+##### arp_announce
+
+设置使用那个网卡的mac和ip用来响应arp请求,既arp响应的dst_mac和dst_ip
+
+- 0:使用任何配置在本接口上的地址响应
+- 1:尽量避免使用不属于该发送网卡子网的本地地址作为发送arp请求的源IP地址
+- 2:忽略IP数据包的源IP地址，选择该发送网卡上最合适的本地地址作为arp请求的源IP地址
+
+##### rp_filter
+
+反向路径过滤
+
+- 0:不校验
+- 1(默认):严格的校验，每个数据包都进行校验，校验反向路径通过特定的接口是否是最佳路径，如不是则丢弃
+- 2:宽松模式。只校验通过任意接口是否可达，如果不通则丢弃
+- 取conf/{all,interface}/rp_filter中的最大值
 
 #### 负载均衡算法
 
@@ -320,3 +356,4 @@ ipvsadm -R < ipvs.conf
 
 <https://www.cnblogs.com/laolieren/p/lvs_explained.html>
 <https://www.cnblogs.com/klb561/p/9215667.html>
+<https://www.jianshu.com/p/734640384fda>
