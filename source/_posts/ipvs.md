@@ -3,6 +3,7 @@ title: ipvs
 author: Nature丿灵然
 tags:
   - 网络
+  - 负载均衡
 categories:
   - 运维
 date: 2022-11-07 15:20:00
@@ -357,3 +358,4 @@ ipvsadm -R < ipvs.conf
 <https://www.cnblogs.com/laolieren/p/lvs_explained.html>
 <https://www.cnblogs.com/klb561/p/9215667.html>
 <https://www.jianshu.com/p/734640384fda>
+<https://www.cnblogs.com/f-ck-need-u/p/8472744.html>
