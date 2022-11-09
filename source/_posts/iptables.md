@@ -35,13 +35,15 @@ Iptables是大多数发型版本中支持的防火墙
 
 #### 链表关系
 
-![images](/images/pasted-11.png)
+![iptables](../images/iptables-1.png)
 
-![images](/images/iptables_traverse.jpeg)
+- 以流量的视角来开
+
+![iptables](../images/iptables_traverse.jpeg)
 
 #### 查看规则
 
-![images](/images/pasted-10.png)
+![iptables](../images/iptables-2.png)
 
 ##### 命令说明
 
