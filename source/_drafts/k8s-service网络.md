@@ -3,6 +3,7 @@ title: k8s-service网络
 author: Nature丿灵然
 tags:
   - k8s
+  - 网络
 categories:
   - 运维
 date: 2021-06-11 15:05:00
@@ -17,7 +18,7 @@ k8s service是对一组pod进行抽象的方法
 
 service的ip是虚拟的他的具体实现程序是`kube-proxy`
 
-![upload successful](/images/pasted-124.png)
+![svc](../images/kube-svc-1.png)
 
 如图，流量被service给负载到后端当中，对于用户来说只要访问service即可
 
@@ -30,7 +31,7 @@ kub-proxy有目前主要有四种
 
 目前主流使用iptables和ipvs，所以主要说iptables和ipvs
 
-![upload successful](/images/pasted-26.png)
+![svc](../images/kube-svc-1.png)
 
 ##### kube-proxy
 
@@ -149,29 +150,85 @@ spec:
 
 目前拥有2种策略，`cluster`和`local`
 
-cluster:会将流量转发到所有节点的pod当中，默认就是此模式
+- cluster(默认):会将流量转发到所有节点的pod当中,但有可能pod在其他节点或者其他地域上会导致延迟
 
-local: 只会将流量转发本地的pod上，不会转发到其他node上的pod
+- local: 只会将流量转发本地的pod上，不会转发到其他node上的pod,拥有较好的性能
 
-##### 内部流量(东西流量)
+![kube-svc](../images/kube-svc-3.png)
 
-- 默认为Cluster
+##### internalTrafficPolicy
 
-- service中字段为internalTrafficPolicy
+- 主要针对pod访问svc的策略
 
-##### 外部访问内部流量(南北流量)
+##### externalTrafficPolicy
 
-- 默认为Cluster
-
-- service中字段为externalTrafficPolicy
+- 针对外面通过node port访问集群的svc
 
 #### 实现
 
 ##### iptables
 
+##### 南北流量
+
 ```shell
-iptables -nvL PREROUTING  -t nat
+#! /bin/bash
+set -e
+
+log(){
+  printf "\n"
+  echo -e '\e[92m'$1链$2表'\e[0m'
+}
+
+log PREROUTING raw
+iptables -nvL PREROUTING -t raw
+log PREROUTING mangle
+iptables -nvL PREROUTING -t mangle
+log PREROUTING nat
+iptables -nvL PREROUTING -t nat
+
+
+log INUT mangle
+iptables -nvL INPUT -t mangle
+log INUT nat
+iptables -nvL INPUT -t nat
+log INUT filter
+iptables -nvL INPUT -t filter
+
+
+log INUT filter
+iptables -nvL FORWARD -t mangle
+log INUT filter
+iptables -nvL FORWARD -t filter
+
+log OUTPUT raw
+iptables -nvL OUTPUT -t raw
+log OUTPUT mangle
+iptables -nvL OUTPUT -t mangle
+log OUTPUT nat
+iptables -nvL OUTPUT -t nat
+log OUTPUT filter
+iptables -nvL OUTPUT -t filter
+
+log POSTROUTING mangle
+iptables -nvL POSTROUTING -t mangle
+log POSTROUTING nat
+iptables -nvL POSTROUTING -t nat
 ```
+
+```shell
+root@minikube:~# iptables -nvL PREROUTING -t nat
+Chain PREROUTING (policy ACCEPT 0 packets, 0 bytes)
+ pkts bytes target     prot opt in     out     source               destination         
+    4   276 KUBE-SERVICES  all  --  *      *       0.0.0.0/0            0.0.0.0/0            /* kubernetes service portals */
+    1    96 DOCKER_OUTPUT  all  --  *      *       0.0.0.0/0            192.168.65.2        
+    6   360 DOCKER     all  --  *      *       0.0.0.0/0            0.0.0.0/0            ADDRTYPE match dst-type LOCAL
+root@minikube:~# 
+
+
+
+```
+
+##### 东西流量
 
 ##### ipvs
 
