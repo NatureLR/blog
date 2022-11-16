@@ -37,7 +37,7 @@ Iptables是大多数发型版本中支持的防火墙
 
 ![iptables](../images/iptables-1.png)
 
-- 以流量的视角来开
+- 以流量的视角来看
 
 ![iptables](../images/iptables_traverse.jpeg)
 
@@ -368,6 +368,12 @@ iptables-restore > iptable
 
 ```shell
 iptables-save < iptable
+```
+
+#### 帮助
+
+```shell
+iptables -j <target> -help
 ```
 
 #### 参考资料
