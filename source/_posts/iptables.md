@@ -344,6 +344,40 @@ iptables -t filter -I INPUT -s 192.168.1.0/24 -m comment --comment "xxxx" -j ACC
 -m set --match-set <ipset名字>
 ```
 
+##### mark
+
+> 标记流量，需要注意的时候这个标记只在本地标记流量出去之后就没了
+
+```shell
+# 设置标签
+-j MARK --set-xmark 0x8000/0x8000
+
+# 匹配标签并丢弃
+-m MARK --mark 0x8000/0x8000 -j DROP
+```
+
+- --set-xmark value[/mask]  mask和value做异或运算
+- --set-mark value[/mask]   mask和value做或运算
+- --and-mark bits           和nfmark做与运算
+- --or-mark bits            和nfmark做或运算
+- --xor-mark bits           和nfmark做异或运算
+
+#### conntrack
+
+> 连接跟踪模块可以根据连接的状态匹配
+
+```shell
+-m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT
+```
+
+- NEW 新建连接
+- ESTABLISHED 已经连接
+- RELATED 相关连接
+- INVALID 无效连接
+- UNTRACKED 人为设置的
+
+参考 <https://www.cnblogs.com/saolv/p/13096965.html>
+
 #### 规则保存导出和还原
 
 ##### 保存规则
