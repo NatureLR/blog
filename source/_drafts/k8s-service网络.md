@@ -168,67 +168,197 @@ spec:
 
 ##### iptables
 
-##### 南北流量
+##### 规则分析
 
-```shell
-#! /bin/bash
-set -e
+###### PREROUTING
 
-log(){
-  printf "\n"
-  echo -e '\e[92m'$1链$2表'\e[0m'
-}
-
-log PREROUTING raw
-iptables -nvL PREROUTING -t raw
-log PREROUTING mangle
-iptables -nvL PREROUTING -t mangle
-log PREROUTING nat
-iptables -nvL PREROUTING -t nat
-
-
-log INUT mangle
-iptables -nvL INPUT -t mangle
-log INUT nat
-iptables -nvL INPUT -t nat
-log INUT filter
-iptables -nvL INPUT -t filter
-
-
-log INUT filter
-iptables -nvL FORWARD -t mangle
-log INUT filter
-iptables -nvL FORWARD -t filter
-
-log OUTPUT raw
-iptables -nvL OUTPUT -t raw
-log OUTPUT mangle
-iptables -nvL OUTPUT -t mangle
-log OUTPUT nat
-iptables -nvL OUTPUT -t nat
-log OUTPUT filter
-iptables -nvL OUTPUT -t filter
-
-log POSTROUTING mangle
-iptables -nvL POSTROUTING -t mangle
-log POSTROUTING nat
-iptables -nvL POSTROUTING -t nat
-```
+- `PREROUTING`链的nat表是所有svc的入口,进入的流量都会到`KUBE-SERVICES`这条自定义链
 
 ```shell
 root@minikube:~# iptables -nvL PREROUTING -t nat
-Chain PREROUTING (policy ACCEPT 0 packets, 0 bytes)
+Chain PREROUTING (policy ACCEPT 1 packets, 60 bytes)
  pkts bytes target     prot opt in     out     source               destination         
-    4   276 KUBE-SERVICES  all  --  *      *       0.0.0.0/0            0.0.0.0/0            /* kubernetes service portals */
-    1    96 DOCKER_OUTPUT  all  --  *      *       0.0.0.0/0            192.168.65.2        
-    6   360 DOCKER     all  --  *      *       0.0.0.0/0            0.0.0.0/0            ADDRTYPE match dst-type LOCAL
-root@minikube:~# 
-
-
-
+   57  3492 KUBE-SERVICES  all  --  *      *       0.0.0.0/0            0.0.0.0/0            /* kubernetes service portals */
+    2   192 DOCKER_OUTPUT  all  --  *      *       0.0.0.0/0            192.168.65.2        
+   57  3420 DOCKER     all  --  *      *       0.0.0.0/0            0.0.0.0/0            ADDRTYPE match dst-type LOCAL
 ```
 
-##### 东西流量
+- 在`KUBE-SERVICES`中就是我们定义的svc对应的规则,来源地址是任何目标地址是`clusterIP`时,配额对应svc的自定义链
+- 其中`KUBE-NODEPORTS`是处理nodePort类型的规则
+
+```shell
+root@minikube:~# iptables -nvL KUBE-SERVICES -t nat 
+Chain KUBE-SERVICES (2 references)
+ pkts bytes target     prot opt in     out     source               destination         
+    0     0 KUBE-SVC-NPX46M4PTMTKRN6Y  tcp  --  *      *       0.0.0.0/0            10.96.0.1            /* default/kubernetes:https cluster IP */ tcp dpt:443
+    0     0 KUBE-SVC-JD5MR3NA4I4DYORP  tcp  --  *      *       0.0.0.0/0            10.96.0.10           /* kube-system/kube-dns:metrics cluster IP */ tcp dpt:9153
+    0     0 KUBE-SVC-TCOU7JCQXEZGVUNU  udp  --  *      *       0.0.0.0/0            10.96.0.10           /* kube-system/kube-dns:dns cluster IP */ udp dpt:53
+    0     0 KUBE-SVC-ERIFXISQEP7F7OF4  tcp  --  *      *       0.0.0.0/0            10.96.0.10           /* kube-system/kube-dns:dns-tcp cluster IP */ tcp dpt:53
+    0     0 KUBE-SVC-ZZYI5KMAZUYAMTQ6  tcp  --  *      *       0.0.0.0/0            10.98.178.225        /* default/cdebug cluster IP */ tcp dpt:80
+ 1043 62580 KUBE-NODEPORTS  all  --  *      *       0.0.0.0/0            0.0.0.0/0            /* kubernetes service nodeports; NOTE: this must be the last rule in this chain */ ADDRTYPE match dst-type LOCAL
+```
+
+- 在`KUBE-SVC-ZZYI5KMAZUYAMTQ6`这条自定义链中定义了具体的nat地址,当原地址不是10.244.0.0/16目标是clusterIP时会进入一个打标签的自定义链
+- 下面2条是每一条分别对应`svc`的`ep`,进入第一条的几率是50%通过`random`,实现了负载均衡
+- 10.244.0.0/16是`kube-proxy`的`clusterCIDR`设置,作用是区别流量是否是pod的流量以用来直接访问svc参考<https://blog.csdn.net/shida_csdn/article/details/104334372>
+
+```shell
+root@minikube:~# iptables -nvL KUBE-SVC-ZZYI5KMAZUYAMTQ6 -t nat
+Chain KUBE-SVC-ZZYI5KMAZUYAMTQ6 (2 references)
+ pkts bytes target     prot opt in     out     source               destination         
+    0     0 KUBE-MARK-MASQ  tcp  --  *      *      !10.244.0.0/16        10.98.178.225        /* default/cdebug cluster IP */ tcp dpt:80
+    0     0 KUBE-SEP-36ZFR6ZLFG6NGI5P  all  --  *      *       0.0.0.0/0            0.0.0.0/0            /* default/cdebug -> 172.17.0.4:80 */ statistic mode random probability 0.50000000000
+    0     0 KUBE-SEP-4E32UMZN7V2DQATS  all  --  *      *       0.0.0.0/0            0.0.0.0/0            /* default/cdebug -> 172.17.0.5:80 */
+```
+
+- 在`KUBE-MARK-MASQ`是个标记的链他会将流量打上`0x4000`标签,该流量将被执行snat
+
+```shell
+root@minikube:~# iptables -nvL KUBE-MARK-MASQ -t nat
+Chain KUBE-MARK-MASQ (8 references)
+ pkts bytes target     prot opt in     out     source               destination         
+    0     0 MARK       all  --  *      *       0.0.0.0/0            0.0.0.0/0            MARK or 0x4000
+```
+
+- 这里对来源是`172.17.0.4(ep)`的进行打标签，同时进行了DNAT到了ep
+
+```shell
+root@minikube:~# iptables -nvL KUBE-SEP-36ZFR6ZLFG6NGI5P -t nat
+Chain KUBE-SEP-36ZFR6ZLFG6NGI5P (1 references)
+ pkts bytes target     prot opt in     out     source               destination         
+    0     0 KUBE-MARK-MASQ  all  --  *      *       172.17.0.4           0.0.0.0/0            /* default/cdebug */
+    0     0 DNAT       tcp  --  *      *       0.0.0.0/0            0.0.0.0/0            /* default/cdebug */ tcp to:172.17.0.4:80
+```
+
+- `KUBE-NODEPORTS`下是存放nodePort的规则,打标签之后进入了svc
+
+```shell
+root@minikube:~# iptables -nvL KUBE-NODEPORTS -t nat
+Chain KUBE-NODEPORTS (1 references)
+ pkts bytes target     prot opt in     out     source               destination         
+    0     0 KUBE-EXT-ZZYI5KMAZUYAMTQ6  tcp  --  *      *       0.0.0.0/0            0.0.0.0/0            /* default/cdebug */ tcp dpt:32753
+```
+
+- 具体内容和`KUBE-SERVICES`里一样的规则复用了每个svc创建的链
+
+```shell
+root@minikube:~# iptables -nvL KUBE-EXT-ZZYI5KMAZUYAMTQ6  -t nat
+Chain KUBE-EXT-ZZYI5KMAZUYAMTQ6 (1 references)
+ pkts bytes target     prot opt in     out     source               destination         
+    2   120 KUBE-MARK-MASQ  all  --  *      *       0.0.0.0/0            0.0.0.0/0            /* masquerade traffic for default/cdebug external destinations */
+    2   120 KUBE-SVC-ZZYI5KMAZUYAMTQ6  all  --  *      *       0.0.0.0/0            0.0.0.0/0           
+```
+
+###### INPUT
+
+- 这里主要实现了一些防火墙规则
+
+```shell
+root@minikube:~# iptables -nvL INPUT -t filter
+Chain INPUT (policy ACCEPT 279K packets, 37M bytes)
+ pkts bytes target     prot opt in     out     source               destination         
+ 647K   39M KUBE-PROXY-FIREWALL  all  --  *      *       0.0.0.0/0            0.0.0.0/0            ctstate NEW /* kubernetes load balancer firewall */
+  75M   10G KUBE-NODEPORTS  all  --  *      *       0.0.0.0/0            0.0.0.0/0            /* kubernetes health check service ports */
+ 647K   39M KUBE-EXTERNAL-SERVICES  all  --  *      *       0.0.0.0/0            0.0.0.0/0            ctstate NEW /* kubernetes externally-visible service portals */
+  75M   10G KUBE-FIREWALL  all  --  *      *       0.0.0.0/0            0.0.0.0/0
+```
+
+```shell
+root@minikube:~# iptables -nvL  KUBE-PROXY-FIREWALL -t filter 
+Chain KUBE-PROXY-FIREWALL (3 references)
+ pkts bytes target     prot opt in     out     source               destination         
+```
+
+```shell
+root@minikube:~# iptables -nvL  KUBE-NODEPORTS -t filter
+Chain KUBE-NODEPORTS (1 references)
+ pkts bytes target     prot opt in     out     source               destination         
+```
+
+```shell
+root@minikube:~# iptables -nvL  KUBE-EXTERNAL-SERVICES -t filter
+Chain KUBE-EXTERNAL-SERVICES (2 references)
+ pkts bytes target     prot opt in     out     source               destination
+```
+
+- 这个将丢弃标签为`0x8000`的流量还有源头不是`127.0.0.0/8`目标是`127.0.0.0/8`状态是RELATED,ESTABLISHED,DNAT的流量
+
+```shell
+root@minikube:~# iptables -nvL KUBE-FIREWALL -t filter
+Chain KUBE-FIREWALL (2 references)
+ pkts bytes target     prot opt in     out     source               destination         
+    0     0 DROP       all  --  *      *      !127.0.0.0/8          127.0.0.0/8          /* block incoming localnet connections */ ! ctstate RELATED,ESTABLISHED,DNAT
+    0     0 DROP       all  --  *      *       0.0.0.0/0            0.0.0.0/0            /* kubernetes firewall for dropping marked packets */ mark match 0x8000/0x8000
+```
+
+###### FORWARD
+
+```shell
+root@minikube:~# iptables -nvL FORWARD -t filter
+Chain FORWARD (policy ACCEPT 0 packets, 0 bytes)
+ pkts bytes target     prot opt in     out     source               destination         
+    0     0 KUBE-PROXY-FIREWALL  all  --  *      *       0.0.0.0/0            0.0.0.0/0            ctstate NEW /* kubernetes load balancer firewall */
+    0     0 KUBE-FORWARD  all  --  *      *       0.0.0.0/0            0.0.0.0/0            /* kubernetes forwarding rules */
+    0     0 KUBE-SERVICES  all  --  *      *       0.0.0.0/0            0.0.0.0/0            ctstate NEW /* kubernetes service portals */
+    0     0 KUBE-EXTERNAL-SERVICES  all  --  *      *       0.0.0.0/0            0.0.0.0/0            ctstate NEW /* kubernetes externally-visible service portals */
+    0     0 DOCKER-USER  all  --  *      *       0.0.0.0/0            0.0.0.0/0           
+    0     0 DOCKER-ISOLATION-STAGE-1  all  --  *      *       0.0.0.0/0            0.0.0.0/0           
+    0     0 ACCEPT     all  --  *      docker0  0.0.0.0/0            0.0.0.0/0            ctstate RELATED,ESTABLISHED
+    0     0 DOCKER     all  --  *      docker0  0.0.0.0/0            0.0.0.0/0           
+    0     0 ACCEPT     all  --  docker0 !docker0  0.0.0.0/0            0.0.0.0/0           
+    0     0 ACCEPT     all  --  docker0 docker0  0.0.0.0/0            0.0.0.0/0  
+```
+
+```shell
+root@minikube:~# iptables -nvL  KUBE-FORWARD  -t filter
+Chain KUBE-FORWARD (1 references)
+ pkts bytes target     prot opt in     out     source               destination         
+    0     0 DROP       all  --  *      *       0.0.0.0/0            0.0.0.0/0            ctstate INVALID
+    0     0 ACCEPT     all  --  *      *       0.0.0.0/0            0.0.0.0/0            /* kubernetes forwarding rules */ mark match 0x4000/0x4000
+    0     0 ACCEPT     all  --  *      *       0.0.0.0/0            0.0.0.0/0            /* kubernetes forwarding conntrack rule */ ctstate RELATED,ESTABLISHED
+```
+
+###### OUTPUT
+
+```shell
+root@minikube:~# iptables -nvL OUTPUT -t nat
+Chain OUTPUT (policy ACCEPT 3995 packets, 240K bytes)
+ pkts bytes target     prot opt in     out     source               destination         
+ 748K   45M KUBE-SERVICES  all  --  *      *       0.0.0.0/0            0.0.0.0/0            /* kubernetes service portals */
+  130  8116 DOCKER_OUTPUT  all  --  *      *       0.0.0.0/0            192.168.65.2        
+ 499K   30M DOCKER     all  --  *      *       0.0.0.0/0           !127.0.0.0/8          ADDRTYPE match dst-type LOCAL
+```
+
+```shell
+root@minikube:~# iptables -nvL OUTPUT -t filter
+Chain OUTPUT (policy ACCEPT 368K packets, 49M bytes)
+ pkts bytes target     prot opt in     out     source               destination         
+ 748K   45M KUBE-PROXY-FIREWALL  all  --  *      *       0.0.0.0/0            0.0.0.0/0            ctstate NEW /* kubernetes load balancer firewall */
+ 748K   45M KUBE-SERVICES  all  --  *      *       0.0.0.0/0            0.0.0.0/0            ctstate NEW /* kubernetes service portals */
+  75M 9999M KUBE-FIREWALL  all  --  *      *       0.0.0.0/0            0.0.0.0/0           
+```
+
+###### POSTROUTING
+
+```shell
+root@minikube:~# iptables -nvL POSTROUTING -t nat   
+Chain POSTROUTING (policy ACCEPT 4112 packets, 247K bytes)
+ pkts bytes target     prot opt in     out     source               destination         
+ 748K   45M KUBE-POSTROUTING  all  --  *      *       0.0.0.0/0            0.0.0.0/0            /* kubernetes postrouting rules */
+    0     0 MASQUERADE  all  --  *      !docker0  172.17.0.0/16        0.0.0.0/0           
+    0     0 DOCKER_POSTROUTING  all  --  *      *       0.0.0.0/0            192.168.65.2
+```
+
+```shell
+root@minikube:~# iptables -nvL KUBE-POSTROUTING -t nat
+Chain KUBE-POSTROUTING (1 references)
+ pkts bytes target     prot opt in     out     source               destination         
+ 4253  255K RETURN     all  --  *      *       0.0.0.0/0            0.0.0.0/0            mark match ! 0x4000/0x4000
+    0     0 MARK       all  --  *      *       0.0.0.0/0            0.0.0.0/0            MARK xor 0x4000
+    0     0 MASQUERADE  all  --  *      *       0.0.0.0/0            0.0.0.0/0            /* kubernetes service traffic requiring SNAT */ random-fully
+```
+
+##### 集群外访问SVC
 
 ##### ipvs
 
