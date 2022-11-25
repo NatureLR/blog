@@ -126,22 +126,49 @@ spec:
 
 ##### ExternalName
 
-类似外部的一个服务对内部的一个别名，比如mysql的地址是192.168.1.1，则在集群中可以使用mysq来访问192.168.1.1
+外部的服务对内部的一个别名，比如web的域名是10.23.83.9.sslip.io，则在集群中可以使用web来访问10.23.83.9.sslip.io,
+
+没有选择器,kube-proxy不会创建规则,仅在dns层面完成
+
+externalName为dns地址如果是ip的话dns无法解析,而且如果是http(s)将可能无法访问，因为你访问的是`a`,而对应的服务只接受`b`域名
+
+解决方法使用类似<sslip.io>这种域名来通过域名动态解析到ip上
 
 ```yaml
 apiVersion: v1
 kind: Service
 metadata:
-  name: mysql
+  name: web
 spec:
-  externalName: 192.168.1.1
+  externalName: 10.23.83.9.sslip.io
   ports:
   - name: tcp
-    port: 3306
+    port: 80
     protocol: TCP
-    targetPort: 3306
+    targetPort: 80
   sessionAffinity: None
   type: ExternalName
+```
+
+##### 外部IP
+
+可以将一个外部地址导入到集群内部对应的服务里,在本地请求
+
+```yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: my-service
+spec:
+  selector:
+    app: cdebug
+  ports:
+    - name: http
+      protocol: TCP
+      port: 80
+      targetPort: 80
+  externalIPs:
+    - 1.1.1.1
 ```
 
 #### 流量策略
@@ -358,7 +385,65 @@ Chain KUBE-POSTROUTING (1 references)
     0     0 MASQUERADE  all  --  *      *       0.0.0.0/0            0.0.0.0/0            /* kubernetes service traffic requiring SNAT */ random-fully
 ```
 
-##### 集群外访问SVC
+##### 集群外访问NodePort
+
+集群外部一台服务器(10.23.83.9)通过`nodePort`请求集群的cdebug这个服务
+
+cdebug服务详情
+
+```shell
+❯ k get svc -o wide
+NAME         TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)        AGE    SELECTOR
+cdebug       NodePort    172.17.102.133   <none>        80:32577/TCP   5d2h   app=cdebug
+kubernetes   ClusterIP   172.17.0.1       <none>        443/TCP        5d2h   <none>
+
+❯ k get po -l app=cdebug -o wide
+NAME                      READY   STATUS    RESTARTS   AGE    IP            NODE            NOMINATED NODE   READINESS GATES
+cdebug-77cc4fc98f-rv9hn   1/1     Running   0          5d1h   10.23.8.140   10.23.142.106   <none>           <none>
+
+❯ kubectl get po nginx -o wide
+NAME    READY   STATUS    RESTARTS   AGE   IP              NODE            NOMINATED NODE   READINESS GATES
+nginx   1/1     Running   0          22h   10.23.246.131   10.23.142.106   <none>           <none>
+```
+
+- 这是在请求的node上抓包
+
+发送
+10.23.83.9:36848 > 10.23.142.106:32577
+10.23.142.106:36848 > 10.23.8.140:80
+
+返回
+10.23.8.140:80 > 10.23.142.106:36848
+10.23.142.106:32577 > 10.23.83.9:36848
+![svc](../images/kube-svc-4.png)
+
+可以看到客户端请求集群的nodePort，iptables目的地址改为对应的pod地址,源地址则是nodePort的地址,所以pod`不知道真正的客户端是谁`
+即pod看到的请求来自`请求的nodePort所在的node`
+这里做了
+
+- 在netfilter流向,这里充当了一个路由器防火墙
+
+![svc](../images/kube-svc-5.png)
+
+##### 集群内节点访问NodePort
+
+和集群外访问NodePort差不多,最终pod的看到的源地址为访问所在的node的地址
+
+##### POD访问SVC
+
+发送
+10.23.246.131:38906 > 172.17.102.133:80
+10.23.246.131:38906 > 10.23.8.140:80
+
+响应
+10.23.8.140:80    > 10.23.246.131:38906
+172.17.102.133:80 > 10.23.246.131:38906
+
+![svc](../images/kube-svc-6.png)
+
+路径和访问NodePort差不都只不过没有做SNAT只做了DNAT,也就是说集群POD访问SVC是可以知道客户端的真实地址
+
+##### 集群内访问外部域名的svc
 
 ##### ipvs
 
