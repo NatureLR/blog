@@ -171,6 +171,21 @@ spec:
     - 1.1.1.1
 ```
 
+- 使用效果如下
+
+```shell
+[root@10-23-141-183 ~]# kubectl get svc my-service
+NAME         TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)   AGE
+my-service   ClusterIP   172.17.4.228   1.1.1.1       80/TCP    19h
+[root@10-23-141-183 ~]# curl 1.1.1.1
+ClientAddr: 10.23.141.183:52416
+ClientReqPath: /
+ClientReqMeth: GET
+ServerHostName: cdebug-77cc4fc98f-rv9hn
+ServerAddr: 10.23.8.140
+[root@10-23-141-183 ~]#                                                                                 
+```
+
 #### 流量策略
 
 流量策略主要解决在拥有众多ep的服务在转发流量时有些pod距离访问的node比较远导致延迟增大
@@ -210,7 +225,7 @@ Chain PREROUTING (policy ACCEPT 1 packets, 60 bytes)
    57  3420 DOCKER     all  --  *      *       0.0.0.0/0            0.0.0.0/0            ADDRTYPE match dst-type LOCAL
 ```
 
-- 在`KUBE-SERVICES`中就是我们定义的svc对应的规则,来源地址是任何目标地址是`clusterIP`时,配额对应svc的自定义链
+- 在`KUBE-SERVICES`中就是我们定义的svc对应的规则,来源地址是任何目标地址是`clusterIP`时,匹配对应svc的自定义链
 - 其中`KUBE-NODEPORTS`是处理nodePort类型的规则
 
 ```shell
@@ -238,7 +253,7 @@ Chain KUBE-SVC-ZZYI5KMAZUYAMTQ6 (2 references)
     0     0 KUBE-SEP-4E32UMZN7V2DQATS  all  --  *      *       0.0.0.0/0            0.0.0.0/0            /* default/cdebug -> 172.17.0.5:80 */
 ```
 
-- 在`KUBE-MARK-MASQ`是个标记的链他会将流量打上`0x4000`标签,该流量将被执行snat
+- 在`KUBE-MARK-MASQ`是个标记的链他会将流量打上`0x4000`标签,该流量将在`PODTROUTNG`链中的`KUBE-POSTROUTING`被执行snat
 
 ```shell
 root@minikube:~# iptables -nvL KUBE-MARK-MASQ -t nat
@@ -347,6 +362,8 @@ Chain KUBE-FORWARD (1 references)
 
 ###### OUTPUT
 
+- 这里继续会有一个`KUBE-SERVICES`这个链用于处理节点上访问svc
+
 ```shell
 root@minikube:~# iptables -nvL OUTPUT -t nat
 Chain OUTPUT (policy ACCEPT 3995 packets, 240K bytes)
@@ -366,6 +383,8 @@ Chain OUTPUT (policy ACCEPT 368K packets, 49M bytes)
 ```
 
 ###### POSTROUTING
+
+- 整个流程中最后一个地点，这里主要对前面打了`0x4000/0x4000`的标签进行snat
 
 ```shell
 root@minikube:~# iptables -nvL POSTROUTING -t nat   
@@ -408,6 +427,7 @@ nginx   1/1     Running   0          22h   10.23.246.131   10.23.142.106   <none
 
 - 这是在请求的node上抓包
 
+```text
 发送
 10.23.83.9:36848 > 10.23.142.106:32577
 10.23.142.106:36848 > 10.23.8.140:80
@@ -415,6 +435,8 @@ nginx   1/1     Running   0          22h   10.23.246.131   10.23.142.106   <none
 返回
 10.23.8.140:80 > 10.23.142.106:36848
 10.23.142.106:32577 > 10.23.83.9:36848
+```
+
 ![svc](../images/kube-svc-4.png)
 
 可以看到客户端请求集群的nodePort，iptables目的地址改为对应的pod地址,源地址则是nodePort的地址,所以pod`不知道真正的客户端是谁`
