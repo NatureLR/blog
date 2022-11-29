@@ -404,6 +404,10 @@ Chain KUBE-POSTROUTING (1 references)
     0     0 MASQUERADE  all  --  *      *       0.0.0.0/0            0.0.0.0/0            /* kubernetes service traffic requiring SNAT */ random-fully
 ```
 
+###### 概览
+
+![svc](../images/kube-svc-7.png)
+
 ##### 集群外访问NodePort
 
 集群外部一台服务器(10.23.83.9)通过`nodePort`请求集群的cdebug这个服务
