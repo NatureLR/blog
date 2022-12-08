@@ -111,7 +111,7 @@ npm install -g npm-check-updates
   - npm install -g xxx 安装全局模块
   - npm uninstall xxx 卸载模块
   - npm uninstall -g  xxx 卸载全局模块
-  - npm moudles npm list --depth=0 查看所有高级的模块
+  - npm list --depth=0 查看所有高级的模块
   - npm list --depth=0 -global 查看所有全局安装的模块
 - nvm
   - nvm install xxx 安装指定版本的node
