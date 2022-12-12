@@ -30,14 +30,14 @@ ventoy是一个国人开发的使用usb安装系统的工具
 安装的时候会格式化磁盘
 {% endnote %}
 
-![upload successful](/images/ventoy-1.png)
+![upload successful](../images/ventoy-1.png)
 
 #### 安装系统
 
 1. 将iso文件放到u盘里面
 2. 设置启动方式为u盘启动，就可以看到下面的界面使用使用上下键选择要启动的系统回车键安装，则可以进入系统的安装界面
 
-![upload successful](/images/ventoy-2.png)
+![upload successful](../images/ventoy-2.png)
 
 #### 参考资料
 

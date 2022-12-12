@@ -28,6 +28,6 @@ date: 2020-08-03 17:35:00
 
 输入账号密码后进去如类似下界面
 
-![upload successful](/images/pasted-2.png)
+![upload successful](../images/pasted-2.png)
 
 > 端口号可以在 `/usr/lib/systemd/system/cockpit.socket`中修改

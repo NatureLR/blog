@@ -26,7 +26,7 @@ KVM acceleration can be used
 
 > 虚拟机中需要打开虚拟化嵌套支持
 
-![upload successful](/images/pasted-12.png)
+![upload successful](../images/pasted-12.png)
 
 #### 安装
 
@@ -51,45 +51,45 @@ sudo systemctl status libvirtd
 
 > 找到虚拟系统管理器
 
-![upload successful](/images/pasted-13.png)
+![upload successful](../images/pasted-13.png)
 
 > 点击新建，剩下的和vmware很像
 
-![upload successful](/images/pasted-14.png)
+![upload successful](../images/pasted-14.png)
 
 > 选择安装类型
 
-![upload successful](/images/pasted-15.png)
+![upload successful](../images/pasted-15.png)
 
 > 指定安装的iso镜像文件
 
-![upload successful](/images/pasted-16.png)
+![upload successful](../images/pasted-16.png)
 
 > 自动选择系统类型有问题，无法识别，这里改为通用默认类型
 
-![upload successful](/images/pasted-17.png)
+![upload successful](../images/pasted-17.png)
 
 > 启动成功进入了安装界面剩下的不做过多介绍
 
-![upload successful](/images/pasted-18.png)
+![upload successful](../images/pasted-18.png)
 
 ##### 其他界面说明
 
 > 系统启动引导界面
 
-![upload successful](/images/pasted-19.png)
+![upload successful](../images/pasted-19.png)
 
 > 这里可以看到磁盘的信息
 
-![upload successful](/images/pasted-20.png)
+![upload successful](../images/pasted-20.png)
 
 > 这里选择可图形服务器
 
-![upload successful](/images/pasted-21.png)
+![upload successful](../images/pasted-21.png)
 
 > 网卡配置界面
 
-![upload successful](/images/pasted-22.png)
+![upload successful](../images/pasted-22.png)
 
 #### 命令行创建
 
@@ -115,7 +115,7 @@ sudo virt-install \
 
 > 此时可以通过vnc连接开始安装系统，也可以像图形化界面一样用虚拟机管理器安装
 
-![upload successful](/images/pasted-23.png)
+![upload successful](../images/pasted-23.png)
 
 ##### 选项说明
 

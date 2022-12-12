@@ -27,7 +27,7 @@ date: 2022-08-13 22:45:00
 改为`puma`,夜晚不太想查对应的字段且这些都是优化项于是直接注释了，再次执行`yum install xxx`但是还是报错。然后又试了几次还是报这个错误，仔细看了配置文件unicorn的配置已经被我注释了，为啥还是报这个错了呢，稍微思索了一会突然想到了gitlab.rb这个配置文件修改之后要执行`gitlab-ctl reconfigure`才生效，执行之后再次升级果然没有报错了
 同样的等了几分钟之后界面打开了。14版本新增了后台数据库迁移任务在迁移任务没没有完成再升级下个把版本会报错的，所以赶紧使用管理员账号看下后台任务，发现才完成2个还有10来个任务且进度很慢果然和预期的一样是没法一下子升级到目标版本的，遂检查下git clone git push等功能,发现没问题
 
-准备睡觉但是好巧不求随手点了下打开的wiki，然后wiki就404了。。。![x](/images/gitlab-troubleshooting-1.png)
+准备睡觉但是好巧不求随手点了下打开的wiki，然后wiki就404了。。。![x](../images/gitlab-troubleshooting-1.png)
 开始以为是刚升级完导致的，于是手动刷新了几次还是404此时心里有点纳闷，我都没更改gitlab的配置为什么会404，然后冷静一下首先此问题不是大问题gitlab重要功能没问题，然后对可能出问题的地方进行了一下分析，我只是注释了`unicorn`的一些配置其次14版本的后台字段升级会不会影响，于是查找了`unicorn`对应`puma`配置，修改完成之后重新reconfigure一下，重新打开wiki界面发现还是404。。。那么此时就有可能是14版本的后台迁移任务导致的，查看了下升级任务才玩跑2个第三个还很慢估计得第二天了，但是心里隐隐约约觉得这俩应该没啥关系，于是试探性的查看了下gitlab的nginx日志，发现里面有301返回的日志，此时企信群里有同事已经再说为啥gitlab page打不开了(真卷当时都11点多了)，我没有找到原因就没回他，于是继续顺着301这条线索找，
 
 开始怀疑是gitlab-pages服务返回了个301于是`gitlab-ctl tail gitlab-pages`查看了下gilab-page服务的日志，然后发现没日志。。。查看配置文件原来gitlab-pges的日志文件修改了,于是去了日志目录，从我升级之后日志就没了此时怀疑是gitlab-page服务是不是升级之后有问题。变在浏览器刷新wiki变来查看ngixn和pages日志，随后有报错502，在nginx日志显示是`connection refused`大概意思,发现解析出来的locahost是ipv6的而gitlab-page是监听的ipv4，手动调用下确实，于是将gitlab-page改为监听ipv6
@@ -35,7 +35,7 @@ date: 2022-08-13 22:45:00
 
 第二天上午到公司之后和同事交流了一下问题，她也加入处理问题。在企信群里通知所有人gitlab-page有问题我们再看了，并建立一个相关故障群同步处理情况。做完这些之后我们就开始了处理，她按我提供的情况查了一下未发现问题，唯一的有价值的是gitlab-page升级之后存储方式有变化变成了zipfs，需要迁移。于是执行了一下迁移返回的job是0，也就是说不需要迁移，此时我们查看了gitlab的架构图，觉得可能是nginx的问题，我们一起看了nginx的配置文件没发现啥问题，加上这个nginx文件是gitlab.rb生成的。
 
-![x](/images/gitlab-architecture_simplified_v14_9.png)
+![x](../images/gitlab-architecture_simplified_v14_9.png)
 
 中午吃完饭之后，下午我俩分工，我重新部署一套环境来对比，她继续调查gitlab-page的问题。我咋经过一波折腾时候成功在测试环境上访问到了我做测试的page界面，而她那边发现的更多，比如<https://docs.gitlab.com/14.10/ee/administration/pages/index.html#wildcard-domains-with-tls-support>https导致的在经过一波操作测试还是不行，
 还有这个issues下的所有方法<https://gitlab.com/gitlab-org/gitlab/-/issues/331699>我们都是尝试了还是404，有点沮丧，此时一下午过得差不多了快要下班了。于是我想先回复一下业务，用go写一个web服务先临时替代一下gitlab-page。但是同事觉得直接用最简单的nginx好了，这里说下gitlab的page其实就是返回一个有规则的目录里的配置文件,于是尝试用nginx实现这个规则发现不行，同时领导也过来问了问帮我们叫来了另一个同事来写ningx，折腾了一个小时之后我们放弃了于是先下班了。满脑子都是404
@@ -50,7 +50,7 @@ gitlab-http.conf:43:    return 301 https://git.example.com:443$request_uri;
 
 于是发现这个是80跳转到443的配置，既常见的访问80自动跳转到http的443配置，但是这行监听的是gitlab的配置不是gitlab page的配置，但是我还是注释了此行进行测试，在浏览器测试之后发现界面由gitlab的404变成了nginx的404，也就是说`这行对本不是由他处理的gitab page产生了作用`
 
-![x](/images/gitlab-troubleshooting-2.png)
+![x](../images/gitlab-troubleshooting-2.png)
 
 但是这只是解释了为啥跳转没解释路由问题，查看了gitla page的配置文件时发现一个奇怪的配置：
 

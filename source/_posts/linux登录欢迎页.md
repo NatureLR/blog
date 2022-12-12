@@ -10,7 +10,7 @@ ssh每次登录的时候显示一些信息
 <!--more-->
 编辑`/etc/motd`中的内容，即可在登录的时候打印出来
 
-![upload successful](/images/pasted-0.png)
+![upload successful](../images/pasted-0.png)
 
 例如将下面的复制进去
 

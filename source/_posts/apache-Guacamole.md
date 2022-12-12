@@ -13,7 +13,7 @@ Apache Guacamole是一个基于web的远程终端支持ssh,vnc,rdp等协议
 
 官网地址：<http://guacamole.apache.org>
 
-![guac-arch](/images/pasted-4.png)
+![guac-arch](../images/pasted-4.png)
 
 > 从图中可看出分为guacamole服务和guacd服务，guacd服务负责连接远程的vpc，rdp，ssh等服务器
 
@@ -175,14 +175,14 @@ EOF
 
 ##### 添加链接
 
-![upload successful](/images/pasted-5.png)
+![upload successful](../images/pasted-5.png)
 
 进入配置界面配置根据目标主机的情况填写
 
-![upload successful](/images/pasted-6.png)
+![upload successful](../images/pasted-6.png)
 
 这个时候首页就出现了可以连接的机器，点击即可连接此机器
 
-![upload successful](/images/pasted-7.png)
+![upload successful](../images/pasted-7.png)
 
 Ctrl + Alt + Shift 可以打开控制面板，复制文件也可以直接拖进去

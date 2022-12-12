@@ -23,6 +23,6 @@ date: 2020-09-29 15:59:00
 
 使用`dive <image:tage>`来查看一个镜像，默认tag为`latest`没有镜像则会下载
 
-![upload successful](/images/pasted-3.png)
+![upload successful](../images/pasted-3.png)
 
 如图之所示左边显示阶段和执行的命令，右边是文件系统，\<tab\>键切换到右边的文件系统，↑↓键则启动光标

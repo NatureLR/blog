@@ -3,6 +3,7 @@ title: 使用velero备份k8s集群
 author: Nature丿灵然
 tags:
   - 备份
+  - k8s
 categories:
   - 运维
 date: 2022-12-12 16:28:00

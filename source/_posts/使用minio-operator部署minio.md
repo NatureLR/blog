@@ -3,6 +3,7 @@ title: 使用minio-operator部署minio
 author: Nature丿灵然
 tags:
   - 存储
+  - k8s
 categories:
   - 运维
 date: 2022-12-12 14:19:00

@@ -26,7 +26,7 @@ Validating主要为验证性质的，主要看是不是符合条件集群要求�
 #### 架构
 
 > 下图所显的是api请求的流程
-![upload successful](/images/pasted-24.png)
+![upload successful](../images/pasted-24.png)
 
 #### 编写webhook
 

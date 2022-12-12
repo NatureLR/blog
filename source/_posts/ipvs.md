@@ -48,7 +48,7 @@ yum install ipvsadm
 - 来回流量都从dr过dr会成为瓶颈
 - 同一个网段时RS的默认网关需要指向DS,且本网段的路由需要删除不然不会通过默认路由到DR
 
-![x](/images/ipvs-nat-1.png)
+![x](../images/ipvs-nat-1.png)
 
 ###### NAT部署
 
@@ -120,14 +120,14 @@ ip r del 10.23.0.0/16 dev eth0 proto kernel scope link src 10.23.197.23
 
 ###### 流量转发路径
 
-![cl](/images/ipvs-nat-2.png)
-![dr](/images/ipvs-nat-3.png)
-![rs](/images/ipvs-nat-4.png)
+![cl](../images/ipvs-nat-2.png)
+![dr](../images/ipvs-nat-3.png)
+![rs](../images/ipvs-nat-4.png)
 
 通过抓包我可以看到client请求vip之后，dr接受到会将vip替换成rip然后发送给rs
 rs收到之后因为会路由设置会发送给dr，dr将src地址再改回vip
 
-![rs](/images/ipvs-nat-5.png)
+![rs](../images/ipvs-nat-5.png)
 
 ##### DR
 
@@ -200,9 +200,9 @@ i am rs 10-23-9-198
 
 ###### 流量抓包
 
-![dr](/images/ipvs-dr-1.png)
+![dr](../images/ipvs-dr-1.png)
 
-![dr](/images/ipvs-dr-2.png)
+![dr](../images/ipvs-dr-2.png)
 
 图中可看出dr将mac地址换成类似rs的mac地址
 
@@ -246,9 +246,9 @@ echo "0" > /proc/sys/net/ipv4/conf/all/rp_filter
 
 ###### IPIP流量分析
 
-![ipip](/images/ipvs-ipip-1.png)
+![ipip](../images/ipvs-ipip-1.png)
 
-![ipip](/images/ipvs-ipip-2.png)
+![ipip](../images/ipvs-ipip-2.png)
 
 由于实验环境在同一个网段所以需要对arp响应进行处理
 
