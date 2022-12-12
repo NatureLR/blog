@@ -147,9 +147,15 @@ velero uninstall
 
 #### pvc备份
 
-- pvc备份需要2个条件一个是安装的时候需要有`--use-node-agent`参数
+{% note warning %}
+hostpath无法备份
+{% endnote %}
+
+- pvc备份需要2个条件一个是安装的时候需要有`--use-node-agent`参数,将会部署一个ds
 
 - pod上需要有下面的注释
+
+- 具体是先使用`Restic`或`Kopia`
 
 ```shell
 backup.velero.io/backup-volumes: '<卷名字1,卷名字2...>'
