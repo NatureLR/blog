@@ -12,6 +12,10 @@ velero是k8s的备份还原工具，他不同于etcd的数据库级备份是一�
 
 <!--more-->
 
+#### 原理
+
+![x](../images/velero-1.png)
+
 #### 客户端安装
 
 - macos

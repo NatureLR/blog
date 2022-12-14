@@ -6,7 +6,7 @@ tags:
   - 网络
 categories:
   - 运维
-date: 2021-06-11 15:05:00
+date: 2022-12-14 18:04:00
 ---
 k8s service是对一组pod进行抽象的方法
 
@@ -185,6 +185,10 @@ ServerHostName: cdebug-77cc4fc98f-rv9hn
 ServerAddr: 10.23.8.140
 [root@10-23-141-183 ~]#                                                                                 
 ```
+
+##### 指定后端Endpoints
+
+- 可以手动创建可以svc同名的ep来指定一个svc的对应的ep
 
 #### 流量策略
 
@@ -469,9 +473,93 @@ nginx   1/1     Running   0          22h   10.23.246.131   10.23.142.106   <none
 
 路径和访问NodePort差不都只不过没有做SNAT只做了DNAT,也就是说集群POD访问SVC是可以知道客户端的真实地址
 
-##### 集群内访问外部域名的svc
+#### kube-proxy修改为ipvs
 
-##### ipvs
+- 去人内核模块是否有ipvs
+
+```shell
+lsmos|grep ip_vs
+```
+
+- 根据情况是否安装ipvsadm管理工具
+
+```shell
+yum install ipvsadm
+```
+
+- kube-proxy配置文件中`mode`,改为`ipvs`即可切换为ipvs,如果是`ds`运行的话需要重启pod
+
+#### ipvs
+
+总体来说ipvs相比iptables要简单一些
+
+- 创建了一个名为`kube-ipvs0`的`dummy`类型网卡，该网卡上会有所有`CluserIP`的地址,用于让该ip的流量进入协议栈，不然网卡发现本地没该地址流量被丢弃
+
+- iptables上会通过创建一些规则,使用`ipset`提升性能
+
+- 创建ipvs转发规则,使用nat模式
+
+##### 分析
+
+- 一个svc叫cdebug详情如下
+
+```shell
+# kubectl get svc cdebug
+NAME     TYPE       CLUSTER-IP       EXTERNAL-IP   PORT(S)        AGE
+cdebug   NodePort   172.17.102.133   <none>        80:32577/TCP   25d
+# kubectl get ep  cdebug
+NAME     ENDPOINTS          AGE
+cdebug   10.23.169.107:80   25d
+```
+
+###### 网卡
+
+- 节点上的kube-ipvs0网卡上可以看到这个svc的`ClusterIP`
+
+```shell
+# ip -s addr show kube-ipvs0 |grep 172.17.102.133
+    inet 172.17.102.133/32 scope global kube-ipvs0
+```
+
+###### ipvs规则
+
+- 同时ipvs的规则中rs为svc对应的ep也就是pod的地址转发规则为`rr`
+
+```shell
+# ipvsadm -Ln -t 172.17.102.133:80
+Prot LocalAddress:Port Scheduler Flags
+  -> RemoteAddress:Port           Forward Weight ActiveConn InActConn
+TCP  172.17.102.133:80 rr
+  -> 10.23.169.107:80             Masq    1      0          0
+```
+
+###### iptable规则
+
+- ipvs下依然使用了iptables
+- 使用ipset模块来过滤添加标记,并在POSTROUTING上做snat
+- 和iptables模式一样分别在`OUTPUT`和`PREROUTING`上调用了`KUBE-SERVICES`
+- `KUBE-SERVICES`和iptables模式相比没有了负载均衡功能(交给了ipvs)
+- ipvs模式吧所有的流量都做snat
+
+```shell
+# iptables -t nat -nvL KUBE-SERVICES
+Chain KUBE-SERVICES (2 references)
+ pkts bytes target     prot opt in     out     source               destination
+    0     0 KUBE-LOAD-BALANCER  all  --  *      *       0.0.0.0/0            0.0.0.0/0            /* Kubernetes service lb portal */ match-set KUBE-LOAD-BALANCER dst,dst
+    0     0 KUBE-MARK-MASQ  all  --  *      *       0.0.0.0/0            0.0.0.0/0            /* Kubernetes service cluster ip + port for masquerade purpose */ match-set KUBE-CLUSTER-IP src,dst
+    0     0 KUBE-MARK-MASQ  all  --  *      *       0.0.0.0/0            0.0.0.0/0            /* Kubernetes service external ip + port for masquerade and filter purpose */ match-set KUBE-EXTERNAL-IP dst,dst
+    0     0 ACCEPT     all  --  *      *       0.0.0.0/0            0.0.0.0/0            /* Kubernetes service external ip + port for masquerade and filter purpose */ match-set KUBE-EXTERNAL-IP dst,dst PHYSDEV match ! --physdev-is-in ADDRTYPE match src-type !LOCAL
+    0     0 ACCEPT     all  --  *      *       0.0.0.0/0            0.0.0.0/0            /* Kubernetes service external ip + port for masquerade and filter purpose */ match-set KUBE-EXTERNAL-IP dst,dst ADDRTYPE match dst-type LOCAL
+   39  2148 KUBE-NODE-PORT  all  --  *      *       0.0.0.0/0            0.0.0.0/0            ADDRTYPE match dst-type LOCAL
+    0     0 ACCEPT     all  --  *      *       0.0.0.0/0            0.0.0.0/0            match-set KUBE-CLUSTER-IP dst,dst
+    0     0 ACCEPT     all  --  *      *       0.0.0.0/0            0.0.0.0/0            match-set KUBE-LOAD-BALANCER dst,dst
+```
+
+#### 如何选择
+
+当svc比较多的时候选择ipvs比较好，否则iptables
+
+参考<https://docs.ucloud.cn/uk8s/userguide/kubeproxy_mode>
 
 #### 参考资料
 
