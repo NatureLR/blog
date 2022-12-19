@@ -49,7 +49,7 @@ skopeo copy docker-daemon:alpine:latest docker://uhub.service.ucloud.cn/naturelr
 > 如果仓库不是https的使用--dest-tls-verify=false  
 
 ```shell
-skopeo copy docker://docker.io/busybox:latest docker://uuhub.service.ucloud.cn/naturelr/test-zxz/busybox:latest --override-os linux
+skopeo copy docker://docker.io/busybox:latest docker://uhub.service.ucloud.cn/naturelr/test-zxz/busybox:latest --override-os linux
 ```
 
 - 创建保存的目录,直接mkdir貌似有问题
