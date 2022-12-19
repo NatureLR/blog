@@ -7,11 +7,11 @@ categories:
   - 运维
 date: 2022-12-19 17:42:00
 ---
-<简介，将显示在首页>
+在大部分场景下我们内部都会有一个镜像仓库来保证k8s活着cicd在拉镜像下的体验,以往我们需要使用docker pull
 
 <!--more-->
 
-> 说明，模版文件不要发布出来
+下载下镜像然后使用docker push上传到内部仓库这个过程很繁琐,skopeo就是为了解决这个问题而诞生
 
 #### 安装
 
@@ -32,7 +32,7 @@ skopeo inspect docker://docker.io/alpine:latest --override-os linux
 #### 登录
 
 ```shell
-skopeo login -u nature.zhang hub.ucloudadmin.com
+skopeo login -u <用户名> <仓库地址>
 ```
 
 #### 复制镜像
@@ -40,7 +40,7 @@ skopeo login -u nature.zhang hub.ucloudadmin.com
 - 从本地复制到仓库
 
 ```shell
-skopeo copy docker-daemon:alpine:latest docker://hub.ucloudadmin.com/test-zxz/alpine:latest
+skopeo copy docker-daemon:alpine:latest docker://uhub.service.ucloud.cn/naturelr/test-zxz/alpine:latest
 ```
 
 - 从一个仓库复制到另一个仓库
@@ -49,7 +49,7 @@ skopeo copy docker-daemon:alpine:latest docker://hub.ucloudadmin.com/test-zxz/al
 > 如果仓库不是https的使用--dest-tls-verify=false  
 
 ```shell
-skopeo copy docker://docker.io/busybox:latest docker://uhub.ucloudadmin.com/test-zxz/busybox:latest --override-os linux
+skopeo copy docker://docker.io/busybox:latest docker://uuhub.service.ucloud.cn/naturelr/test-zxz/busybox:latest --override-os linux
 ```
 
 - 创建保存的目录,直接mkdir貌似有问题
@@ -73,13 +73,13 @@ skopeo copy docker://docker.io/busybox:latest oci:images
 #### 同步镜像
 
 ```shell
-skopeo sync  --src docker --dest dir uhub.ucloudadmin.com/test-zxz/busybox:latest images
+skopeo sync --src docker --dest dir uhub.service.ucloud.cn/naturelr/test-zxz/busybox:latest images
 ```
 
 - 从一个仓库同步到另一个仓库
 
 ```shell
-skopeo sync --src docker --dest docker docker.io/redis uhub.ucloudadmin.com/test-zxz/redis
+skopeo sync --src docker --dest docker docker.io/redis uhub.service.ucloud.cn/naturelr/test-zxz/redis
 ```
 
 #### 参考资料
