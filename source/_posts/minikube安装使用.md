@@ -2,8 +2,9 @@ title: minikube安装使用
 author: Nature丿灵然
 tags:
   - minikube
+  - k8s
 categories:
-  - 开发
+  - 运维
 date: 2020-09-14 19:28:00
 ---
 在做k8s开发的时候受限于本地的性能以及复杂度不能搭建一个完整的k8s集群，这个时候需要minikube来搭建k8s开发环境
