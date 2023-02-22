@@ -15,7 +15,7 @@ date: 2020-09-16 18:20:00
 brew install node
 ```
 
-具体看{% post_link NodeJs基本使用 %},当前版本的hexo在node14中会有告警，建议安装12并使用nvm管理node版本
+具体看{% post_link nodejs基本使用 %},当前版本的hexo在node14中会有告警，建议安装12并使用nvm管理node版本
 
 #### 安装 Hexo
 
