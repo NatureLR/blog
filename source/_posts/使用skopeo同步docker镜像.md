@@ -25,8 +25,14 @@ brew install skopeo
 
 #### 查看镜像情况
 
+- 查看镜像详情
+
 ```shell
 skopeo inspect docker://docker.io/alpine:latest --override-os linux
+```
+
+```shell
+skopeo list-tags docker://docker.io/alpine --override-os linux
 ```
 
 #### 登录
@@ -72,14 +78,52 @@ skopeo copy docker://docker.io/busybox:latest oci:images
 
 #### 同步镜像
 
+> 同步是指将一个镜像所有的tag全部复制到另一个地方
+
+- 从一个仓库同步到本地目录
+
 ```shell
-skopeo sync --src docker --dest dir uhub.service.ucloud.cn/naturelr/test-zxz/busybox:latest images
+skopeo sync --src docker --dest dir uhub.service.ucloud.cn/naturelr/busybox:latest images
 ```
 
 - 从一个仓库同步到另一个仓库
 
 ```shell
 skopeo sync --src docker --dest docker docker.io/redis uhub.service.ucloud.cn/naturelr/test-zxz/redis
+```
+
+- 文件同步
+
+```yaml
+registry.example.com:
+    images:
+        busybox: []
+        redis:
+            - "1.0"
+            - "2.0"
+            - "sha256:0000000000000000000000000000000011111111111111111111111111111111"
+    images-by-tag-regex:
+        nginx: ^1\.13\.[12]-alpine-perl$
+    credentials:
+        username: john
+        password: this is a secret
+    tls-verify: true
+    cert-dir: /home/john/certs
+quay.io:
+    tls-verify: false
+    images:
+        coreos/etcd:
+            - latest
+```
+
+```shell
+skopeo sync --src yaml --dest docker sync.yml my-registry.local.lan/repo/
+```
+
+#### 删除镜像
+
+```shell
+skopeo delete docker://harbor.fumai.com/library/alpine:latest
 ```
 
 #### 参考资料
