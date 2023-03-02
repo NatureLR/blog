@@ -52,10 +52,11 @@ skopeo copy docker-daemon:alpine:latest docker://uhub.service.ucloud.cn/naturelr
 - 从一个仓库复制到另一个仓库
 
 > --override-os linux 是因为本地是m1的mac而改镜像没有改os的所以要加上这个参数,同时还有--override-arch只不过这个是arch
+> --override-arch amd64 同样是因为我本地m1是arm的但是我们需要amd64的
 > 如果仓库不是https的使用--dest-tls-verify=false  
 
 ```shell
-skopeo copy docker://docker.io/busybox:latest docker://uhub.service.ucloud.cn/naturelr/test-zxz/busybox:latest --override-os linux
+skopeo copy docker://docker.io/busybox:latest docker://uhub.service.ucloud.cn/naturelr/test-zxz/busybox:latest --override-os linux --override-arch amd64
 ```
 
 - 创建保存的目录,直接mkdir貌似有问题
