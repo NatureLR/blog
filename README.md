@@ -42,6 +42,5 @@
 ├── package-lock.json
 ├── package.json
 ├── source/CNAME       # gitlab Pags的域名
-├── drawio             # drawio图片文件
 ├── LICENSE            # 许可
 ```
