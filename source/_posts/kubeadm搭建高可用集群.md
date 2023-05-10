@@ -212,6 +212,12 @@ kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documen
 kubectl taint nodes <节点名字> node-role.kubernetes.io/master:NoSchedule-
 ```
 
+- 新版本叫`control-plane`
+
+```shell
+kubectl taint nodes --all node-role.kubernetes.io/control-plane-
+```
+
 #### metrics-server
 
 > metrics-server提供了最基础的metrics手机，使用`kubectl top`和hpa时需要他，当然也可以使用kube-prometheus代理
