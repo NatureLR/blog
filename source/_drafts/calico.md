@@ -1,22 +1,28 @@
 title: 在k8s中部署calico
 author: Nature丿灵然
 tags:
-  - 模版
+  - k8s
+  - cni
+  - 网络
 categories:
   - 运维
 date: 2023-05-10 16:41:00
 ---
-calico是k8s中常见的网络插件
+calico是k8s中常见的网络插件,支持ipip，vxlan隧道和bgp路由,以及ebpf
 
 <!--more-->
 
-> 说明，模版文件不要发布出来
+#### 部署calico cni
 
-#### 标题一
+```shell
+curl https://raw.githubusercontent.com/projectcalico/calico/v3.25.1/manifests/calico.yaml -O
 
-<内容>
+kubectl apply -f calico.yaml
+```
 
 #### 安装calicoctl
+
+- calicoctl使用calic的命令行客户端攻击可以用来查看一些信息，有三种安装方法选一种即可
 
 ##### 用容器的方式运行calicoctl
 
@@ -27,6 +33,29 @@ kubectl apply -f calicoctl.yaml
 
 echo alias calicoctl="kubectl exec -i -n kube-system calicoctl -- /calicoctl"
 ```
+
+使用方法:`calicoctl version`
+
+##### 二进制文件使用
+
+```shell
+curl -L https://github.com/projectcalico/calico/releases/latest/download/calicoctl-linux-amd64 -o calicoctl
+
+chmod +x calicoctl
+mv calicoctl /usr/local/bin/
+```
+
+使用方法:`calicoctl version`
+
+##### kubectl插件使用
+
+```shell
+curl -L https://github.com/projectcalico/calico/releases/latest/download/calicoctl-linux-amd64 -o kubectl-calico
+chmod +x kubectl-calico
+mv kubectl-calico /usr/local/bin/
+```
+
+使用方法: `kubectl calico version`
 
 #### 开启ipv6支持
 
