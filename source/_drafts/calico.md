@@ -8,9 +8,34 @@ categories:
   - 运维
 date: 2023-05-10 16:41:00
 ---
-[calico](https://github.com/projectcalico/calico)是k8s中常见的网络插件,支持ipip,vxlan隧道bgp路由以及ebpf
+[calico](https://github.com/projectcalico/calico)是k8s中常见的网络插件,非常灵活,支持ipip,vxlan隧道bgp路由以及ebpf,虚机k8s均可使用
 
 <!--more-->
+
+#### 架构
+
+![calico](../images/calico.svg)
+
+|组件              |作用       |
+|-----------------|----------|
+|felix            |状态报告，路由规划，接口管理，acl|
+|bird             |负责路由宣告，以及路由反射|
+|confd            |监控bgp变更，配置和更新bird的配置|
+|储存插件          |存储配置,有etcd和k8s两种选择|
+|CNI插件           |为pod配置网络|
+|typha            |为confd和felix和后端存储之间提供缓存等增加性能服务|
+|calicoctl        |命令行工具|
+|dikastes         |配合istio|
+
+##### 术语
+
+###### ippool
+
+- ip池子,默认calico将会从池子中分配给podip
+
+###### ipamblocks
+
+- 从ippool里分割出来的ip段，为了减少路由数量，calico宣告路由时是以块为单位在pod所在的节点进行宣告的
 
 #### 部署calico cni
 
@@ -36,7 +61,7 @@ echo alias calicoctl="kubectl exec -i -n kube-system calicoctl -- /calicoctl"
 
 使用方法:`calicoctl version`
 
-##### 二进制文件使用
+##### 二进制文件
 
 ```shell
 curl -L https://github.com/projectcalico/calico/releases/latest/download/calicoctl-linux-amd64 -o calicoctl
@@ -47,7 +72,7 @@ mv calicoctl /usr/local/bin/
 
 使用方法:`calicoctl version`
 
-##### kubectl插件使用
+##### kubectl插件
 
 ```shell
 curl -L https://github.com/projectcalico/calico/releases/latest/download/calicoctl-linux-amd64 -o kubectl-calico
@@ -56,6 +81,40 @@ mv kubectl-calico /usr/local/bin/
 ```
 
 使用方法: `kubectl calico version`
+
+##### calicoctl常用命令
+
+- 查看ipam分配情况
+
+```shell
+calicoctl ipam show
+# +----------+---------------+-----------+------------+--------------+
+# | GROUPING |     CIDR      | IPS TOTAL | IPS IN USE |   IPS FREE   |
+# +----------+---------------+-----------+------------+--------------+
+# | IP Pool  | 10.244.0.0/16 |     65536 | 10 (0%)    | 65526 (100%) |
+# +----------+---------------+-----------+------------+--------------+
+```
+
+- 查看blocks分配情况
+
+```shell
+calicoctl ipam show --show-blocks
+#+----------+-------------------+-----------+------------+--------------+
+#| GROUPING |       CIDR        | IPS TOTAL | IPS IN USE |   IPS FREE   |
+#+----------+-------------------+-----------+------------+--------------+
+#| IP Pool  | 10.244.0.0/16     |     65536 | 10 (0%)    | 65526 (100%) |
+#| Block    | 10.244.120.64/26  |        64 | 5 (8%)     | 59 (92%)     |
+#| Block    | 10.244.205.192/26 |        64 | 5 (8%)     | 59 (92%)     |
+#+----------+-------------------+-----------+------------+--------------+
+```
+
+- 查看ippool
+
+```shell
+calicoctl get ippool -o wide
+# NAME                  CIDR            NAT    IPIPMODE   VXLANMODE   DISABLED   DISABLEBGPEXPORT   SELECTOR   
+# default-ipv4-ippool   10.244.0.0/16   true   Always     Never       false      false              all() 
+```
 
 #### IPIP模式
 
@@ -112,6 +171,7 @@ kubectl exec -it nginx-7fc57c59f7-4nxhh -- sh -c "ip addr;ip r"
 
 > 从上面的信息比较难以理解的是路由的网关是169.254.1.1，169.254.0.0/16为保留地址一般用于dhcp获取，而calico则将容器的默认路由设置为此,当容器发现目标地址不是本ip段时，会将流量发送给网关，这时需要知道网关的mac地址
 > 这里calico将网关设置为169.254.1.1而没有任何一个网卡是169.254.1.1,其实是因为开了arp_proxy代答,具体使用了pod的veth的外面的网卡,这样流量就通过二层到达主机
+> 官方的[FAQ](https://docs.tigera.io/calico/latest/reference/faq#why-cant-i-see-the-16925411-address-mentioned-above-on-my-host)
 
 ```shell
 tcpdump -i cali1143a22bb0c host 10.244.120.68 -ennnvv
@@ -268,15 +328,138 @@ tcpdump -i cali00c313c8253
 
 - 通过以上抓包可以发现并没有经过隧道，而是直接路由到了目标的网卡
 
-###### 总结
+###### 小结
 
-![calico-ipip](../images/calico-1.png)
+![calico-ipip](../images/calico-ipip-1.png)
 
 #### VXLAN模式
 
 #### BGP模式
 
 #### EBPF模式
+
+#### IP地址管理
+
+##### 静态ip
+
+- 一般来说pod不需要pod的ip是静态的，而是已通过service来访问，但是在安全等领域可能需要pod的ip是静态或者一小段范围
+
+- 使用ipam里面的ip
+
+```yaml
+annotations:
+  'cni.projectcalico.org/ipAddrs': '["192.168.0.1"]'
+```
+
+###### 不使用ipam里面的ip
+
+> 此功能需要cni开启特性才行
+
+```shell
+kubectl -n kube-system edit cm calico-config
+```
+
+```json
+{
+  "name": "any_name",
+  "cniVersion": "0.1.0",
+  "type": "calico",
+  "ipam": {
+    "type": "calico-ipam"
+  },
+  "feature_control": {
+    "ip_addrs_no_ipam": true
+  }
+}
+```
+
+- 然后重启calico的agent
+
+```shell
+kubectl -n kube-system rollout restart ds calico-node
+```
+
+- 在pod上添加下面的注释
+
+```yaml
+annotations:
+  'cni.projectcalico.org/ipAddrsNoIpam': '["10.0.0.1"]'
+```
+
+- 此时pod的ip则会设置为`10.0.0.1`,但是这个ip只能在你在pod所在的node上ping通过，路由等需要自己手动处理
+
+##### Floating IP(浮动ip)
+
+> Floating IP（浮动IP）是一种IP地址分配技术，它能够将一个IP地址从一台主机转移到另一台主机。 浮动IP通常用于云计算环境中，因为在这种环境下，虚拟资源（如虚拟机）可能随时在不同的物理主机之间移动。
+
+{% note warning %}
+只能在BGP模式下使用
+{% endnote %}
+
+- 也需要打开特性和上面noipam的类似方法不做赘述
+
+```json
+{
+  "name": "any_name",
+  "cniVersion": "0.1.0",
+  "type": "calico",
+  "ipam": {
+    "type": "calico-ipam"
+  },
+  "feature_control": {
+    "floating_ips": true
+  }
+}
+```
+
+```yaml
+annotations:
+  'cni.projectcalico.org/floatingIPs': '["10.0.0.1"]'
+```
+
+##### IP预留
+
+- 顾名思义保留的ip不会分配给pod
+
+```yaml
+apiVersion: projectcalico.org/v3
+kind: IPReservation
+metadata:
+  name: my-ipreservation-1
+spec:
+  reservedCIDRs:
+    - 192.168.2.3
+    - 10.0.2.3/32
+    - cafe:f00d::/123
+```
+
+#### 带宽限制
+
+- cni配置文件需要设置如下参数
+
+```json
+{
+  "type": "bandwidth",
+  "capabilities": { "bandwidth": true }
+}
+```
+
+- 在pod上配置带宽
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  annotations:
+    kubernetes.io/ingress-bandwidth: 1M # 进入
+    kubernetes.io/egress-bandwidth: 1M  # 出口
+```
+
+- 实际应该是调用了`bandwidth`这个cni插件这个插件应该是使用linux的`tc`
+
+##### 优先级
+
+pod的注释>pod所在的ns的注释>ippool
 
 #### 开启ipv6支持
 

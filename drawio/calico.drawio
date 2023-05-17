@@ -1,6 +1,6 @@
 <mxfile host="65bd71144e">
     <diagram id="-8RV91jiBXgCZmh8I0XD" name="第 1 页">
-        <mxGraphModel dx="995" dy="3089" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="3300" pageHeight="2339" background="#BFF0CD" math="0" shadow="0">
+        <mxGraphModel dx="1386" dy="3201" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="3300" pageHeight="2339" background="#BFF0CD" math="0" shadow="0">
             <root>
                 <mxCell id="0"/>
                 <mxCell id="1" parent="0"/>
@@ -99,7 +99,7 @@
                 <mxCell id="178" value="&lt;font color=&quot;#18141d&quot;&gt;&lt;span style=&quot;font-style: italic; font-family: &amp;quot;JetBrains Mono&amp;quot;, &amp;quot;Courier New&amp;quot;, monospace, Menlo, Monaco, &amp;quot;Courier New&amp;quot;, monospace; font-size: 14px;&quot;&gt;169.254.1.1 dev eth0 scope link &lt;/span&gt;&amp;nbsp;&lt;/font&gt;" style="text;strokeColor=#B09500;fillColor=#e3c800;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;dashed=1;fontSize=13;fontColor=#000000;" parent="175" vertex="1">
                     <mxGeometry y="60" width="290" height="30" as="geometry"/>
                 </mxCell>
-                <mxCell id="189" value="" style="endArrow=classic;html=1;edgeStyle=orthogonalEdgeStyle;strokeColor=#CCCC00;strokeWidth=4;fillColor=#e3c800;" edge="1" parent="28">
+                <mxCell id="189" value="" style="endArrow=classic;html=1;edgeStyle=orthogonalEdgeStyle;strokeColor=#CCCC00;strokeWidth=4;fillColor=#e3c800;" parent="28" edge="1">
                     <mxGeometry width="50" height="50" relative="1" as="geometry">
                         <mxPoint x="102.5" y="108" as="sourcePoint"/>
                         <mxPoint x="217.5" y="108" as="targetPoint"/>
@@ -110,7 +110,7 @@
                         </Array>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="195" value="pod在同一node" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="189">
+                <mxCell id="195" value="pod在同一node" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="189" vertex="1" connectable="0">
                     <mxGeometry x="0.6457" relative="1" as="geometry">
                         <mxPoint x="-1" y="16" as="offset"/>
                     </mxGeometry>
@@ -206,6 +206,9 @@
                 </mxCell>
                 <mxCell id="187" value="&lt;font color=&quot;#18141d&quot;&gt;&lt;span style=&quot;font-style: italic; font-family: &amp;quot;JetBrains Mono&amp;quot;, &amp;quot;Courier New&amp;quot;, monospace, Menlo, Monaco, &amp;quot;Courier New&amp;quot;, monospace; font-size: 14px;&quot;&gt;169.254.1.1 dev eth0 scope link &lt;/span&gt;&amp;nbsp;&lt;/font&gt;" style="text;strokeColor=#B09500;fillColor=#e3c800;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;dashed=1;fontSize=13;fontColor=#000000;" parent="185" vertex="1">
                     <mxGeometry y="60" width="290" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="196" value="&lt;font style=&quot;font-size: 19px;&quot; color=&quot;#ff0000&quot;&gt;calico-ipip&lt;/font&gt;" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;strokeWidth=5;" vertex="1" parent="1">
+                    <mxGeometry x="535" y="-132" width="102" height="35" as="geometry"/>
                 </mxCell>
             </root>
         </mxGraphModel>
