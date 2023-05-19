@@ -128,7 +128,12 @@ calicoctl get ippool -o wide
 # default-ipv4-ippool   10.244.0.0/16      true    Always      Never       false      false              all()
 ```
 
-##### ipip分析
+- 启动ipipmode分为两种，一种是`Always`，还有一种`CrossSubnet`,
+  - always，无论是否跨子网都通过ipip来通讯
+  - CrossSubnet，只有在跨子网时使用ipip模式，子网内使用bgp
+  - Never,关闭从不使用ipip模式
+
+##### ipip路径分析
 
 - 部署一个nginx
 
@@ -146,7 +151,7 @@ k get po -l app=nginx -o wide
 kubectl exec -it nginx-7fc57c59f7-4nxhh -- ping 10.244.205.195
 ```
 
-###### pod到node
+###### ipip-pod到pod所在的node
 
 - 查看容器的网卡和路由信息
 
@@ -200,7 +205,7 @@ cat /proc/sys/net/ipv4/conf/cali1143a22bb0c/proxy_arp
 # ...
 ```
 
-###### node到node
+###### ipip-pod所在的node到目标所在的node的pod
 
 - 查看minikube上的路由
 
@@ -271,7 +276,7 @@ tcpdump -i tunl0
 # 10:51:06.694392 IP 10.244.120.68 > 10.244.205.195: ICMP echo request, id 21761, seq 106, length 64
 # 10:51:06.694504 IP 10.244.205.195 > 10.244.120.68: ICMP echo reply, id 21761, seq 106, length 64
 # 10:51:07.695538 IP 10.244.120.68 > 10.244.205.195: ICMP echo request, id 21761, seq 107, length 64
-# 10:51:07.695667 IP 10.244.205.195 > 10.244.120.68: ICMP echo reply, id 21761, seq 107, length 64
+# ...
 ```
 
 - 通过以上抓包可以确定流量的路径
@@ -323,7 +328,7 @@ tcpdump -i cali00c313c8253
 # 10:47:39.884507 IP 10.244.120.68 > 10.244.120.67: ICMP echo request, id 19969, seq 141, length 64
 # 10:47:39.884649 IP 10.244.120.67 > 10.244.120.68: ICMP echo reply, id 19969, seq 141, length 64
 # 10:47:40.885829 IP 10.244.120.68 > 10.244.120.67: ICMP echo request, id 19969, seq 142, length 64
-# 10:47:40.885965 IP 10.244.120.67 > 10.244.120.68: ICMP echo reply, id 19969, seq 142, length 64
+# ...
 ```
 
 - 通过以上抓包可以发现并没有经过隧道，而是直接路由到了目标的网卡
@@ -334,7 +339,119 @@ tcpdump -i cali00c313c8253
 
 #### VXLAN模式
 
+#### 开启vxlan模式
+
+- 修改ippool中`VXLANMODE`字段为`Always`,`IPIPMODE`改为`Never`
+
+- 修改calico-node的环境变量
+
+```shell
+# 修改环境变量
+kubectl -n kube-system set env ds/calico-node -c calico-node CALICO_IPV4POOL_IPIP=Never
+kubectl -n kube-system set env ds/calico-node -c calico-node CALICO_IPV4POOL_VXLAN=Always
+```
+
+- 关闭关闭bird
+
+```shell
+# 将calico_backend修改为vxlan
+# alico_backend: vxlan
+kubectl edit cm -nkube-system calico-config
+```
+
+```yaml
+livenessProbe:
+  exec:
+    command:
+    - /bin/calico-node
+    - -felix-live
+   # - -bird-live
+readinessProbe:
+  exec:
+    command:
+    - /bin/calico-node
+    # - -bird-ready
+    - -felix-ready
+```
+
+##### vxlan路径分析
+
+- 依然使用之前的nginx来做测试
+
+- 节点路由
+
+```shell
+ip r
+# default via 192.168.49.1 dev eth0 
+# 10.244.0.192/26 via 10.244.0.192 dev vxlan.calico onlink 
+# blackhole 10.244.120.64/26 proto 80 
+# 10.244.120.65 dev califc4f8273134 scope link 
+# 10.244.120.66 dev cali54e305c20b5 scope link 
+# 10.244.120.68 dev cali1143a22bb0c scope link 
+# 10.244.205.192/26 via 10.244.0.192 dev vxlan.calico onlink  之前是ipip的tunl0网卡变更为vxlan的网卡
+# 172.17.0.0/16 dev docker0 proto kernel scope link src 172.17.0.1 linkdown 
+# 192.168.49.0/24 dev eth0 proto kernel scope link src 192.168.49.2 
+```
+
+- 查看vxlan.calico网卡信息
+
+```shell
+ip -s  addr show vxlan.calico
+#863: vxlan.calico: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 65485 qdisc noqueue state UNKNOWN group default 
+#    link/ether 66:66:b0:7b:5c:e1 brd ff:ff:ff:ff:ff:ff
+#    inet 10.244.120.70/32 scope global vxlan.calico
+#       valid_lft forever preferred_lft forever
+#    RX: bytes  packets  errors  dropped overrun mcast   
+#    23094      267      0       0       0       0       
+#    TX: bytes  packets  errors  dropped carrier collsns 
+#    22374      268      0       0       0       0       
+```
+
+- 搜下这个ip发现他作用为vxlan的网卡ip
+
+```shell
+calicoctl ipam show --ip=10.244.120.70
+#IP 10.244.120.70 is in use
+#Attributes:
+#  node: minikube
+#  type: vxlanTunnelAddress
+```
+
+#### vxlan-pod到node
+
+- 从上面的网卡和路由信息可以看到calico只是修改了到其他节点pod的通讯方式，从ipip隧道改为vlxan隧道然后修改路由
+- 所以后pod到node的方式其实没有变化和[ipip](#ipip-pod到pod所在的node)模式是一样的
+
+#### vxlan-pod到另一个node的pod
+
+- 依然开始长ping
+
+- 抓包vxlan网卡
+
+```shell
+tcpdump -i vxlan.calico -eenn
+# tcpdump: verbose output suppressed, use -v or -vv for full protocol decode
+# listening on vxlan.calico, link-type EN10MB (Ethernet), capture size 262144 bytes
+# 09:22:33.108257 66:66:b0:7b:5c:e1 > 66:9f:82:63:75:c1, ethertype IPv4 (0x0800), length 98: 10.244.120.68 > 10.244.205.196: ICMP echo request, id 30721, seq 33, length 64
+# 09:22:33.108388 66:9f:82:63:75:c1 > 66:66:b0:7b:5c:e1, ethertype IPv4 (0x0800), length 98: 10.244.205.196 > 10.244.120.68: ICMP echo reply, id 30721, seq 33, length 64
+# 09:22:34.109579 66:66:b0:7b:5c:e1 > 66:9f:82:63:75:c1, ethertype IPv4 (0x0800), length 98: 10.244.120.68 > 10.244.205.196: ICMP echo request, id 30721, seq 34, length 64
+# ...
+```
+
+- 可以看到到vxlan网卡有我们长ping的数据包，可以确定不同node上的pod是通过vxlan来通讯
+- `66:66:b0:7b:5c:e1`为源头pod所在node的vxlan网卡mac
+- `66:9f:82:63:75:c1`为目标pod所在node的vxlan网卡mac
+
+#### vxlan-小结
+
+- vxlan模式下知识变换了从一个node到另一个node的方式，从之前的ipip变为vxlan
+- pod到node没有变化
+
+![calico-ipip](../images/calico-vxlan-1.png)
+
 #### BGP模式
+
+- 修改ippool中`VXLANMODE`字段为`Never`,`IPIPMODE`改为`Never`
 
 #### EBPF模式
 
@@ -456,6 +573,15 @@ metadata:
 ```
 
 - 实际应该是调用了`bandwidth`这个cni插件这个插件应该是使用linux的`tc`
+
+#### 指定MAC地址
+
+```yaml
+annotations:
+  "cni.projectcalico.org/hwAddr": "1c:0c:0a:c0:ff:ee"
+```
+
+- 重启pod生效
 
 ##### 优先级
 
