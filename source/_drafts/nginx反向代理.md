@@ -3,6 +3,7 @@ title: nginx反向代理
 author: Nature丿灵然
 tags:
   - 负载均衡
+  - 网络
 categories:
   - 运维
 date: 2023-05-15 16:11:00
