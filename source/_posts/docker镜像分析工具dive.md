@@ -13,7 +13,9 @@ date: 2020-09-29 15:59:00
 
 ###### MacOs
 
-    brew install dive
+```shell
+brew install dive
+```
 
 其他平台查看官方文档:<https://github.com/wagoodman/dive#installation>
 

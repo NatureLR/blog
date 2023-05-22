@@ -339,9 +339,9 @@ tcpdump -i cali00c313c8253
 
 #### VXLAN模式
 
-#### 开启vxlan模式
+##### 开启vxlan模式
 
-- 修改ippool中`VXLANMODE`字段为`Always`,`IPIPMODE`改为`Never`
+- 修改ippool中`VXLANMODE`字段为`Always`,`IPIPMODE`改为`Never`,其中`VXLANMODE`中的也有`CrossSubnet`只在跨子网时使用
 
 - 修改calico-node的环境变量
 
@@ -355,8 +355,14 @@ kubectl -n kube-system set env ds/calico-node -c calico-node CALICO_IPV4POOL_VXL
 
 ```shell
 # 将calico_backend修改为vxlan
-# alico_backend: vxlan
+# calico_backend: vxlan
 kubectl edit cm -nkube-system calico-config
+```
+
+- 关闭bird的健康检查
+
+```shell
+kubectl -n kube-system edit ds calico-node
 ```
 
 ```yaml
@@ -417,12 +423,12 @@ calicoctl ipam show --ip=10.244.120.70
 #  type: vxlanTunnelAddress
 ```
 
-#### vxlan-pod到node
+###### vxlan-pod到node
 
 - 从上面的网卡和路由信息可以看到calico只是修改了到其他节点pod的通讯方式，从ipip隧道改为vlxan隧道然后修改路由
 - 所以后pod到node的方式其实没有变化和[ipip](#ipip-pod到pod所在的node)模式是一样的
 
-#### vxlan-pod到另一个node的pod
+###### vxlan-pod到另一个node的pod
 
 - 依然开始长ping
 
@@ -442,7 +448,7 @@ tcpdump -i vxlan.calico -eenn
 - `66:66:b0:7b:5c:e1`为源头pod所在node的vxlan网卡mac
 - `66:9f:82:63:75:c1`为目标pod所在node的vxlan网卡mac
 
-#### vxlan-小结
+##### vxlan-小结
 
 - vxlan模式下知识变换了从一个node到另一个node的方式，从之前的ipip变为vxlan
 - pod到node没有变化
@@ -451,7 +457,195 @@ tcpdump -i vxlan.calico -eenn
 
 #### BGP模式
 
+##### 开启BGP模式(full mesh)
+
+> 开启bgp模式基本思路就是将`ipip`和`vxlan`模式都给关闭了,跨子网需要改为``
+
 - 修改ippool中`VXLANMODE`字段为`Never`,`IPIPMODE`改为`Never`
+
+- 修改calico-node的环境变量
+
+```shell
+# 修改环境变量
+kubectl -n kube-system set env ds/calico-node -c calico-node CALICO_IPV4POOL_IPIP=Never
+kubectl -n kube-system set env ds/calico-node -c calico-node CALICO_IPV4POOL_VXLAN=Never
+```
+
+- 如果关闭bird需要开启bird
+
+```shell
+# 将calico_backend修改为bird
+# calico_backend: bird
+kubectl edit cm -nkube-system calico-config
+```
+
+- 如果关闭了bird的健康检查则需要开启bird的健康检查
+
+```shell
+kubectl -n kube-system edit ds calico-node
+```
+
+```yaml
+livenessProbe:
+  exec:
+    command:
+    - /bin/calico-node
+    - -felix-live
+    - -bird-live # 打开
+readinessProbe:
+  exec:
+    command:
+    - /bin/calico-node
+    - -felix-ready
+    - -bird-ready # 打开
+```
+
+##### BGP模式路径分析
+
+- 查看路由,可以发现跨节点通讯使用路由
+
+```shell
+ip r 
+# default via 192.168.49.1 dev eth0 
+# 10.244.0.192/26 via 192.168.49.3 dev eth0 proto bird 
+# blackhole 10.244.120.64/26 proto bird 
+# 10.244.120.65 dev califc4f8273134 scope link 
+# 10.244.120.66 dev cali54e305c20b5 scope link 
+# 10.244.120.68 dev cali1143a22bb0c scope link 
+# 10.244.205.192/26 via 192.168.49.3 dev eth0 proto bird # 这里已经变成了bird了
+# 172.17.0.0/16 dev docker0 proto kernel scope link src 172.17.0.1 linkdown 
+# 192.168.49.0/24 dev eth0 proto kernel scope link src 192.168.49.2 
+```
+
+- 查看网卡,可以发现没有vxlan的网卡
+
+```shell
+ip addr
+# 1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000
+#     link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+#     inet 127.0.0.1/8 scope host lo
+#        valid_lft forever preferred_lft forever
+# 2: tunl0@NONE: <NOARP,UP,LOWER_UP> mtu 65515 qdisc noqueue state UNKNOWN group default qlen 1000
+#     link/ipip 0.0.0.0 brd 0.0.0.0
+# 3: ip6tnl0@NONE: <NOARP> mtu 1452 qdisc noop state DOWN group default qlen 1000
+#     link/tunnel6 :: brd ::
+# 4: docker0: <NO-CARRIER,BROADCAST,MULTICAST,UP> mtu 1500 qdisc noqueue state DOWN group default 
+#     link/ether 02:42:7a:58:36:29 brd ff:ff:ff:ff:ff:ff
+#     inet 172.17.0.1/16 brd 172.17.255.255 scope global docker0
+#        valid_lft forever preferred_lft forever
+# 5: califc4f8273134@if5: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue state UP group default 
+#     link/ether ee:ee:ee:ee:ee:ee brd ff:ff:ff:ff:ff:ff link-netnsid 1
+# 6: cali54e305c20b5@if5: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue state UP group default 
+#     link/ether ee:ee:ee:ee:ee:ee brd ff:ff:ff:ff:ff:ff link-netnsid 2
+# 10: cali1143a22bb0c@if5: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 65515 qdisc noqueue state UP group default 
+#     link/ether ee:ee:ee:ee:ee:ee brd ff:ff:ff:ff:ff:ff link-netnsid 4
+# 16: eth0@if17: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 65535 qdisc noqueue state UP group default 
+#     link/ether 02:42:c0:a8:31:02 brd ff:ff:ff:ff:ff:ff link-netnsid 0
+#     inet 192.168.49.2/24 brd 192.168.49.255 scope global eth0
+#        valid_lft forever preferred_lft forever
+```
+
+- 通过birdcl查看路由表
+
+```shell
+kubectl -n kube-system exec -it calico-node-9pwnj -c calico-node -- /bin/bash
+
+birdcl
+show route
+
+# bird> show route
+# 0.0.0.0/0          via 192.168.49.1 on eth0 [kernel1 07:27:41] * (10)
+# 10.244.205.192/26  via 192.168.49.3 on eth0 [Mesh_192_168_49_3 07:27:41] * (100/0) [i]
+# 192.168.49.0/24    dev eth0 [direct1 07:27:40] * (240)
+# 10.244.120.64/26   blackhole [static1 07:27:40] * (200)
+# 10.244.120.65/32   dev califc4f8273134 [kernel1 07:27:41] * (10)
+# 10.244.120.66/32   dev cali54e305c20b5 [kernel1 07:27:41] * (10)
+# 10.244.120.68/32   dev cali1143a22bb0c [kernel1 07:27:41] * (10)
+# 10.244.0.192/26    via 192.168.49.3 on eth0 [Mesh_192_168_49_3 07:27:41] * (100/0) [i]
+# 172.17.0.0/16      dev docker0 [direct1 07:27:40] * (240)
+# bird> 
+```
+
+- 通过birdcl查bgp邻居状态
+
+```shell
+birdcl show protocols
+# root@minikube /]# birdcl  show protocols
+# BIRD v0.3.3+birdv1.6.8 ready.
+# name     proto    table    state  since       info
+# static1  Static   master   up     07:27:40    
+# kernel1  Kernel   master   up     07:27:40    
+# device1  Device   master   up     07:27:40    
+# direct1  Direct   master   up     07:27:40    
+# Mesh_192_168_49_3 BGP      master   up     07:27:53    Established  bgp邻居状态
+```
+
+- 查看bgp详细信息
+
+```shell
+birdcl show protocols all Mesh_192_168_49_2
+# root@minikube-m02 /]# birdcl show protocols all Mesh_192_168_49_2
+# BIRD v0.3.3+birdv1.6.8 ready.
+# name     proto    table    state  since       info
+# Mesh_192_168_49_2 BGP      master   up     07:27:53    Established   
+#   Description:    Connection to BGP peer
+#   Preference:     100
+#   Input filter:   ACCEPT
+#   Output filter:  calico_export_to_bgp_peers
+#   Routes:         1 imported, 2 exported, 1 preferred
+#   Route change stats:     received   rejected   filtered    ignored   accepted
+#     Import updates:              4          0          0          0          4
+#     Import withdraws:            3          0        ---          0          3
+#     Export updates:             17          4          8        ---          5
+#     Export withdraws:            8        ---        ---        ---          3
+#   BGP state:          Established
+#     Neighbor address: 192.168.49.2
+#     Neighbor AS:      64512
+#     Neighbor ID:      192.168.49.2
+#     Neighbor caps:    refresh enhanced-refresh restart-able llgr-aware AS4 add-path-rx add-path-tx
+#     Session:          internal multihop AS4 add-path-rx add-path-tx
+#     Source address:   192.168.49.3
+#     Hold timer:       157/240
+#     Keepalive timer:  67/80
+```
+
+- 总体而言比较简单，直接通过路由到目标pod对应的节点
+
+##### bgp小结
+
+- 每个节点之间通过bgp宣告路由
+
+![calico-bgp](../images/calico-bgp-1.png)
+
+![calico-bgp](../images/calico-bgp-2.png)
+
+##### node不在一个子网
+
+bgp peer只能在一个子网中使用,但是在k8s中为了灾备冗余不能一个集群所有节点都在同一个子网中，所以在node节点不在同一个子网时候bgp需要其他node知道路由
+
+![calico-bgp](../images/calico-bgp-3.png)
+
+- 当跨子网时使用`ipip/vxlan`来进行通讯
+
+##### bgp混合模式部署
+
+- 将ippool中的`IPIPMODE`或`VXLANMODE`修改为`CrossSubnet`即可
+- 这与既可以享受bgp的性能又能解决bgp的局限性
+
+##### 路由反射(Route reflectors)
+
+![calico-bgp](../images/calico-bgp-4.png)
+
+- 从节点中选取一部分节点作为bgp路由反射器以减少路由提升效率
+
+##### TOR路由
+
+`Top of Rack`机架上面的交换机
+
+![calico-bgp](../images/calico-bgp-5.png)
+
+- 这个方案中所有的节点将bgp信息宣告给tor交换机由交换机负责bgp宣告
+- 需要硬件交换机和路由器中整体部署bgp网络，然后宣告给这个网络
 
 #### EBPF模式
 
@@ -550,6 +744,10 @@ spec:
     - cafe:f00d::/123
 ```
 
+##### 优先级
+
+pod的注释>pod所在的ns的注释>ippool
+
 #### 带宽限制
 
 - cni配置文件需要设置如下参数
@@ -582,10 +780,6 @@ annotations:
 ```
 
 - 重启pod生效
-
-##### 优先级
-
-pod的注释>pod所在的ns的注释>ippool
 
 #### 开启ipv6支持
 
