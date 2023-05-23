@@ -457,6 +457,8 @@ tcpdump -i vxlan.calico -eenn
 
 #### BGP模式
 
+> BGP是一个使用广泛的路由协议，分为2种一种是不同as号的ebgp已经同as号的ibgp，这里使用的是ibgp
+
 ##### 开启BGP模式(full mesh)
 
 > 开启bgp模式基本思路就是将`ipip`和`vxlan`模式都给关闭了,跨子网需要改为``
@@ -619,24 +621,153 @@ birdcl show protocols all Mesh_192_168_49_2
 
 ![calico-bgp](../images/calico-bgp-2.png)
 
-##### node不在一个子网
+##### bgp混合模式
 
-bgp peer只能在一个子网中使用,但是在k8s中为了灾备冗余不能一个集群所有节点都在同一个子网中，所以在node节点不在同一个子网时候bgp需要其他node知道路由
+> bgp peer只能在一个子网中使用,但是在k8s中为了灾备冗余不能一个集群所有节点都在同一个子网中，所以在node节点不在同一个子网时候bgp需要其他node知道路由
 
 ![calico-bgp](../images/calico-bgp-3.png)
 
 - 当跨子网时使用`ipip/vxlan`来进行通讯
-
-##### bgp混合模式部署
-
 - 将ippool中的`IPIPMODE`或`VXLANMODE`修改为`CrossSubnet`即可
 - 这与既可以享受bgp的性能又能解决bgp的局限性
 
-##### 路由反射(Route reflectors)
+##### bgp-rr模式(Route reflectors)
 
 ![calico-bgp](../images/calico-bgp-4.png)
 
-- 从节点中选取一部分节点作为bgp路由反射器以减少路由提升效率
+- 从节点中选取一部分节点作为bgp路由反射器以减少bgp对等体数量
+
+###### 路由反射部署方案
+
+> 测试环境为4个节点的minikube集群
+
+- 部署路由反射器有很多方法:
+  - 1. 在集群外的机器中部署bird
+  - 2. 在k8s中选择专门的节点
+  - 3. 部署专门的calico-node容器作为反射器
+
+- 很显然直接在集群中部署专门的节点作为反射器比较方便且容易管理
+
+- 选择2个节点作为反射器，这里我选择后2个
+
+###### 确认现在的为bgp的mesh模式
+
+{% note warning %}
+需要注意`calicoctl node status`这个需要再部署calico的节点上执行。。。。有点唐突
+{% endnote %}
+
+- 查看当前bgp邻居,可以发现已经与另外三个节点建立了邻居关系
+
+```shell
+calicoctl node status
+# root@minikube:~# calicoctl node status
+# Calico process is running.
+# 
+# IPv4 BGP status
+# +--------------+-------------------+-------+----------+-------------+
+# | PEER ADDRESS |     PEER TYPE     | STATE |  SINCE   |    INFO     |
+# +--------------+-------------------+-------+----------+-------------+
+# | 192.168.49.3 | node-to-node mesh | up    | 18:13:08 | Established |
+# | 192.168.49.4 | node-to-node mesh | up    | 19:37:12 | Established |
+# | 192.168.49.5 | node-to-node mesh | up    | 02:27:27 | Established |
+# +--------------+-------------------+-------+----------+-------------+
+```
+
+```shell
+calicoctl get nodes -o wide 
+# NAME           ASN       IPV4              IPV6   
+# minikube       (64512)   192.168.49.2/24          
+# minikube-m02   (64512)   192.168.49.3/24          
+# minikube-m03   (64512)   192.168.49.4/24   # 作为反射器       
+# minikube-m04   (64512)   192.168.49.5/24   # 作为反射器
+```
+
+###### 指定节点作为反射器
+
+- 导出`calico/node`资源
+
+```shell
+calicoctl get nodes minikube-m03 -o yaml > minikube-m03.yaml
+calicoctl get nodes minikube-m04 -o yaml > minikube-m04.yaml
+```
+
+- 在导出的文件中添加下面的字段
+
+```yaml
+# ...
+  bgp:
+    ipv4Address: 192.168.49.4/24
+    routeReflectorClusterID: 1.0.0.1
+# ...
+```
+
+- 应用修改
+
+```shell
+calicoctl replace -f minikube-m03.yaml
+# Successfully replaced 1 'Node' resource(s)
+calicoctl replace -f minikube-m04.yaml
+# Successfully replaced 1 'Node' resource(s)
+```
+
+- 在指定的节点打上标签
+
+```shell
+kubectl label node minikube-m04 minikube-m03 route-reflector=true
+```
+
+###### 配置bgp对等体
+
+```yaml
+kind: BGPPeer
+apiVersion: crd.projectcalico.org/v1
+metadata:
+  name: node-rr
+spec:
+  nodeSelector: all()
+  peerSelector: route-reflector == 'true'
+```
+
+- 修改bgp配置，关闭mesh模式
+
+```yaml
+apiVersion: projectcalico.org/v3
+kind: BGPConfiguration
+metadata:
+  name: default
+spec:
+  logSeverityScreen: Info
+  nodeToNodeMeshEnabled: false
+  asNumber: 63400
+```
+
+###### 查看节点bgp状态
+
+```shell
+# rr模式的节点上
+root@minikube-m03:~# calicoctl node status
+Calico process is running.
+
+IPv4 BGP status
++--------------+---------------+-------+----------+-------------+
+| PEER ADDRESS |   PEER TYPE   | STATE |  SINCE   |    INFO     |
++--------------+---------------+-------+----------+-------------+
+| 192.168.49.2 | node specific | up    | 03:17:41 | Established |
+| 192.168.49.3 | node specific | up    | 03:17:41 | Established |
+| 192.168.49.5 | node specific | up    | 03:17:41 | Established |
++--------------+---------------+-------+----------+-------------+
+# 普通节点
+root@minikube:~# calicoctl node status 
+Calico process is running.
+
+IPv4 BGP status
++--------------+---------------+-------+----------+-------------+
+| PEER ADDRESS |   PEER TYPE   | STATE |  SINCE   |    INFO     |
++--------------+---------------+-------+----------+-------------+
+| 192.168.49.4 | node specific | up    | 03:17:41 | Established |
+| 192.168.49.5 | node specific | up    | 03:17:43 | Established |
++--------------+---------------+-------+----------+-------------+
+```
 
 ##### TOR路由
 
@@ -647,7 +778,78 @@ bgp peer只能在一个子网中使用,但是在k8s中为了灾备冗余不能�
 - 这个方案中所有的节点将bgp信息宣告给tor交换机由交换机负责bgp宣告
 - 需要硬件交换机和路由器中整体部署bgp网络，然后宣告给这个网络
 
-#### EBPF模式
+#### EBPF
+
+> epbf是一个内核虚拟机
+
+##### EBPF部署
+
+###### 环境验证
+
+```shell
+uname -rv
+# docker@minikube:~$ uname -rv
+# 5.15.49-linuxkit #1 SMP PREEMPT Tue Sep 13 07:51:32 UTC 2022
+```
+
+- ebpf对内核版本要求比较高，内核版本最高5.0往上，红帽4.8往上也行
+
+###### 修改api-server地址
+
+- calico默认使用的是kube-proxy提供的api-server的svc地址需要改为api-server负载均衡的地址
+- 可以通过`kubelet`的配置文件来查看，
+- 创建配置文件
+
+```yaml
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: kubernetes-services-endpoint
+  namespace: kube-system
+data:
+  KUBERNETES_SERVICE_HOST: "192.168.49.2" # <API server host>
+  KUBERNETES_SERVICE_PORT: "8443"         # <API server port>
+```
+
+- 重启calico组件
+
+```shell
+kubectl -n kube-system rollout restart deployment calico-kube-controllers
+kubectl -n kube-system rollout restart ds calico-node
+```
+
+###### 开启ebpf
+
+- 配置kube-proxy
+
+```shell
+kubectl patch ds -n kube-system kube-proxy -p '{"spec":{"template":{"spec":{"nodeSelector":{"non-calico": "true"}}}}}'
+```
+
+- 开启ebpf
+
+```shell
+calicoctl patch felixconfiguration default --patch='{"spec": {"bpfEnabled": true}}'
+# Successfully patched 1 'FelixConfiguration' resource
+```
+
+###### 开启dsr
+
+> dsr可以保留客户端ip
+
+- 主要是修改`BPFExternalServiceMode`这个变量
+
+- 开启dsr
+
+```shell
+calicoctl patch felixconfiguration default --patch='{"spec": {"bpfExternalServiceMode": "DSR"}}'
+```
+
+- 回滚
+
+```shell
+calicoctl patch felixconfiguration default --patch='{"spec": {"bpfExternalServiceMode": "Tunnel"}}'
+```
 
 #### IP地址管理
 
@@ -770,7 +972,7 @@ metadata:
     kubernetes.io/egress-bandwidth: 1M  # 出口
 ```
 
-- 实际应该是调用了`bandwidth`这个cni插件这个插件应该是使用linux的`tc`
+- 实际是调用了`bandwidth`这个cni插件
 
 #### 指定MAC地址
 
@@ -782,6 +984,8 @@ annotations:
 - 重启pod生效
 
 #### 开启ipv6支持
+
+> ipv6需要k8s同步开启双栈
 
 ##### 修改cni配置文件
 
