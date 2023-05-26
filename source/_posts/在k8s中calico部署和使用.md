@@ -128,9 +128,9 @@ calicoctl get ippool -o wide
 # default-ipv4-ippool   10.244.0.0/16      true    Always      Never       false      false              all()
 ```
 
-- 启动ipipmode分为两种，一种是`Always`，还有一种`CrossSubnet`,
+- 启动ipipmode分为两种，一种是`Always`，还有一种`CrossSubnet`
   - always，无论是否跨子网都通过ipip来通讯
-  - CrossSubnet，只有在跨子网时使用ipip模式，子网内使用bgp
+  - CrossSubnet，只有在跨子网时使用ipip模式
   - Never,关闭从不使用ipip模式
 
 ##### ipip路径分析
@@ -455,13 +455,17 @@ tcpdump -i vxlan.calico -eenn
 
 ![calico-ipip](../images/calico-vxlan-1.png)
 
-#### BGP模式
+#### BGP模式(full mesh)
 
 > BGP是一个使用广泛的路由协议，分为2种一种是不同as号的ebgp已经同as号的ibgp，这里使用的是ibgp
 
-##### 开启BGP模式(full mesh)
+{% note warning %}
+注意此模式节点只能在同一个子网中进行，如果节点不在同一个子网请参与[](#跨)
+{% endnote %}
 
-> 开启bgp模式基本思路就是将`ipip`和`vxlan`模式都给关闭了,跨子网需要改为``
+##### 开启BGP模式
+
+> 开启bgp模式基本思路就是将`ipip`和`vxlan`模式都给关闭了
 
 - 修改ippool中`VXLANMODE`字段为`Never`,`IPIPMODE`改为`Never`
 
@@ -621,23 +625,13 @@ birdcl show protocols all Mesh_192_168_49_2
 
 ![calico-bgp](../images/calico-bgp-2.png)
 
-##### bgp混合模式
-
-> bgp peer只能在一个子网中使用,但是在k8s中为了灾备冗余不能一个集群所有节点都在同一个子网中，所以在node节点不在同一个子网时候bgp需要其他node知道路由
-
-![calico-bgp](../images/calico-bgp-3.png)
-
-- 当跨子网时使用`ipip/vxlan`来进行通讯
-- 将ippool中的`IPIPMODE`或`VXLANMODE`修改为`CrossSubnet`即可
-- 这与既可以享受bgp的性能又能解决bgp的局限性
-
-##### bgp-rr模式(Route reflectors)
+#### BGP-RR模式(Route reflectors)
 
 ![calico-bgp](../images/calico-bgp-4.png)
 
 - 从节点中选取一部分节点作为bgp路由反射器以减少bgp对等体数量
 
-###### 路由反射部署方案
+##### 路由反射部署方案
 
 > 测试环境为4个节点的minikube集群
 
@@ -650,7 +644,7 @@ birdcl show protocols all Mesh_192_168_49_2
 
 - 选择2个节点作为反射器，这里我选择后2个
 
-###### 确认现在的为bgp的mesh模式
+##### 确认现在的为bgp的mesh模式
 
 {% note warning %}
 需要注意`calicoctl node status`这个需要再部署calico的节点上执行。。。。有点唐突
@@ -682,7 +676,7 @@ calicoctl get nodes -o wide
 # minikube-m04   (64512)   192.168.49.5/24   # 作为反射器
 ```
 
-###### 指定节点作为反射器
+##### 指定节点作为反射器
 
 - 导出`calico/node`资源
 
@@ -692,6 +686,8 @@ calicoctl get nodes minikube-m04 -o yaml > minikube-m04.yaml
 ```
 
 - 在导出的文件中添加下面的字段
+
+> routeReflectorClusterID应该是为了防止路由环路
 
 ```yaml
 # ...
@@ -716,7 +712,7 @@ calicoctl replace -f minikube-m04.yaml
 kubectl label node minikube-m04 minikube-m03 route-reflector=true
 ```
 
-###### 配置bgp对等体
+##### 配置bgp对等体
 
 ```yaml
 kind: BGPPeer
@@ -741,7 +737,7 @@ spec:
   asNumber: 63400
 ```
 
-###### 查看节点bgp状态
+##### 查看节点bgp状态
 
 ```shell
 # rr模式的节点上
@@ -769,7 +765,7 @@ IPv4 BGP status
 +--------------+---------------+-------+----------+-------------+
 ```
 
-##### TOR路由
+#### BGP-TOR路由
 
 `Top of Rack`机架上面的交换机
 
@@ -777,6 +773,170 @@ IPv4 BGP status
 
 - 这个方案中所有的节点将bgp信息宣告给tor交换机由交换机负责bgp宣告
 - 需要硬件交换机和路由器中整体部署bgp网络，然后宣告给这个网络
+
+#### IPIP/VXLAN跨子网模式
+
+- 当跨子网时使用`ipip/vxlan`来进行通讯
+- 将ippool中的`IPIPMODE`或`VXLANMODE`修改为`CrossSubnet`即可
+
+##### 环境说明
+
+```shell
+kubectl get no
+# [root@10-72-164-144 ~]# kubectl get no
+# NAME            STATUS   ROLES           AGE   VERSION
+# 10-72-137-177   Ready    control-plane   14d   v1.27.1
+# 10-72-164-144   Ready    control-plane   14d   v1.27.1
+# 10-72-164-145   Ready    control-plane   14d   v1.27.1
+
+kubectl get po -o wide
+# [root@10-72-164-144 ~]# kubectl get po -o wide
+# NAME             READY   STATUS    RESTARTS   AGE   IP              NODE            NOMINATED NODE   READINESS GATES
+# net-test-5g2hg   1/1     Running   0          14d   10.244.90.196   10-72-164-145   <none>           <none>
+# net-test-5j2kw   1/1     Running   0          14d   10.244.77.194   10-72-164-144   <none>           <none>
+# net-test-dzhhs   1/1     Running   0          14d   10.244.90.132   10-72-137-177   <none>           <none>
+```
+
+- `10.72.137.177`为一个子网，`10.72.164.144,10.72.164.145`为同一个子网
+
+##### IPIP
+
+- 修改ipip为`CrossSubnet`
+
+```shell
+# 关闭vxlan如果开启了
+calicoctl patch ippool default-ipv4-ippool  -p '{"spec":{"vxlanMode": "Never"}}'
+calicoctl patch ippool default-ipv4-ippool  -p '{"spec":{"ipipMode": "CrossSubnet"}}'
+
+# 确认修改
+calicoctl get ippool default-ipv4-ippool -o wide
+# [root@10-72-164-144 ~]# calicoctl get ippool default-ipv4-ippool -o wide
+# NAME                  CIDR            NAT    IPIPMODE      VXLANMODE   DISABLED   DISABLEBGPEXPORT   SELECTOR
+# default-ipv4-ippool   10.244.0.0/16   true   CrossSubnet   Never       false      false              all()
+```
+
+- 查看路由
+
+```shell
+ip r
+# [root@10-72-164-144 ~]# ip r
+# default via 10.72.164.1 dev eth0
+# 10.72.164.0/24 dev eth0 proto kernel scope link src 10.72.164.144
+# blackhole 10.244.77.192/26 proto bird
+# 10.244.77.194 dev cali97faa6acd6c scope link
+# 10.244.77.195 dev cali8192f92cc2f scope link
+# 10.244.90.128/26 via 10.72.137.177 dev tunl0 proto bird onlink 跨子网使用了tunlo这个网卡
+# 10.244.90.192/26 via 10.72.164.145 dev eth0 proto bird
+```
+
+- 确认是ipip网卡
+
+```shell
+ip addr show  tunl0
+# [root@10-72-164-144 ~]# ip addr show  tunl0
+# 9: tunl0@NONE: <NOARP,UP,LOWER_UP> mtu 1480 qdisc noqueue state UNKNOWN qlen 1000
+#     link/ipip 0.0.0.0 brd 0.0.0.0
+#     inet 10.244.77.199/32 scope global tunl0
+```
+
+![calico-ipip](../images/calico-ipip-2.png)
+
+- 通过路由可以看到ipip在CrossSubnet下同子网直接通过bgp(bird)获取的路由发送出去,跨子网则使用了ipip隧道
+
+##### VXLAN
+
+- 修改VXLANMODE为CrossSubnet
+
+```shell
+calicoctl patch ippool default-ipv4-ippool  -p '{"spec":{"ipipMode": "Never"}}'
+calicoctl patch ippool default-ipv4-ippool  -p '{"spec":{"vxlanMode": "CrossSubnet"}}'
+
+# 确认下
+calicoctl get ippool default-ipv4-ippool -o wide
+# [root@10-72-164-144 ~]# calicoctl get ippool default-ipv4-ippool -o wide
+# NAME                  CIDR            NAT    IPIPMODE   VXLANMODE     DISABLED   DISABLEBGPEXPORT   SELECTOR
+# default-ipv4-ippool   10.244.0.0/16   true   Never      CrossSubnet   false      false              all()
+```
+
+- 查看路由
+
+```shell
+ip r
+# [root@10-72-164-144 ~]# ip r
+# default via 10.72.164.1 dev eth0
+# 10.72.164.0/24 dev eth0 proto kernel scope link src 10.72.164.144
+# 10.244.0.192/26 via 10.72.164.145 dev eth0 proto 80 onlink
+# blackhole 10.244.77.192/26 proto 80
+# 10.244.77.194 dev cali97faa6acd6c scope link
+# 10.244.77.195 dev cali8192f92cc2f scope link
+# 10.244.90.128/26 via 10.244.90.135 dev vxlan.calico onlink 跨子网使用了vxlan
+# 10.244.90.192/26 via 10.72.164.145 dev eth0 proto 80 onlink 同子网其他节点
+```
+
+- 查看vxlan网卡
+
+```shell
+ip addr show vxlan.calico
+# [root@10-72-164-144 ~]# ip addr show vxlan.calico
+# 43: vxlan.calico: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1450 qdisc noqueue state UNKNOWN
+#     link/ether 66:80:c0:e8:b1:d7 brd ff:ff:ff:ff:ff:ff
+#     inet 10.244.77.200/32 scope global vxlan.calico
+#        valid_lft forever preferred_lft forever
+#     inet6 fe80::6480:c0ff:fee8:b1d7/64 scope link
+#        valid_lft forever preferred_lft forever
+```
+
+![calico-vxlan](../images/calico-vxlan-2.png)
+
+- 结论通过路由可以看到vxlan在CrossSubnet下同子网直接通过eth0发送出去,跨子网则使用了vxlan
+
+##### 跨子网bgp full mesh模式下路由
+
+- 查看路由
+
+```shell
+# [root@10-72-164-144 ~]# calicoctl get ippool default-ipv4-ippool -o wide
+# NAME                  CIDR            NAT    IPIPMODE   VXLANMODE   DISABLED   DISABLEBGPEXPORT   SELECTOR
+# default-ipv4-ippool   10.244.0.0/16   true   Never      Never       false      false              all()
+
+ip r
+# [root@10-72-164-144 ~]# ip r
+# default via 10.72.164.1 dev eth0
+# 10.72.164.0/24 dev eth0 proto kernel scope link src 10.72.164.144
+# blackhole 10.244.77.192/26 proto bird
+# 10.244.77.194 dev cali97faa6acd6c scope link
+# 10.244.77.195 dev cali8192f92cc2f scope link
+# 10.244.90.128/26 via 10.72.164.1 dev eth0 proto bird
+# 10.244.90.192/26 via 10.72.164.145 dev eth0 proto bird
+```
+
+- 可以看到在跨子网时,路由指向了当前节点的网关，但我们的网关却不知道10.244.90.128/26路由到哪里，所以10.244.90.128/26的地址不通
+
+```shell
+k get po -o wide
+# [root@10-72-164-144 ~]# k get po -o wide
+# NAME             READY   STATUS    RESTARTS   AGE   IP              NODE            NOMINATED NODE   READINESS GATES
+# net-test-5g2hg   1/1     Running   0          14d   10.244.90.196   10-72-164-145   <none>           <none>
+# net-test-5j2kw   1/1     Running   0          14d   10.244.77.194   10-72-164-144   <none>           <none>
+# net-test-dzhhs   1/1     Running   0          14d   10.244.90.132   10-72-137-177   <none>           <none>
+k exec -it net-test-5g2hg -- ping 10.244.90.132
+# [root@10-72-164-144 ~]# k exec -it net-test-5g2hg -- ping 10.244.90.132
+# PING 10.244.90.132 (10.244.90.132): 56 data bytes
+
+```
+
+- 符合预期
+
+##### 将ipip和vxlan全部设置为CrossSubnet
+
+- 不行
+
+```shell
+[root@10-72-164-144 ~]# calicoctl patch ippool default-ipv4-ippool  -p '{"spec":{"vxlanMode": "CrossSubnet"}}'
+Successfully patched 1 'IPPool' resource
+[root@10-72-164-144 ~]# calicoctl patch ippool default-ipv4-ippool  -p '{"spec":{"ipipMode": "CrossSubnet"}}'
+Hit error: updating existing resource: error with field IPPool.Spec.VXLANMode = 'CrossSubnet' (Cannot enable both VXLAN and IPIP on the same IPPool)
+```
 
 #### EBPF
 
@@ -935,7 +1095,7 @@ annotations:
 - 顾名思义保留的ip不会分配给pod
 
 ```yaml
-apiVersion: projectcalico.org/v3
+apiVersion: crd.projectcalico.org/v1
 kind: IPReservation
 metadata:
   name: my-ipreservation-1
