@@ -12,7 +12,24 @@ tags:
 
 #### 标题一
 
-<内容>
+```shell
+git clone https://github.com/kubernetes-sigs/kubespray.git
+```
+
+```shell
+cp -rfp inventory/sample /inventory/mycluster
+
+declare -a IPS=(10.10.1.3 10.10.1.4 10.10.1.5)
+CONFIG_FILE=inventory/mycluster/hosts.yaml python3 contrib/inventory_builder/inventory.py ${IPS[@]}
+
+
+docker run --rm -it --mount type=bind,source="$(pwd)"/inventory/sample,dst=/inventory \
+  --mount type=bind,source="${HOME}"/.ssh/id_rsa,dst=/root/.ssh/id_rsa \
+  quay.io/kubespray/kubespray:v2.22.0 bash
+
+ansible-playbook -i /inventory/inventory.ini --private-key /root/.ssh/id_rsa cluster.yml
+```
+
 
 ##### 标题一子标题
 
