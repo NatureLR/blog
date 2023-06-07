@@ -1,8 +1,11 @@
 layout: draft
 title: 使用kubespray部署k8s集群
 author: Nature丿灵然
-date: 2023-05-25 17:35:40
 tags:
+  - k8s
+categories:
+  - 运维
+date: 2023-05-25 17:35:00
 ---
 <简介，将显示在首页>
 
