@@ -1,7 +1,7 @@
 layout: draft
-title: rsync
+title: rsync使用
 author: Nature丿灵然
-date: 2023-05-19 17:57:49
+date: 2023-06-07 16:41:49
 tags:
   - rsync
 categories:
@@ -10,8 +10,6 @@ categories:
 rsync是一个用于文件同步和传输的实用工具。它可以在本地或远程系统之间进行文件传输，并提供许多功能，例如增量复制、备份、远程同步等。
 
 <!--more-->
-
-> 说明，模版文件不要发布出来
 
 #### 安装
 
@@ -61,16 +59,38 @@ rsync -avz $src $dest
 
 - 一般只需要在目标前加上用户名和ip和冒号即可
 
-- 上传
+```shell
+rsync -rv -e ssh $src root@0.0.0.0:$dest
+```
+
+- 上传,`-e ssh`可以省略
 
 ```shell
-rsync -rv  $src root@0.0.0.0:$dest
+rsync -rv $src root@0.0.0.0:$dest
 ```
 
 - 下载
 
 ```shell
 rsync -rv root@0.0.0.0:$src $dest
+```
+
+- 指定ssh端口
+
+```shell
+rsync -rv -e "ssh -p2222" $src root@0.0.0.0:$dest
+```
+
+##### rsync协议同步
+
+- 如果另外一台服务区安装了rsync守护进程则可以使用rsync协议来传输
+
+- 在前面加了个`rsync://`或者`::`指定协议
+- module是rsync守护进程指定的
+
+```shell
+rsync -av $src/ $ip::/$module/$dest
+rsync -av $src/ rsync://$ip/$module/$dest
 ```
 
 #### 断点续传
@@ -91,30 +111,16 @@ rsync -avP $src $dest
 rsync -av --delete $src $dest
 ```
 
-- --existing 只传输目标没有的
-- --ignore-existing" 只传输目标有的
+- --existing 只传输目标有的的
 
-```shell
-tree a b
-a
-├── 1
-├── 2
-└── 3
-b
-├── 1
-└── 2
-```
-
-```shell
-
-```
+- --ignore-existing 只传输目标没有的
 
 #### 设置带宽
 
 - --bwlimit 设置带宽,单位是KB/s
 
 ```shell
-rsync -av --bwlimit=1000  $src $dest
+rsync -rv --bwlimit=1000  $src $dest
 ```
 
 #### 文件过滤
@@ -123,16 +129,24 @@ rsync -av --bwlimit=1000  $src $dest
 
 ```shell
 # 排除日志文件
-rsync -av --include="*.dat" $src $dest
+rsync -rv --include="*.dat" $src $dest
 ```
 
 - --exclude排除同步的文件
 
 ```shell
 # 排除日志文件
-rsync -av --exclude="*.log" $src $dest
+rsync -rv --exclude="*.log" $src $dest
+```
+
+#### 增量备份
+
+- --link-dest=$DIR 和基准目录不一样的文件创建链接,注意这个目录需要时`绝对路径`
+
+```shell
+rsync -a -v --link-dest=$base $src $dest
 ```
 
 #### 参考资料
 
-<http://blog.naturelr.cc>
+<https://www.ruanyifeng.com/blog/2020/08/rsync.html>
