@@ -356,6 +356,9 @@ kubectl uncordon <节点>
 # 打印默认的初始化配置
 kubeadm config print init-defaults > kubeadm-config.yaml
 
+# 打印默认的初始化配置,巴罗了kubeetl组件
+kubeadm config print init-defaults --component-configs KubeletConfiguration
+
 # 使用配置文件来初始化集群
 kubeadm init --config kubeadm-config.yaml
 
