@@ -1,11 +1,10 @@
-layout: draft
-title: keepalived
+title: 模版
 author: Nature丿灵然
 tags:
-  - 负载均衡
+  - 模版
 categories:
   - 运维
-date: 2023-05-15 16:11:00
+date: 2020-12-14 15:15:00
 ---
 <简介，将显示在首页>
 
@@ -13,11 +12,9 @@ date: 2023-05-15 16:11:00
 
 > 说明，模版文件不要发布出来
 
-#### 安装
+#### 标题一
 
-```shell
-yum install keepalived
-```
+<内容>
 
 ##### 标题一子标题
 
@@ -25,4 +22,4 @@ yum install keepalived
 
 #### 参考资料
 
-<https://wsgzao.github.io/post/keepalived/>
+<http://blog.naturelr.cc>
