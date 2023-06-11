@@ -82,3 +82,58 @@ gitlab-backup restore BACKUP=1684312462_2023_05_17_14.9.5
 wget --content-disposition https://packages.gitlab.com/gitlab/gitlab-ce/packages/el/7/gitlab-ce-13.12.12-ce.0.el7.x86_64.rpm/download.rpm
 yum -y install gitlab-ce-13.12.12-ce.0.el7.x86_64.rpm
 ```
+
+#### gitalb-pages
+
+- 设置pages的地址，不要和gitlab的域名一致，dns是是泛域名解析到gitlab服务器
+
+```ruby
+pages_external_url "http://pages.example.com/"
+gitlab_pages['enable'] = true
+```
+
+##### 实例
+
+```yaml
+pages:
+  stage: deploy
+  script:
+    - mkdir .public
+    - cp -r * .public
+    - mv .public public
+  artifacts:
+    paths:
+      - public
+  only:
+```
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>测试</h1>
+</body>
+</html>
+```
+
+```nginx
+server {
+    listen        8084;
+    root          /data/nginx/domain5;
+    server_name   www.baidu.com;
+    location      /   {
+        root          /data/nginx/domain5;
+        autoindex     on;
+    }
+    location      /abc.html   {
+        return  301  http://root.page.naturelr.cc/home;
+    }
+
+}
+```
