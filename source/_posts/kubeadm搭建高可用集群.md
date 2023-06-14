@@ -385,11 +385,17 @@ kubeadm join k8s-api:6443
 --certificate-key <key> \
 --v=6
 
+# 加入master的简便命令
+kubeadm token create --print-join-command --certificate-key $(kubeadm init phase upload-certs --upload-certs|tail -1)
+
 # kubeadm init 和 kubeadm join 如果cpu配置太低可以使用下面的参数忽略
 --ignore-preflight-errors=Mem,NumCPU
 
 # 查看证书时间
-kubeadm  certs check-expiration
+kubeadm certs check-expiration
+
+# 证书续期
+kubeadm certs renew all
 ```
 
 #### 参考资料

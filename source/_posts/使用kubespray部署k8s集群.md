@@ -34,7 +34,7 @@ docker run --rm -it -v $(pwd)/inventory:/inventory -v "${HOME}"/.ssh/id_rsa:/roo
 - 拷贝模本文件到自己的inventory下
 
 ```shell
-cp -rfp inventory/sample /inventory/mycluste
+cp -rfp inventory/sample /inventory/mycluster
 ```
 
 - 通过脚本自动生成hosts文件,也可以自己写hosts文件,且配置集群
