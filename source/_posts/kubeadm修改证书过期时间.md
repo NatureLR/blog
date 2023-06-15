@@ -15,11 +15,19 @@ kubeadm搭建的集群证书默认ca是时间，其他组件的证书是一年�
 
 > 所以一劳永逸直接修改kubeadm证书时间
 
+#### 下载源码
+
+```shell
+git clone -b v1.27.3 https://github.com/kubernetes/kubernetes.git
+```
+
 #### 修改证书时间
 
 - ca 证书
 
-./staging/src/k8s.io/client-go/util/cert/cert.go
+```shell
+code ./staging/src/k8s.io/client-go/util/cert/cert.go
+```
 
 `NewSelfSignedCACert`这个函数的NotAfter字段
 
@@ -51,7 +59,9 @@ func NewSelfSignedCACert(cfg Config, key crypto.Signer) (*x509.Certificate, erro
 
 - 组件证书
 
-./cmd/kubeadm/app/constants/constants.go
+```shell
+code ./cmd/kubeadm/app/constants/constants.go
+```
 
 `CertificateValidity`这个变量
 
