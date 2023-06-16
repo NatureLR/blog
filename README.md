@@ -5,7 +5,7 @@
 
 ## 安装
 
-1. 安装npm 根据各个平台具体查看我写的[blog](https://blog.naturelr.cc/2020/09/22/NodeJs%E5%9F%BA%E6%9C%AC%E4%BD%BF%E7%94%A8/)
+1. 安装npm 根据各个平台具体查看我写的[blog](https://blog.naturelr.cc/2020/09/22/nodejs%E5%9F%BA%E6%9C%AC%E4%BD%BF%E7%94%A8/)
 
 2. 克隆本项目并进入`git clone https://github.com/NatureLR/blog.git`，进入项目
 

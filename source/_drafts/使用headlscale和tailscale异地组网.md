@@ -90,7 +90,7 @@ source .bashrc
 
 #### tailscale部署
 
-- 一件安装
+- 一键安装
 
 ```sehll
 curl -fsSL https://tailscale.com/install.sh | sh
