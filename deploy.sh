@@ -6,6 +6,6 @@ hexo clean
 hexo generate
 hexo deploy
 
-git add .
-git commit -m "hexo-admin:deploy"
-git push
+# git add .
+# git commit -m "hexo-admin:deploy"
+# git push
