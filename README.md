@@ -38,9 +38,11 @@
 ├── _config.yml        # hexo配置文件
 ├── db.json
 ├── deploy.sh*         # hexo-admin执行发布的脚本
+├── Dockerfile         # dockerfile
 ├── drawio             # drawio图片文件
 ├── package-lock.json
 ├── package.json
 ├── source/CNAME       # gitlab Pags的域名
+├── makefile           # makefile
 ├── LICENSE            # 许可
 ```
