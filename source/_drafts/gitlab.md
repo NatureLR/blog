@@ -121,19 +121,3 @@ pages:
 </body>
 </html>
 ```
-
-```nginx
-server {
-    listen        8084;
-    root          /data/nginx/domain5;
-    server_name   www.baidu.com;
-    location      /   {
-        root          /data/nginx/domain5;
-        autoindex     on;
-    }
-    location      /abc.html   {
-        return  301  http://root.page.naturelr.cc/home;
-    }
-
-}
-```

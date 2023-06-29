@@ -1,18 +1,17 @@
----
 layout: draft
-title: 使用headlscale和tailscale异地组网
+title: 使用headscale和tailscale异地组网
 author: Nature丿灵然
-date: 2023-05-26 11:09:33
 tags:
+  - 网络
+categories:
+  - 运维
+date: 2023-06-11 15:49:00
 ---
-<简介，将显示在首页>
+[Tailscale](https://github.com/tailscale/tailscale)是一个基于[WireGuard](https://www.wireguard.com)的组网工具,不同的在用户空间实现了WireGuard协议,虽然性能稍微下降但是比较灵活
 
 <!--more-->
 
-> 说明，模版文件不要发布出来
-
-[headscale](https://github.com/juanfont/headscale)
-[tailscals](https://github.com/tailscale/tailscale)
+tailcasle官方原版中的控制器是不开源的,[headscale](https://github.com/juanfont/headscale)是一个开源的控制器,由欧洲航天局的大佬开发
 
 #### 使用docker部署headscale
 

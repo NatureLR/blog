@@ -8,19 +8,36 @@ categories:
   - 运维
 date: 2023-05-15 16:11:00
 ---
-<简介，将显示在首页>
+nginx除了做为web服务器，常用来做为反代
 
 <!--more-->
 
-> 说明，模版文件不要发布出来
+#### 安装
 
-#### 标题一
+- yum
 
-<内容>
+```shell
+yum install nginx
+```
 
-##### 标题一子标题
+- docker镜像
 
-<内容>
+#### 反向代理
+
+```conf
+server {
+    listen        8080;
+    root          /data/nginx/;
+    server_name   www.baidu.com;
+    location / {
+        root          /data/nginx/domain5;
+        autoindex     on;
+    }
+    location /tset   {
+        return  301  http://test.naturelr.cc/home;
+    }
+}
+```
 
 #### 参考资料
 

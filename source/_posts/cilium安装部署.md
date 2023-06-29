@@ -1,5 +1,5 @@
 layout: draft
-title: cilium
+title: cilium安装部署
 author: Nature丿灵然
 tags:
   - cni
@@ -7,7 +7,7 @@ tags:
   - k8s
 categories:
   - 运维
-date: 2023-05-19 18:01:00
+date: 2023-06-21 17:01:00
 ---
 clium是一个使用ebpf实现的cni
 
@@ -15,10 +15,13 @@ clium是一个使用ebpf实现的cni
 
 #### 安装
 
+{% note warning %}
+ebpf需要高版本内核支持,建议5.0以上
+{% endnote %}
+
 - 下载二进制文件
 
 ```shell
-
 CILIUM_CLI_VERSION=$(curl -s https://raw.githubusercontent.com/cilium/cilium-cli/master/stable.txt)
 CLI_ARCH=amd64
 if [ "$(uname -m)" = "aarch64" ]; then CLI_ARCH=arm64; fi
@@ -41,6 +44,7 @@ cilium hubble enable
 - 开启hubble可观测性界面
 
 ```shell
+# 下载二进制文件
 wget https://github.com/cilium/hubble/releases/download/v0.10.0/hubble-linux-amd64.tar.gz
 
 # 开启hubble界面
@@ -52,4 +56,4 @@ cilium hubble ui
 
 #### 参考资料
 
-<http://blog.naturelr.cc>
+<https://docs.cilium.io/en/stable/>
