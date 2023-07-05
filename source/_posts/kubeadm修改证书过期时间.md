@@ -6,7 +6,7 @@ tags:
   - kubeadm
   - 证书
 categories:
-  - 运维
+  - 开发
 date: 2022-08-19 11:51:00
 ---
 kubeadm搭建的集群证书默认ca是时间，其他组件的证书是一年如果一年没有执行升级的操作就会过期
@@ -57,6 +57,19 @@ func NewSelfSignedCACert(cfg Config, key crypto.Signer) (*x509.Certificate, erro
 }
 ```
 
+- loopback证书
+
+```go
+func GenerateSelfSignedCertKeyWithFixtures(host string, alternateIPs []net.IP, alternateDNS []string, fixtureDirectory string) ([]byte, []byte, error) {
+  validFrom := time.Now().Add(-time.Hour) // valid an hour earlier to avoid flakes due to clock skew
+  maxAge := time.Minute * 10// one year self-signed certs 这里需要修改
+
+  baseName := fmt.Sprintf("%s_%s_%s", host, strings.Join(ipsToStrings(alternateIPs), "-"), strings.Join(alternateDNS, "-"))
+  certFixturePath := filepath.Join(fixtureDirectory, baseName+".crt")
+  keyFixturePath := filepath.Join(fixtureDirectory, baseName+".key")
+...
+```
+
 - 组件证书
 
 ```shell
@@ -74,9 +87,11 @@ CertificateValidity = time.Hour * 24 * 365 // 需要修改的地方
 
 ```shell
 make all WHAT=cmd/kubeadm GOFLAGS=-v
+
+make all WHAT=cmd/kube-apiserver GOFLAGS=-v
 ```
 
-编译好的二进制文件中在`_output/bin/kubeadm`
+编译好的二进制文件中在`_output/bin/`
 
 建议先使用yum等工具安装官方的kubeadm之后进行二进制替换
 
