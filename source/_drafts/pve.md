@@ -2,10 +2,13 @@
 # PVE环境制作cloud-init模板
 
 ```shell
+id=""
+img=""
+
 # 创建机器
 qm create $id --name Debian12CloudInit --net0 virtio,bridge=vmbr0
 # 导入启动盘
-qm importdisk $id debian-12-genericcloud-amd64-20230802-1460.qcow2 local-lvm
+qm importdisk $id $img local-lvm
 # 添加磁盘
 qm set $id --scsihw virtio-scsi-pci --scsi0 local-lvm:vm-$id-disk-0
 #调整磁盘大小
