@@ -24,7 +24,7 @@ yum install nginx
 
 #### 反向代理
 
-```conf
+```nginx
 server {
     listen        8080;
     root          /data/nginx/;
