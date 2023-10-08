@@ -412,6 +412,10 @@ Chain KUBE-POSTROUTING (1 references)
 
 ![svc](../images/kube-svc-7.png)
 
+> 流程图
+
+![Alt text](../images/kube-proxy-iptables-nat-control-flow.svg)
+
 ##### 集群外访问NodePort
 
 集群外部一台服务器(10.23.83.9)通过`nodePort`请求集群的cdebug这个服务
