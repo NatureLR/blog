@@ -38,15 +38,17 @@ sepc:               # 加上下放的 spec 就是 Resource了
 
 类似这样的关系/group/version/kind
 
-### 项目初始化
+#### 示例
+
+##### 项目初始化
 
 完整代码:<https://github.com/NatureLR/code-example/tree/master/operator>
 
-#### 需求背景
+##### 需求背景
 
 > 我们在部署服务的时候经常需要同时部署deployment和svc这样很复杂，于是自定义一个资源叫appx，让appx来创建svc和deployment
 
-#### 初始化文件夹
+##### 初始化文件夹
 
 在项目文件夹下执行
 
@@ -74,7 +76,7 @@ kubebuilder init --repo github.com/naturelr/code-example/operator --domain natur
 6 directories, 24 files
 ```
 
-#### 创建api模板
+##### 创建api模板
 
 执行下面的命令，创建api，期间会问你是不是需要创建Resource和Controller，这里我们都选y
 
@@ -106,7 +108,7 @@ kubebuilder create api --group appx --version v1 --kind Appx
 12 directories, 10 files
 ```
 
-#### 实现
+##### 实现
 
 ##### 定义字段
 
@@ -274,7 +276,7 @@ LAST SEEN   TYPE     REASON   OBJECT     MESSAGE
 4s          Normal   找到cr     appx/foo   foo  
 ```
 
-### 常用命令
+#### 常用命令
 
 ```shell
 # 初始化

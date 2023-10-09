@@ -191,7 +191,7 @@ func GenerateSelfSignedCertKeyWithFixtures(host string, alternateIPs []net.IP, a
 
 - 到此位置生成的证书和回环客户端完成，其中回环客户端复制给了`controlplane.Config.LoopbackClientConfig`,证书给了`controlplane.Config.SNICerts`
 
-### 使用证书
+#### 使用证书
 
 - 使用证书的地方为
 
@@ -280,7 +280,7 @@ tlsConfig.GetConfigForClient = dynamicCertificateController.GetConfigForClient /
 
 ```
 
-### 使用客户端
+#### 使用客户端
 
 - 回环证书在很多地方回到`CreateServerChain`这里
 
