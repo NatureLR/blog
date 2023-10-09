@@ -23,7 +23,7 @@ kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.13.10/conf
 
 > l2只能在同一个二层中使用，且只有容灾没有负载均衡功能，所有访问lb的流量都转发`选举`的主节点上在通过该节点转发到对应的pod
 
-![Alt text](../images/meteallb-0.png)
+![x](../images/metallb-0.png)
 
 ##### 配置
 
