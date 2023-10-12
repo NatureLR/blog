@@ -56,11 +56,15 @@ highlight:
   tab_replace: ''
   wrap: true
   hljs: true
+  exclude_languages:
+    - mermaid
 prismjs:
   enable: true
   preprocess: true
   line_number: true
   tab_replace: ''
+  exclude_languages:
+    - mermaid
 
 # Home page setting
 # path: Root path for your blogs index page. (default = '')

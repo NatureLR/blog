@@ -364,8 +364,8 @@ codeblock:
     light: default
     dark: base16/tomorrow-night
   prism:
-    light: prism-shades-of-purple
-    dark: prism-shades-of-purple
+    light: prism-one-dark
+    dark: prism-one-dark
   # Add copy button on codeblock
   copy_button:
     enable: true
