@@ -1,20 +1,16 @@
-title: containerd源码-启动过程插件注册
+title: containerd源码-下载镜像
 author: Nature丿灵然
 tags:
   - k8s
   - containerd
 categories:
   - 开发
-date: 2023-10-25 15:15:00
+date: 2023-10-26 15:15:00
 ---
 
-前面介绍了containerd的存储以及oci等,现在将从源码开蓝启动过程和插件的注册
+前面介绍了插件注册以及启动,本次介绍下载镜像的过程
 
 <!--more-->
-
-#### 启动过程
-
-#### 插件注册
 
 #### 下载镜过程
 

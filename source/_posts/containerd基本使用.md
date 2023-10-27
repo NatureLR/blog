@@ -246,7 +246,7 @@ oci镜像格式的`mediaType`参考[这里](https://github.com/opencontainers/im
 
 ###### manifest
 
-- 主要定义镜像相关的清单，包含config类型和config类型
+- 主要定义镜像相关的清单，主要包含config类型和layers类型
 
 ```json
 {
