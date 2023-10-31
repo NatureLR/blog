@@ -141,6 +141,12 @@ ctr images tag docker.io/library/alpine:3.18.3 <仓库>/alpine:3.18.3
 ctr images push <镜像>
 ```
 
+- 查看插件
+
+```shell
+ctr plugin ls
+```
+
 - 打印containerd默认配置
 
 ```shell

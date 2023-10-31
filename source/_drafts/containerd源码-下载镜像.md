@@ -681,10 +681,1254 @@ func (i *image) Unpack(ctx context.Context, snapshotterName string, opts ...Unpa
   }
 
   _, err = cs.Update(ctx, cinfo, fmt.Sprintf("labels.containerd.io/gc.ref.snapshot.%s", snapshotterName))
+}
+```
 
+##### chanid怎么得出来的
+
+sha256(sha256 + sha256)
+
+#### 服务端
+
+- 所有的服务都是通过插件的形式注册到grpc等服务中,都会有三种类型 grpc,service,和具体类型(content,snapshots等)
+
+##### content
+
+> content主要负责存储下载的layer接口定义在`content/content.go`中
+
+```go
+// content/content.go
+
+type ReaderAt interface {
+  io.ReaderAt
+  io.Closer
+  Size() int64
 }
 
+type Provider interface {
+  ReaderAt(ctx context.Context, desc ocispec.Descriptor) (ReaderAt, error)
+}
+
+type Ingester interface {
+  Writer(ctx context.Context, opts ...WriterOpt) (Writer, error)
+}
+
+type Info struct {
+  Digest    digest.Digest
+  Size      int64
+  CreatedAt time.Time
+  UpdatedAt time.Time
+  Labels    map[string]string
+}
+
+// Status of a content operation
+type Status struct {
+  Ref       string
+  Offset    int64
+  Total     int64
+  Expected  digest.Digest
+  StartedAt time.Time
+  UpdatedAt time.Time
+}
+
+
+type WalkFunc func(Info) error
+type Manager interface {
+  Info(ctx context.Context, dgst digest.Digest) (Info, error)
+  Update(ctx context.Context, info Info, fieldpaths ...string) (Info, error)
+  Walk(ctx context.Context, fn WalkFunc, filters ...string) error
+  Delete(ctx context.Context, dgst digest.Digest) error
+}
+type IngestManager interface {
+  Status(ctx context.Context, ref string) (Status, error)
+  ListStatuses(ctx context.Context, filters ...string) ([]Status, error)
+  Abort(ctx context.Context, ref string) error
+}
+
+
+type Writer interface {
+  io.WriteCloser
+  Digest() digest.Digest
+  Commit(ctx context.Context, size int64, expected digest.Digest, opts ...Opt) error
+  Status() (Status, error)
+  Truncate(size int64) error
+}
+
+type Store interface {
+  Manager
+  Provider
+  IngestManager
+  Ingester
+}
 ```
+
+###### content grpc类型
+
+- grpc类型的content注册在这里,使用统一的注册，申明名字类型以及依赖
+- 然后从initcontent中获取所有service的插件,然后拿到一个`ContentService`实例
+- 使用这个实例调用`contentserver.New()`,`contentserver.New()`实现了grpc相关方法
+
+```go
+// services/content/service.go
+func init() {
+  plugin.Register(&plugin.Registration{
+    Type: plugin.GRPCPlugin,
+    ID:   "content",
+    Requires: []plugin.Type{
+      plugin.ServicePlugin,
+    },
+    InitFn: func(ic *plugin.InitContext) (interface{}, error) {
+      plugins, err := ic.GetByType(plugin.ServicePlugin)
+      if err != nil {
+        return nil, err
+      }
+
+      p, ok := plugins[services.ContentService]
+      if !ok {
+        return nil, errors.New("content store service not found")
+      }
+      cs, err := p.Instance()
+      if err != nil {
+        return nil, err
+      }
+      return contentserver.New(cs.(content.Store)), nil
+    },
+  })
+}
+```
+
+- `service`就是抽象了`content.Store`
+
+- `New()`设置了上层
+
+```go
+// services/content/contentserver/contentserver.go
+
+type service struct {
+  store content.Store
+}
+
+// New returns the content GRPC server
+func New(cs content.Store) api.ContentServer {
+  return &service{store: cs}
+}
+
+func (s *service) Register(server *grpc.Server) error {
+  api.RegisterContentServer(server, s)
+  return nil
+}
+```
+
+- 由于接口很多就不一样介绍了，这里只介绍一个简单的接口
+- 可以看到grpc请求来的参数传到`store.Status()`然后再将返回的组装成grpc结果并返回，其他api也是类似这种
+
+```go
+// services/content/contentserver/contentserver.go
+
+func (s *service) Status(ctx context.Context, req *api.StatusRequest) (*api.StatusResponse, error) {
+  status, err := s.store.Status(ctx, req.Ref)
+  if err != nil {
+    return nil, errdefs.ToGRPCf(err, "could not get status for ref %q", req.Ref)
+  }
+
+  var resp api.StatusResponse
+  resp.Status = &api.Status{
+    StartedAt: status.StartedAt,
+    UpdatedAt: status.UpdatedAt,
+    Ref:       status.Ref,
+    Offset:    status.Offset,
+    Total:     status.Total,
+    Expected:  status.Expected,
+  }
+
+  return &resp, nil
+}
+```
+
+###### content service类型
+
+- 这里他依赖`plugin.MetadataPlugin`这个类型,然后将获取的meteada传入`meatadata.ContentStore()`
+
+```go
+// services/content/store.go
+
+func init() {
+  plugin.Register(&plugin.Registration{
+    Type: plugin.ServicePlugin,
+    ID:   services.ContentService,
+    Requires: []plugin.Type{
+      plugin.MetadataPlugin,
+    },
+    InitFn: func(ic *plugin.InitContext) (interface{}, error) {
+      m, err := ic.Get(plugin.MetadataPlugin)
+      if err != nil {
+        return nil, err
+      }
+
+      // 这里注册 content的svc
+      s, err := newContentStore(m.(*metadata.DB).ContentStore(), ic.Events)
+      return s, err
+    },
+  })
+}
+
+
+func newContentStore(cs content.Store, publisher events.Publisher) (content.Store, error) {
+  return &store{
+    Store:     cs,
+    publisher: publisher,
+  }, nil
+}
+```
+
+- 可以看到前面调用的`ContentStore()`返回的就是初始化,而meteadata创建的注册在`services/server/server.go`前面介绍启动过程介绍过
+
+```go
+// metadata/db.go
+
+
+// NewDB creates a new metadata database using the provided
+// bolt database, content store, and snapshotters.
+func NewDB(db *bolt.DB, cs content.Store, ss map[string]snapshots.Snapshotter, opts ...DBOpt) *DB {
+  m := &DB{
+    db:      db,
+    ss:      make(map[string]*snapshotter, len(ss)),
+    dirtySS: map[string]struct{}{},
+    dbopts: dbOptions{
+      shared: true,
+    },
+  }
+
+  for _, opt := range opts {
+    opt(&m.dbopts)
+  }
+
+  // Initialize data stores
+  m.cs = newContentStore(m, m.dbopts.shared, cs)
+  for name, sn := range ss {
+    m.ss[name] = newSnapshotter(m, name, sn)
+  }
+
+  return m
+}
+
+// ContentStore returns a namespaced content store
+// proxied to a content store.
+func (m *DB) ContentStore() content.Store {
+  if m.cs == nil {
+    return nil
+  }
+  return m.cs
+}
+```
+
+- 同样实现了content的很多方法,下面得了例子可以看到这里先读取数据库，然后在调用`store.Status()`
+
+```go
+// metadata/content.go
+
+func (cs *contentStore) Status(ctx context.Context, ref string) (content.Status, error) {
+  ns, err := namespaces.NamespaceRequired(ctx)
+
+  var bref string
+  if err := view(ctx, cs.db, func(tx *bolt.Tx) error {
+    bref = getRef(tx, ns, ref)
+    if bref == "" {
+      return errors.Wrapf(errdefs.ErrNotFound, "reference %v", ref)
+    }
+
+    return nil
+  }); err != nil {
+    return content.Status{}, err
+  }
+
+  st, err := cs.Store.Status(ctx, bref)
+  if err != nil {
+    return content.Status{}, err
+  }
+  st.Ref = ref
+  return st, nil
+}
+```
+
+###### content类型
+
+> content有2中实现,一种本地(local),一种prox(远程)
+
+- local:就是本地实现,目前可以理解为真正实现
+- proxy:则是调用远程的实现，因为content有插件
+
+- 注册则在`loadPlugin()`中首先会将本地的注册，随后读取配置文件中的`proxy_plugin`配置在注册proxy类型的，
+需要注意的是插件在整理之后会返回第一个可能导致你注册的content需要再配置文件中`disabled_plugins`参数关闭local强制使用proxy类型的
+
+```go
+// services/server/server.go
+
+  plugin.Register(&plugin.Registration{
+    Type: plugin.ContentPlugin,
+    ID:   "content",
+    InitFn: func(ic *plugin.InitContext) (interface{}, error) {
+      ic.Meta.Exports["root"] = ic.Root
+      return local.NewStore(ic.Root)
+    },
+  })
+
+  clients := &proxyClients{}
+  for name, pp := range config.ProxyPlugins {
+    var (
+      t plugin.Type
+      f func(*grpc.ClientConn) interface{}
+
+      address = pp.Address
+    )
+
+    // nsap逻辑
+
+    case string(plugin.ContentPlugin), "content":
+      t = plugin.ContentPlugin
+      f = func(conn *grpc.ClientConn) interface{} {
+        return csproxy.NewContentStore(csapi.NewContentClient(conn))
+      }
+    default:
+      log.G(ctx).WithField("type", pp.Type).Warn("unknown proxy plugin type")
+    }
+
+    plugin.Register(&plugin.Registration{
+      Type: t,
+      ID:   name,
+      InitFn: func(ic *plugin.InitContext) (interface{}, error) {
+        ic.Meta.Exports["address"] = address
+        conn, err := clients.getClient(address)
+        if err != nil {
+          return nil, err
+        }
+        return f(conn), nil
+      },
+    })
+```
+
+- 接口实现本质就是读取存储的文件一些信息,然后返回
+
+```go
+// content/local/store.go
+
+// status works like stat above except uses the path to the ingest.
+func (s *store) status(ingestPath string) (content.Status, error) {
+  dp := filepath.Join(ingestPath, "data")
+  fi, err := os.Stat(dp)
+
+  ref, err := readFileString(filepath.Join(ingestPath, "ref"))
+
+  startedAt, err := readFileTimestamp(filepath.Join(ingestPath, "startedat"))
+ 
+  updatedAt, err := readFileTimestamp(filepath.Join(ingestPath, "updatedat"))
+ 
+  // because we don't write updatedat on every write, the mod time may
+  // actually be more up to date.
+  if fi.ModTime().After(updatedAt) {
+    updatedAt = fi.ModTime()
+  }
+
+  return content.Status{
+    Ref:       ref,
+    Offset:    fi.Size(),
+    Total:     s.total(ingestPath),
+    UpdatedAt: updatedAt,
+    StartedAt: startedAt,
+  }, nil
+}
+```
+
+##### snapshot
+
+> snapshot和content的结构类似,其接口定义如下
+
+```go
+// snapshots/snapshotter.go
+
+type Snapshotter interface {
+  Stat(ctx context.Context, key string) (Info, error)
+  Update(ctx context.Context, info Info, fieldpaths ...string) (Info, error)
+  Usage(ctx context.Context, key string) (Usage, error)
+  Mounts(ctx context.Context, key string) ([]mount.Mount, error) // 只是返回了mount参数并没有真正的mount
+  Prepare(ctx context.Context, key, parent string, opts ...Opt) ([]mount.Mount, error) 
+  View(ctx context.Context, key, parent string, opts ...Opt) ([]mount.Mount, error) // 和commit一样只不过是只读的
+  Commit(ctx context.Context, name, key string, opts ...Opt) erro
+  Remove(ctx context.Context, key string) erro
+  Walk(ctx context.Context, fn WalkFunc, filters ...string) erro
+  Close() error
+}
+```
+
+###### snapshot grpc类型
+
+- 注册插件，他依赖于service类型,同样实现了Register方法调用了grpc进行api注册服务
+
+```go
+// services/snapshots/service.go
+func init() {
+  plugin.Register(&plugin.Registration{
+    Type: plugin.GRPCPlugin,
+    ID:   "snapshots",
+    Requires: []plugin.Type{
+      plugin.ServicePlugin,
+    },
+    InitFn: newService,
+  })
+}
+
+func newService(ic *plugin.InitContext) (interface{}, error) {
+  plugins, err := ic.GetByType(plugin.ServicePlugin)
+  if err != nil {
+    return nil, err
+  }
+  p, ok := plugins[services.SnapshotsService]
+  if !ok {
+    return nil, errors.New("snapshots service not found")
+  }
+  i, err := p.Instance()
+  if err != nil {
+    return nil, err
+  }
+  ss := i.(map[string]snapshots.Snapshotter)
+  return &service{ss: ss}, nil
+}
+
+func (s *service) Register(gs *grpc.Server) error {
+  snapshotsapi.RegisterSnapshotsServer(gs, s)
+  return nil
+}
+```
+
+- snapshot的service有个map,因为snapshotter有很多实现，比如默认的`overlayfs`还有`devmapper`等
+
+```go
+type service struct {
+  ss map[string]snapshots.Snapshotter
+}
+```
+
+- 我们看下其中一个api的实现，主要是处理grpc的请求和响应操作，需要注意的是传入的参数中有`Snapshotter`id,然后执行对应的snap的api,后面就到了service层处理
+
+```go
+func (s *service) Prepare(ctx context.Context, pr *snapshotsapi.PrepareSnapshotRequest) (*snapshotsapi.PrepareSnapshotResponse, error) {
+  log.G(ctx).WithField("parent", pr.Parent).WithField("key", pr.Key).Debugf("prepare snapshot")
+  sn, err := s.getSnapshotter(pr.Snapshotter)
+
+  var opts []snapshots.Opt
+  if pr.Labels != nil {
+    opts = append(opts, snapshots.WithLabels(pr.Labels))
+  }
+  mounts, err := sn.Prepare(ctx, pr.Key, pr.Parent, opts...)
+
+  return &snapshotsapi.PrepareSnapshotResponse{
+    Mounts: fromMounts(mounts),
+  }, nil
+}
+```
+
+###### snapshot service类型
+
+- 依赖MetadataPlugin类型吗,调用`db.Snapshotters()`拿到snap,meterdata里通过NewDB()传值
+
+```go
+func init() {
+// services/snapshots/snapshotters.go
+  plugin.Register(&plugin.Registration{
+    Type: plugin.ServicePlugin,
+    ID:   services.SnapshotsService,
+    Requires: []plugin.Type{
+      plugin.MetadataPlugin,
+    },
+    InitFn: func(ic *plugin.InitContext) (interface{}, error) {
+      m, err := ic.Get(plugin.MetadataPlugin)
+
+      db := m.(*metadata.DB)
+      ss := make(map[string]snapshots.Snapshotter)
+      for n, sn := range db.Snapshotters() {
+        ss[n] = newSnapshotter(sn, ic.Events)
+      }
+      return ss, nil
+    },
+  })
+}
+```
+
+- 实际调用了metedata的`Prepare()`,这里进行了大量的数据库操作
+
+```go
+func (s *snapshotter) Prepare(ctx context.Context, key, parent string, opts ...snapshots.Opt) ([]mount.Mount, error) {
+  mounts, err := s.Snapshotter.Prepare(ctx, key, parent, opts...)
+  if err := s.publisher.Publish(ctx, "/snapshot/prepare", &eventstypes.SnapshotPrepare{
+    Key:    key,
+    Parent: parent,
+  }); err != nil {
+    return nil, err
+  }
+  return mounts, nil
+}
+```
+
+- 这可以可以看到prepare和view实现都是一样的只不过view是只读的
+- 源码很长这里不放了,其主要在数据存记录snap相关信息
+- 随后调用真正的snap实现
+
+```go
+// containerd/metadata/snapshot.go
+
+func (s *snapshotter) Prepare(ctx context.Context, key, parent string, opts ...snapshots.Opt) ([]mount.Mount, error) {
+  return s.createSnapshot(ctx, key, parent, false, opts)
+}
+
+func (s *snapshotter) View(ctx context.Context, key, parent string, opts ...snapshots.Opt) ([]mount.Mount, error) {
+  return s.createSnapshot(ctx, key, parent, true, opts)
+}
+
+func (s *snapshotter) createSnapshot(ctx context.Context, key, parent string, readonly bool, opts []snapshots.Opt) ([]mount.Mount, error) {
+  // 校验参数以及复制等代码略过
+
+  if readonly {
+    m, err = s.Snapshotter.View(ctx, bkey, bparent, bopts...)
+  } else {
+    m, err = s.Snapshotter.Prepare(ctx, bkey, bparent, bopts...)
+  }
+}
+```
+
+###### snapshot类型
+
+- 直接返回了`overlay.NewSnapshotter()`
+
+```go
+// snapshots/overlay/plugin/plugin.go
+
+func init() {
+  plugin.Register(&plugin.Registration{
+    Type:   plugin.SnapshotPlugin,
+    ID:     "overlayfs",
+    Config: &Config{},
+    InitFn: func(ic *plugin.InitContext) (interface{}, error) {
+      ic.Meta.Platforms = append(ic.Meta.Platforms, platforms.DefaultSpec())
+      config, ok := ic.Config.(*Config)
+
+      root := ic.Root
+      if config.RootPath != "" {
+        root = config.RootPath
+      }
+
+      ic.Meta.Exports["root"] = root
+      return overlay.NewSnapshotter(root, overlay.AsynchronousRemove)
+    },
+  })
+}
+```
+
+- New函数中依然执行opt相关的操作,然后创建了目录随后创建数据库文件到这个目录中，注意这个数据库不metedata的数据库而是snap自己的数据库
+- 读取了一些overlay相关参数
+
+```go
+// snapshots/overlay/overlay.go
+
+func NewSnapshotter(root string, opts ...Opt) (snapshots.Snapshotter, error) {
+  var config SnapshotterConfig
+  for _, opt := range opts {
+    if err := opt(&config); err != nil {
+      return nil, err
+    }
+  }
+
+  if err := os.MkdirAll(root, 0700); err != nil {
+
+
+  ms, err := storage.NewMetaStore(filepath.Join(root, "metadata.db"))
+
+  if err := os.Mkdir(filepath.Join(root, "snapshots"), 0700); err != nil && !os.IsExist(err) {
+    return nil, err
+  }
+
+  // figure out whether "userxattr" option is recognized by the kernel && needed
+  userxattr, err := overlayutils.NeedsUserXAttr(root)
+  if err != nil {
+    logrus.WithError(err).Warnf("cannot detect whether \"userxattr\" option needs to be used, assuming to be %v", userxattr)
+  }
+
+  return &snapshotter{
+    root:        root,
+    ms:          ms,
+    asyncRemove: config.asyncRemove,
+    indexOff:    indexOff,
+    userxattr:   userxattr,
+  }, nil
+}
+```
+
+- 和前面调用的PrePare结构很相似,也只是传递的是否只读不一样
+
+```go
+func (o *snapshotter) Prepare(ctx context.Context, key, parent string, opts ...snapshots.Opt) ([]mount.Mount, error) {
+  return o.createSnapshot(ctx, snapshots.KindActive, key, parent, opts)
+}
+
+func (o *snapshotter) View(ctx context.Context, key, parent string, opts ...snapshots.Opt) ([]mount.Mount, error) {
+  return o.createSnapshot(ctx, snapshots.KindView, key, parent, opts)
+}
+```
+
+- 首先创建一个临时目录然后数据中创建snap记录,如果有parent则修改guid,然后修改名字为正式的snap目录
+- 最后通过mount函数返回
+
+```go
+// snapshots/overlay/overlay.go
+
+func (o *snapshotter) createSnapshot(ctx context.Context, kind snapshots.Kind, key, parent string, opts []snapshots.Opt) (_ []mount.Mount, err error) {
+  if err := o.ms.WithTransaction(ctx, true, func(ctx context.Context) (err error) {
+    td, err = o.prepareDirectory(ctx, snapshotDir, kind)
+
+    s, err = storage.CreateSnapshot(ctx, kind, key, parent, opts...)
+ 
+    if len(s.ParentIDs) > 0 {
+      st, err := os.Stat(o.upperPath(s.ParentIDs[0]))
+
+      stat := st.Sys().(*syscall.Stat_t)
+      if err := os.Lchown(filepath.Join(td, "fs"), int(stat.Uid), int(stat.Gid)); err != nil {}
+    }
+
+    path = filepath.Join(snapshotDir, s.ID)
+    if err = os.Rename(td, path); err != nil {
+      return fmt.Errorf("failed to rename: %w", err)
+    }
+    td = ""
+
+    return nil
+  }); err != nil {
+    return nil, err
+  }
+
+  return o.mounts(s), nil
+}
+}
+```
+
+- mount函数根据snapshotter的ParentIDs来判断是否返回读写的bind类型挂载
+- 通过判断是否是active来返回只读的bind类型挂载
+- 最后通过ParentIDs组合overlay的参数
+
+```go
+// snapshots/overlay/overlay.go
+func (o *snapshotter) mounts(s storage.Snapshot) []mount.Mount {
+  if len(s.ParentIDs) == 0 {
+    // if we only have one layer/no parents then just return a bind mount as overlay
+    // will not work
+    roFlag := "rw"
+    if s.Kind == snapshots.KindView {
+      roFlag = "ro"
+    }
+
+    return []mount.Mount{
+      {
+        Source: o.upperPath(s.ID),
+        Type:   "bind",
+        Options: []string{
+          roFlag,
+          "rbind",
+        },
+      },
+    }
+  }
+
+  options := o.options
+  if s.Kind == snapshots.KindActive {
+    options = append(options,
+      fmt.Sprintf("workdir=%s", o.workPath(s.ID)),
+      fmt.Sprintf("upperdir=%s", o.upperPath(s.ID)),
+    )
+  } else if len(s.ParentIDs) == 1 {
+    return []mount.Mount{
+      {
+        Source: o.upperPath(s.ParentIDs[0]),
+        Type:   "bind",
+        Options: []string{
+          "ro",
+          "rbind",
+        },
+      },
+    }
+  }
+  parentPaths := make([]string, len(s.ParentIDs))
+  for i := range s.ParentIDs {
+    parentPaths[i] = o.upperPath(s.ParentIDs[i])
+  }
+  options = append(options, fmt.Sprintf("lowerdir=%s", strings.Join(parentPaths, ":")))
+  return []mount.Mount{
+    {
+      Type:    "overlay",
+      Source:  "overlay",
+      Options: options,
+    },
+  }
+
+}
+```
+
+###### bind mount
+
+- bind的mount类型是linux内核实现的一种挂载他和链接(`link`)实现的功能很像,但是他实现更底层在vfs之下
+- 参数rbind表示目录下的目录递归挂载到而不是这是这个一个,
+- ro则表示只读
+
+![Alt text](../images/containerd-6.png)
+
+- bind相当于修改了文件的inode到挂载的目录上
+
+![Alt text](../images/containerd-7.png)
+
+```shell
+mkdir test1 test2
+ls -li
+# 总用量 0
+# 34260425 drwxr-xr-x 2 root root 6 10月 31 17:32 test1
+# 50339286 drwxr-xr-x 2 root root 6 10月 31 17:32 test2
+
+mount --bind ./test1 ./test2/
+
+ll -ti
+# 总用量 0
+# 34260425 drwxr-xr-x 2 root root 6 10月 31 17:32 test1
+# 34260425 drwxr-xr-x 2 root root 6 10月 31 17:32 test2
+
+echo "foo"> ./test1/test
+cat ./test2/test
+# foo
+
+# 显示的挂载是vda1而是test1
+mount -l |grep test
+# /dev/vda1 on /data/test/test2 type xfs (rw,relatime,attr2,inode64,noquota)
+```
+
+##### diff
+
+- 接口比较少只有2个
+
+```go
+// diff/diff.go
+type Applier interface {
+  // Apply applies the content referred to by the given descriptor to
+  // the provided mount. The method of applying is based on the
+  // implementation and content descriptor. For example, in the common
+  // case the descriptor is a file system difference in tar format,
+  // that tar would be applied on top of the mounts.
+  Apply(ctx context.Context, desc ocispec.Descriptor, mount []mount.Mount, opts ...ApplyOpt) (ocispec.Descriptor, error)
+}
+
+type Comparer interface {
+  // Compare computes the difference between two mounts and returns a
+  // descriptor for the computed diff. The options can provide
+  // a ref which can be used to track the content creation of the diff.
+  // The media type which is used to determine the format of the created
+  // content can also be provided as an option.
+  Compare(ctx context.Context, lower, upper []mount.Mount, opts ...Opt) (ocispec.Descriptor, error)
+}
+```
+
+##### diff grpc类型
+
+```go
+func init() {
+  plugin.Register(&plugin.Registration{
+    Type: plugin.GRPCPlugin,
+    ID:   "diff",
+    Requires: []plugin.Type{
+      plugin.ServicePlugin,
+    },
+    InitFn: func(ic *plugin.InitContext) (interface{}, error) {
+      plugins, err := ic.GetByType(plugin.ServicePlugin)
+
+      p, ok := plugins[services.DiffService]
+ 
+      i, err := p.Instance()
+
+      return &service{local: i.(diffapi.DiffClient)}, nil
+    },
+  })
+}
+```
+
+##### diff service类型
+
+- 这里注册的时候添加了一个config
+
+```go
+// services/diff/local.go
+func init() {
+  plugin.Register(&plugin.Registration{
+    Type: plugin.ServicePlugin,
+    ID:   services.DiffService,
+    Requires: []plugin.Type{
+      plugin.DiffPlugin,
+    },
+    Config: defaultDifferConfig,
+    InitFn: func(ic *plugin.InitContext) (interface{}, error) {
+      differs, err := ic.GetByType(plugin.DiffPlugin)
+  
+      orderedNames := ic.Config.(*config).Order
+      ordered := make([]differ, len(orderedNames))
+      for i, n := range orderedNames {
+        differp, ok := differs[n]
+    
+        d, err := differp.Instance()
+   
+        ordered[i], ok = d.(differ)
+
+      }
+      return &local{
+        differs: ordered,
+      }, nil
+    },
+  })
+}
+```
+
+##### diff类型
+
+```go
+func init() {
+  plugin.Register(&plugin.Registration{
+    Type: plugin.DiffPlugin,
+    ID:   "walking",
+    Requires: []plugin.Type{
+      plugin.MetadataPlugin,
+    },
+    InitFn: func(ic *plugin.InitContext) (interface{}, error) {
+      md, err := ic.Get(plugin.MetadataPlugin)
+      if err != nil {
+        return nil, err
+      }
+
+      ic.Meta.Platforms = append(ic.Meta.Platforms, platforms.DefaultSpec())
+      cs := md.(*metadata.DB).ContentStore()
+
+      return diffPlugin{
+        Comparer: walking.NewWalkingDiff(cs),
+        Applier:  apply.NewFileSystemApplier(cs),
+      }, nil
+    },
+  })
+}
+```
+
+```go
+// diff/apply/apply.go
+
+// NewFileSystemApplier returns an applier which simply mounts
+// and applies diff onto the mounted filesystem.
+func NewFileSystemApplier(cs content.Provider) diff.Applier {
+  return &fsApplier{
+    store: cs,
+  }
+}
+
+func (s *fsApplier) Apply(ctx context.Context, desc ocispec.Descriptor, mounts []mount.Mount, opts ...diff.ApplyOpt) (d ocispec.Descriptor, err error) {
+
+  // 从content读取
+  ra, err := s.store.ReaderAt(ctx, desc)
+  defer ra.Close()
+
+  var processors []diff.StreamProcessor
+  processor := diff.NewProcessorChain(desc.MediaType, content.NewReader(ra))
+  processors = append(processors, processor)
+  for {
+    if processor, err = diff.GetProcessor(ctx, processor, config.ProcessorPayloads); err != nil {
+      return emptyDesc, errors.Wrapf(err, "failed to get stream processor for %s", desc.MediaType)
+    }
+    processors = append(processors, processor)
+    if processor.MediaType() == ocispec.MediaTypeImageLayer {
+      break
+    }
+  }
+  defer processor.Close()
+
+  digester := digest.Canonical.Digester()
+  rc := &readCounter{
+    r: io.TeeReader(processor, digester.Hash()),
+  }
+
+  //真正开始apply
+  if err := apply(ctx, mounts, rc); err != nil {
+    return emptyDesc, err
+  }
+
+  // Read any trailing data
+  if _, err := io.Copy(io.Discard, rc); err != nil {
+    return emptyDesc, err
+  }
+
+  for _, p := range processors {
+    if ep, ok := p.(interface{ Err() error }); ok {
+      if err := ep.Err(); err != nil {
+        return emptyDesc, err
+      }
+    }
+  }
+  return ocispec.Descriptor{
+    MediaType: ocispec.MediaTypeImageLayer,
+    Size:      rc.c,
+    Digest:    digester.Digest(),
+  }, nil
+}
+```
+
+```go
+func apply(ctx context.Context, mounts []mount.Mount, r io.Reader) error {
+  switch {
+  case len(mounts) == 1 && mounts[0].Type == "overlay":
+    // OverlayConvertWhiteout (mknod c 0 0) doesn't work in userns.
+    // https://github.com/containerd/containerd/issues/3762
+    if userns.RunningInUserNS() {
+      break
+    }
+    path, parents, err := getOverlayPath(mounts[0].Options)
+    if err != nil {
+      if errdefs.IsInvalidArgument(err) {
+        break
+      }
+      return err
+    }
+    opts := []archive.ApplyOpt{
+      archive.WithConvertWhiteout(archive.OverlayConvertWhiteout),
+    }
+    if len(parents) > 0 {
+      opts = append(opts, archive.WithParents(parents))
+    }
+    _, err = archive.Apply(ctx, path, r, opts...)
+    return err
+  case len(mounts) == 1 && mounts[0].Type == "aufs":
+    path, parents, err := getAufsPath(mounts[0].Options)
+    if err != nil {
+      if errdefs.IsInvalidArgument(err) {
+        break
+      }
+      return err
+    }
+    opts := []archive.ApplyOpt{
+      archive.WithConvertWhiteout(archive.AufsConvertWhiteout),
+    }
+    if len(parents) > 0 {
+      opts = append(opts, archive.WithParents(parents))
+    }
+    _, err = archive.Apply(ctx, path, r, opts...)
+    return err
+  }
+  return mount.WithTempMount(ctx, mounts, func(root string) error {
+    _, err := archive.Apply(ctx, root, r)
+    return err
+  })
+}
+```
+
+```go
+// WithTempMount mounts the provided mounts to a temp dir, and pass the temp dir to f.
+// The mounts are valid during the call to the f.
+// Finally we will unmount and remove the temp dir regardless of the result of f.
+func WithTempMount(ctx context.Context, mounts []Mount, f func(root string) error) (err error) {
+  root, uerr := ioutil.TempDir(tempMountLocation, "containerd-mount")
+  if uerr != nil {
+    return errors.Wrapf(uerr, "failed to create temp dir")
+  }
+  // We use Remove here instead of RemoveAll.
+  // The RemoveAll will delete the temp dir and all children it contains.
+  // When the Unmount fails, RemoveAll will incorrectly delete data from
+  // the mounted dir. However, if we use Remove, even though we won't
+  // successfully delete the temp dir and it may leak, we won't loss data
+  // from the mounted dir.
+  // For details, please refer to #1868 #1785.
+  defer func() {
+    if uerr = os.Remove(root); uerr != nil {
+      log.G(ctx).WithError(uerr).WithField("dir", root).Errorf("failed to remove mount temp dir")
+    }
+  }()
+
+  // We should do defer first, if not we will not do Unmount when only a part of Mounts are failed.
+  defer func() {
+    if uerr = UnmountAll(root, 0); uerr != nil {
+      uerr = errors.Wrapf(uerr, "failed to unmount %s", root)
+      if err == nil {
+        err = uerr
+      } else {
+        err = errors.Wrap(err, uerr.Error())
+      }
+    }
+  }()
+
+  // [{bind /root/snapshotter/snapshots/1/fs [rw rbind]}] /var/lib/containerd/tmpmounts/containerd-mount4278343774
+  if uerr = All(mounts, root); uerr != nil {
+    return errors.Wrapf(uerr, "failed to mount %s", root)
+  }
+  return errors.Wrapf(f(root), "mount callback failed on %s", root)
+}
+```
+
+```go
+unc (m *Mount) Mount(target string) (err error) {
+  d, _ := json.Marshal(m)
+  fmt.Println("====== mount target", target, string(d))
+
+  for _, helperBinary := range allowedHelperBinaries {
+    // helperBinary = "mount.fuse", typePrefix = "fuse."
+    typePrefix := strings.TrimPrefix(helperBinary, "mount.") + "."
+    if strings.HasPrefix(m.Type, typePrefix) {
+      return m.mountWithHelper(helperBinary, typePrefix, target)
+    }
+  }
+  var (
+    chdir   string
+    options = m.Options
+  )
+
+  // avoid hitting one page limit of mount argument buffer
+  //
+  // NOTE: 512 is a buffer during pagesize check.
+  if m.Type == "overlay" && optionsSize(options) >= pagesize-512 {
+    chdir, options = compactLowerdirOption(options)
+  }
+
+  flags, data, losetup := parseMountOptions(options)
+  fmt.Println("=========parseMountOptions(options)", flags, data, losetup)
+  if len(data) > pagesize {
+    return errors.Errorf("mount options is too long")
+  }
+
+  // propagation types.
+  const ptypes = unix.MS_SHARED | unix.MS_PRIVATE | unix.MS_SLAVE | unix.MS_UNBINDABLE
+
+  // Ensure propagation type change flags aren't included in other calls.
+  oflags := flags &^ ptypes
+
+  // In the case of remounting with changed data (data != ""), need to call mount (moby/moby#34077).
+  if flags&unix.MS_REMOUNT == 0 || data != "" {
+    // Initial call applying all non-propagation flags for mount
+    // or remount with changed data
+    source := m.Source
+    if losetup {
+      loFile, err := setupLoop(m.Source, LoopParams{
+        Readonly:  oflags&unix.MS_RDONLY == unix.MS_RDONLY,
+        Autoclear: true})
+      if err != nil {
+        return err
+      }
+      defer loFile.Close()
+
+      // Mount the loop device instead
+      source = loFile.Name()
+    }
+    if err := mountAt(chdir, source, target, m.Type, uintptr(oflags), data); err != nil { // TODO
+      return err
+    }
+    fmt.Println("挂载完成")
+  }
+```
+
+
+```go
+// archive/tar.go
+
+// Apply applies a tar stream of an OCI style diff tar.
+// See https://github.com/opencontainers/image-spec/blob/master/layer.md#applying-changesets
+func Apply(ctx context.Context, root string, r io.Reader, opts ...ApplyOpt) (int64, error) {
+  root = filepath.Clean(root)
+
+  var options ApplyOptions
+  for _, opt := range opts {
+    if err := opt(&options); err != nil {
+      return 0, errors.Wrap(err, "failed to apply option")
+    }
+  }
+  if options.Filter == nil {
+    options.Filter = all
+  }
+  if options.applyFunc == nil {
+    options.applyFunc = applyNaive // 这里调用了applyNaive
+  }
+
+  return options.applyFunc(ctx, root, r, options)
+}
+```
+
+```go
+// archive/tar.go
+
+// applyNaive applies a tar stream of an OCI style diff tar to a directory
+// applying each file as either a whole file or whiteout.
+// See https://github.com/opencontainers/image-spec/blob/master/layer.md#applying-changesets
+func applyNaive(ctx context.Context, root string, r io.Reader, options ApplyOptions) (size int64, err error) {
+  var (
+    dirs []*tar.Header
+
+    tr = tar.NewReader(r)
+
+    // Used for handling opaque directory markers which
+    // may occur out of order
+    unpackedPaths = make(map[string]struct{})
+
+    convertWhiteout = options.ConvertWhiteout
+  )
+
+  if convertWhiteout == nil {
+    // handle whiteouts by removing the target files
+    convertWhiteout = func(hdr *tar.Header, path string) (bool, error) {
+      base := filepath.Base(path)
+      dir := filepath.Dir(path)
+      if base == whiteoutOpaqueDir {
+        _, err := os.Lstat(dir)
+        if err != nil {
+          return false, err
+        }
+        err = filepath.Walk(dir, func(path string, info os.FileInfo, err error) error {
+          if err != nil {
+            if os.IsNotExist(err) {
+              err = nil // parent was deleted
+            }
+            return err
+          }
+          if path == dir {
+            return nil
+          }
+          if _, exists := unpackedPaths[path]; !exists {
+            err := os.RemoveAll(path)
+            return err
+          }
+          return nil
+        })
+        return false, err
+      }
+
+      if strings.HasPrefix(base, whiteoutPrefix) {
+        originalBase := base[len(whiteoutPrefix):]
+        originalPath := filepath.Join(dir, originalBase)
+
+        return false, os.RemoveAll(originalPath)
+      }
+
+      return true, nil
+    }
+  }
+
+  // Iterate through the files in the archive.
+  for {
+    select {
+    case <-ctx.Done():
+      return 0, ctx.Err()
+    default:
+    }
+
+    hdr, err := tr.Next()
+    if err == io.EOF {
+      // end of tar archive
+      break
+    }
+    if err != nil {
+      return 0, err
+    }
+
+    size += hdr.Size
+
+    // Normalize name, for safety and for a simple is-root check
+    hdr.Name = filepath.Clean(hdr.Name)
+
+    accept, err := options.Filter(hdr)
+    if err != nil {
+      return 0, err
+    }
+    if !accept {
+      continue
+    }
+
+    if skipFile(hdr) {
+      log.G(ctx).Warnf("file %q ignored: archive may not be supported on system", hdr.Name)
+      continue
+    }
+
+    // Split name and resolve symlinks for root directory.
+    ppath, base := filepath.Split(hdr.Name)
+    ppath, err = fs.RootPath(root, ppath)
+    if err != nil {
+      return 0, errors.Wrap(err, "failed to get root path")
+    }
+
+    // Join to root before joining to parent path to ensure relative links are
+    // already resolved based on the root before adding to parent.
+    path := filepath.Join(ppath, filepath.Join("/", base))
+    if path == root {
+      log.G(ctx).Debugf("file %q ignored: resolved to root", hdr.Name)
+      continue
+    }
+
+    // If file is not directly under root, ensure parent directory
+    // exists or is created.
+    if ppath != root {
+      parentPath := ppath
+      if base == "" {
+        parentPath = filepath.Dir(path)
+      }
+      if err := mkparent(ctx, parentPath, root, options.Parents); err != nil {
+        return 0, err
+      }
+    }
+
+    // Naive whiteout convert function which handles whiteout files by
+    // removing the target files.
+    if err := validateWhiteout(path); err != nil {
+      return 0, err
+    }
+    writeFile, err := convertWhiteout(hdr, path)
+    if err != nil {
+      return 0, errors.Wrapf(err, "failed to convert whiteout file %q", hdr.Name)
+    }
+    if !writeFile {
+      continue
+    }
+    // If path exits we almost always just want to remove and replace it.
+    // The only exception is when it is a directory *and* the file from
+    // the layer is also a directory. Then we want to merge them (i.e.
+    // just apply the metadata from the layer).
+    if fi, err := os.Lstat(path); err == nil {
+      if !(fi.IsDir() && hdr.Typeflag == tar.TypeDir) {
+        if err := os.RemoveAll(path); err != nil {
+          return 0, err
+        }
+      }
+    }
+
+    srcData := io.Reader(tr)
+    srcHdr := hdr
+
+    if err := createTarFile(ctx, path, root, srcHdr, srcData); err != nil {
+      return 0, err
+    }
+
+    // Directory mtimes must be handled at the end to avoid further
+    // file creation in them to modify the directory mtime
+    if hdr.Typeflag == tar.TypeDir {
+      dirs = append(dirs, hdr)
+    }
+    unpackedPaths[path] = struct{}{}
+  }
+
+  for _, hdr := range dirs {
+    path, err := fs.RootPath(root, hdr.Name)
+    if err != nil {
+      return 0, err
+    }
+    if err := chtimes(path, boundTime(latestTime(hdr.AccessTime, hdr.ModTime)), boundTime(hdr.ModTime)); err != nil {
+      return 0, err
+    }
+  }
+
+  return size, nil
+}
+```
+
+
+#### 总结
 
 ```mermaid
 sequenceDiagram
@@ -743,10 +1987,6 @@ flowchart LR
   api-server(api-server)<-->kube-proxy(kube-proxy)
   kube-proxy(kube-proxy)<-->ipt(iptables/ipvs)
 ```
-
-##### chanid怎么得出来的
-
-sha256(sha256 + sha256)
 
 #### 参考
 

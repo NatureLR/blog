@@ -410,12 +410,11 @@ func init() {
 }
 ```
 
-#### api分层
+#### 插件类型
 
 - 每一层都有负责的事情
 - grpc负责处理grpc协议请求
-- svc进一步处理
-- metadata则负责记录到数据中
+- svc主要记录到数据中
 - 最后是真正干活的
 
 ![Alt text](../images/containerd-4.png)
