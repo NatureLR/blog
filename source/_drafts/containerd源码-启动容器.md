@@ -1,10 +1,12 @@
-title: 模版
+layout: draft
+title: containerd源码-启动容器
 author: Nature丿灵然
 tags:
-  - 模版
+  - containerd
+  - k8s
 categories:
-  - 运维
-date: 2020-12-14 15:15:00
+  - 开发
+date: 2023-11-02 19:26:00
 ---
 <简介，将显示在首页>
 
@@ -12,17 +14,7 @@ date: 2020-12-14 15:15:00
 
 > 说明，模版文件不要发布出来
 
-#### 标题一
-
-<内容>
-
-##### 标题一子标题
-
-<内容>
-
-#### 参考资料
-
-<http://blog.naturelr.cc>
+#### 总结
 
 ```mermaid
 sequenceDiagram
@@ -38,3 +30,7 @@ sequenceDiagram
     client->>task:创建task
     client->>task:启动task
 ```
+
+#### 参考资料
+
+<http://blog.naturelr.cc>

@@ -12,6 +12,8 @@ date: 2023-10-27 15:15:00
 
 <!--more-->
 
+> 代码版本为v.17.5
+
 #### 启动过程
 
 - 入口在/cmd/containerd/main.go,这里申明了一个app并执行了run方法
@@ -576,6 +578,12 @@ func (ps *Set) Add(p *Plugin) error {
 
 #### 总结
 
-- 整体的代码比较清晰的
+- 整体的代码比较清晰的,主要的逻辑在server.New()中
 
-![Alt text](../images/containerd-5.png)
+```mermaid
+flowchart TD
+   注册插件-->main --> command.App --> server.New["`loadPlugins 
+    init_plugin
+    注册grpc
+    `"]  --> App.Run
+```

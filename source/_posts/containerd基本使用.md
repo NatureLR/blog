@@ -26,7 +26,7 @@ flowchart LR
   docker(docker)-->containers([containers])
 ```
 
-- 因为cri是一个单独的进程导致效率太差
+- 最开始cri是一个单独的进程,然后发现效率太差
 
 ```mermaid
 flowchart LR
@@ -40,6 +40,7 @@ flowchart LR
 ```
 
 - 最后将cri已插件的形式集成到containerd中
+
 ```mermaid
 flowchart LR
   kubelet(kubelet)--"grpc"-->cri-plugin(cri-plugin)
@@ -66,6 +67,29 @@ flowchart LR
 - 内部插件架构
 
 ![Alt text](../images/containerd-3.webp)
+
+```mermaid
+flowchart LR
+  kubectl(kubctl)<-->api-server(api-server)
+
+  subgraph master
+  api-server(api-server)<-->etcd[(etcd)]
+  api-server(api-server)<-->scheduler(scheduler)
+  api-server(api-server)<-->controller-manage(controller-manage)
+  end
+
+  api-server(api-server)<-->kubelet(kubelet)
+  kubelet(kubelet)<--"grpc"-->containerd(containerd)
+
+  subgraph containerd组件
+  containerd(containerd)<--"exec"-->containerd-shim-runc(containerd-shim-runc)
+  containerd-shim-runc(containerd-shim-runc)<--"exec"-->runc(runc)
+  runc(runc)<--"exec"-->containers(containers)
+  end
+
+  api-server(api-server)<-->kube-proxy(kube-proxy)
+  kube-proxy(kube-proxy)<-->ipt(iptables/ipvs)
+```
 
 #### containerd下载安装
 
