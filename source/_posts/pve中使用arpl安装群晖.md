@@ -44,8 +44,7 @@ pve则选择带img的
 ![Alt text](../images/pve%E4%B8%AD%E4%BD%BF%E7%94%A8arpl%E5%AE%89%E8%A3%85%E7%BE%A4%E6%99%96-5.png)
 
 - 磁盘同样不要，稍后添加
-
-![Alt text](../images/pve%E4%B8%AD%E4%BD%BF%E7%94%A8arpl%E5%AE%89%E8%A3%85%E7%BE%A4%E8%BE%89-6.png)
+![Alt text](../images/pve%E4%B8%AD%E4%BD%BF%E7%94%A8arpl%E5%AE%89%E8%A3%85%E7%BE%A4%E6%99%96-6.png)
 
 - cpu根据宿主机情况选择
 
