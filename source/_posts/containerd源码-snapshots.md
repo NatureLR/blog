@@ -21,17 +21,16 @@ snapshots主要负责存储解压层之后的存储
 
 ```go
 // snapshots/snapshotter.go
-
 type Snapshotter interface {
   Stat(ctx context.Context, key string) (Info, error)
   Update(ctx context.Context, info Info, fieldpaths ...string) (Info, error)
   Usage(ctx context.Context, key string) (Usage, error)
   Mounts(ctx context.Context, key string) ([]mount.Mount, error) // 只是返回了mount参数并没有真正的mount
-  Prepare(ctx context.Context, key, parent string, opts ...Opt) ([]mount.Mount, error) 
+  Prepare(ctx context.Context, key, parent string, opts ...Opt) ([]mount.Mount, error) // 创建snap
   View(ctx context.Context, key, parent string, opts ...Opt) ([]mount.Mount, error) // 和commit一样只不过是只读的
-  Commit(ctx context.Context, name, key string, opts ...Opt) erro
-  Remove(ctx context.Context, key string) erro
-  Walk(ctx context.Context, fn WalkFunc, filters ...string) erro
+  Commit(ctx context.Context, name, key string, opts ...Opt) error // 提交
+  Remove(ctx context.Context, key string) error // 删除
+  Walk(ctx context.Context, fn WalkFunc, filters ...string) error
   Close() error
 }
 ```

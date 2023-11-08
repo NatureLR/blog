@@ -1,6 +1,6 @@
 <mxfile host="65bd71144e">
     <diagram id="Ot3avktXdxZKkSis2PzH" name="第 1 页">
-        <mxGraphModel dx="1471" dy="427" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="4681" pageHeight="3300" background="#BFF0CD" math="0" shadow="0">
+        <mxGraphModel dx="1061" dy="-67" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="4681" pageHeight="3300" background="#BFF0CD" math="0" shadow="0">
             <root>
                 <mxCell id="0"/>
                 <mxCell id="1" parent="0"/>
@@ -15,8 +15,8 @@
                 </mxCell>
                 <mxCell id="6" value="" style="endArrow=classic;html=1;fillColor=#e51400;strokeColor=#B20000;" parent="1" edge="1">
                     <mxGeometry width="50" height="50" relative="1" as="geometry">
-                        <mxPoint x="182" y="564" as="sourcePoint"/>
-                        <mxPoint x="185" y="714" as="targetPoint"/>
+                        <mxPoint x="180" y="560" as="sourcePoint"/>
+                        <mxPoint x="180" y="710" as="targetPoint"/>
                     </mxGeometry>
                 </mxCell>
                 <mxCell id="7" value="&lt;font color=&quot;#000000&quot;&gt;分层结构&lt;/font&gt;" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" parent="1" vertex="1">
@@ -40,7 +40,7 @@
                 <mxCell id="10" value="server.New()" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1ba1e2;fontColor=#ffffff;strokeColor=#006EAF;" parent="1" vertex="1">
                     <mxGeometry x="455" y="678" width="120" height="60" as="geometry"/>
                 </mxCell>
-                <mxCell id="76" style="edgeStyle=none;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;strokeColor=#000000;" edge="1" parent="1" source="18" target="75">
+                <mxCell id="76" style="edgeStyle=none;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;strokeColor=#000000;" parent="1" source="18" target="75" edge="1">
                     <mxGeometry relative="1" as="geometry"/>
                 </mxCell>
                 <mxCell id="18" value="LoadPlugins()" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1ba1e2;fontColor=#ffffff;strokeColor=#006EAF;" parent="1" vertex="1">
@@ -198,10 +198,10 @@
                 <mxCell id="74" value="写入" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontColor=#000000;" parent="1" vertex="1">
                     <mxGeometry x="1191" y="718" width="50" height="30" as="geometry"/>
                 </mxCell>
-                <mxCell id="75" value="App.Run()" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1ba1e2;fontColor=#ffffff;strokeColor=#006EAF;" vertex="1" parent="1">
+                <mxCell id="75" value="App.Run()" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1ba1e2;fontColor=#ffffff;strokeColor=#006EAF;" parent="1" vertex="1">
                     <mxGeometry x="455" y="889" width="120" height="60" as="geometry"/>
                 </mxCell>
-                <mxCell id="78" value="&lt;font color=&quot;#000000&quot;&gt;启动流程&lt;/font&gt;" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" vertex="1" parent="1">
+                <mxCell id="78" value="&lt;font color=&quot;#000000&quot;&gt;启动流程&lt;/font&gt;" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" parent="1" vertex="1">
                     <mxGeometry x="480" y="417" width="66" height="26" as="geometry"/>
                 </mxCell>
             </root>

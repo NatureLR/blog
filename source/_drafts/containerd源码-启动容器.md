@@ -24,8 +24,9 @@ sequenceDiagram
     participant task as task-service
     #participant content as content-service
     #participant snapshotter as snapshotter-service
-    #participant image as image-service
+    participant image as image-service
     
+    client->>image:获取image信息
     client->>container:创建容器
     client->>task:创建task
     client->>task:启动task
