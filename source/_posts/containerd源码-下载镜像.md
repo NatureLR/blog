@@ -755,6 +755,8 @@ sequenceDiagram
     client->>content:存储index信息(content.Writer)
     client->>hub:获取manifests
     client->>content:存储manifests信息(content.Writer)
+    client->>hub:获取config
+    client->>content:存储manifests信息(content.Writer)
 
     loop 保存所有的layers
     client->>hub:下载镜像
