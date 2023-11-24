@@ -1,10 +1,10 @@
-title: gitlab
+title: gitlab部署配置
 author: Nature丿灵然
 tags:
   - gitlab
 categories:
   - 运维
-date: 2020-12-14 15:15:00
+date: 2023-11-23 16:38:00
 ---
 gitlab是一个功能非常强大的私有化git仓库
 
