@@ -1,4 +1,4 @@
-FROM node:16-alpine3.18 as build
+FROM node:21-alpine as build
 
 LABEL blog.naturelr.cc="good" \
       MAINTAINER="naturelr"
