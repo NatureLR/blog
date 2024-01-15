@@ -1,3 +1,14 @@
+layout: draft
+title: PVE环境制作cloud-init模板
+author: Nature丿灵然
+tags:
+  - pve
+  - 虚拟化
+categories:
+  - 运维
+date: 2023-05-15 00:11:00
+---
+<简介，将显示在首页>
 
 # PVE环境制作cloud-init模板
 
