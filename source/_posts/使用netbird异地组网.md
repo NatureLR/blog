@@ -27,7 +27,7 @@ export NETBIRD_DOMAIN=<域名>; curl -fsSL https://github.com/netbirdio/netbird/
 
 ##### 设置外网IP
 
-- 由于云服务商的eip是基于nat的导致coturn不知道外网ip所以我们需要告诉他,如果不设置会导致移动端连接失败
+- 由于云服务商的eip是基于nat的导致coturn不知道外网ip所以我们需要告诉他,如果不设置会导致移动端连接失败该问题在v0.25.4中修复相关[PR](https://github.com/netbirdio/netbird/pull/1439)
 
 ```shell
 echo "external-ip=<eip>" >>turnserver.conf
