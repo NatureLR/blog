@@ -10,6 +10,25 @@ date: 2023-05-15 00:11:00
 ---
 <简介，将显示在首页>
 
+# pve下载地址
+
+<https://www.proxmox.com/en/downloads>
+
+# 退出集群
+
+```shell
+systemctl stop pve-cluster.service
+systemctl stop corosync.service
+pmxcfs  -l
+
+rm /etc/pve/corosync.conf
+rm -rf /etc/corosync/*
+killall pmxcfs
+systemctl start pve-cluster.service
+
+rm -rf  /etc/pve/nodes/<节点名字>
+```
+
 # PVE环境制作cloud-init模板
 
 ```shell
@@ -23,7 +42,7 @@ qm importdisk $id $img local-lvm
 # 添加磁盘
 qm set $id --scsihw virtio-scsi-pci --scsi0 local-lvm:vm-$id-disk-0
 #调整磁盘大小
-qm disk resize $id scsi0 40G
+qm disk resize $id scsi0 20G
 # 添加cloud-init
 qm set $id --ide2 local-lvm:cloudinit
 # 设置启动盘

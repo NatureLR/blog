@@ -19,7 +19,7 @@ date: 2023-11-05 23:17:00
 
 - 第二个是国内的[wjz304](https://github.com/wjz304)根据fbelavenuto汉化并加速了不过因为原作者停更也停更了,项目地址<https://github.com/wjz304/arpl-zh_CN>
 
-- 第三个还是[wjz304](https://github.com/wjz304)的第二个则是因为原作者停更了不想破坏发布流程重新弄得一个项目<https://github.com/wjz304/rr>
+- 第三个还是[wjz304](https://github.com/wjz304)的第二个则是因为原作者停更了不想破坏发布流程重新弄得一个项目<https://github.com/wjz304/rr>，此仓库因一些原因被被作者删除,qq群更新
 
 pve则选择带img的
 
