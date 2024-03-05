@@ -1,7 +1,7 @@
 FROM node:21-alpine as build
 
-LABEL blog.naturelr.cc="good" \
-      MAINTAINER="naturelr"
+LABEL blog.naturelr.cc="good"
+LABEL MAINTAINER="naturelr"
 
 RUN npm config set registry http://registry.npm.taobao.org/ && \
     apk add make git  openssh-client
