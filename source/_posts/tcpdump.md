@@ -128,6 +128,12 @@ tcpdump -i any -s 0 -X -w tcpdump.pcap
 tcpdump -A -r tcpdump.pcap
 ```
 
+保存文件的时候切分文件
+
+```shell
+tcpdump -i any host -G 60 -C 150M -w test_%Y%m%d%H%M.pcap
+```
+
 #### 参考资料
 
 <https://www.middlewareinventory.com/blog/tcpdump-capture-http-get-post-requests-apache-weblogic-websphere/>
