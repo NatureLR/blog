@@ -2,8 +2,6 @@ title: k8s中安装gitlab-runner
 author: Nature丿灵然
 tags:
   - cicd
-categories:
-  - 运维
 date: 2021-12-17 14:05:00
 ---
 

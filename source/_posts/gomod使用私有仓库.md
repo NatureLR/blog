@@ -3,8 +3,6 @@ title: gomod使用私有仓库
 author: Nature丿灵然
 tags:
   - gomod
-categories:
-  - 开发
 date: 2023-04-11 17:50:00
 ---
 在工作中我们有些mod是放在gitlab中的且一般是有认证的这里记录下解决办法

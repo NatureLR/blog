@@ -3,8 +3,6 @@ title: 使用headscale和tailscale异地组网
 author: Nature丿灵然
 tags:
   - 网络
-categories:
-  - 运维
 date: 2023-06-11 15:49:00
 ---
 [Tailscale](https://github.com/tailscale/tailscale)是一个基于[WireGuard](https://www.wireguard.com)的组网工具,不同的在用户空间实现了WireGuard协议,虽然性能稍微下降但是比较灵活

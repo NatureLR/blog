@@ -97,7 +97,7 @@ open_graph:
 menu:
   home: / || fa fa-home
   tags: /tags/ || fa fa-tags
-  categories: /categories/ || fa fa-th
+  #categories: /categories/ || fa fa-th
   archives: /archives/ || fa fa-archive
   about: /about/ || fa fa-user
   #schedule: /schedule/ || fa fa-calendar
@@ -250,7 +250,7 @@ post_meta:
   updated_at:
     enable: true
     another_day: true
-  categories: true
+  categories: false
 
 # Post wordcount display settings
 # Dependencies: https://github.com/next-theme/hexo-word-counter

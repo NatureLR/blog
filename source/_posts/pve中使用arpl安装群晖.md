@@ -3,8 +3,6 @@ author: Nature丿灵然
 tags:
   - 虚拟化
   - pve
-categories:
-  - 运维
 date: 2023-11-05 23:17:00
 ---
 群辉很强大，但是配置拉胯，且价格感人，使用pve虚拟化安装群辉

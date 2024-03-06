@@ -3,8 +3,6 @@ title: 将时间机器备份到smb上
 author: Nature丿灵然
 tags:
   - 备份
-categories:
-  - 运维
 date: 2022-06-03 16:34:00
 ---
 macos的时间机器备份很方便

@@ -3,8 +3,6 @@ title: kustomize
 author: Nature丿灵然
 tags:
   - k8s
-categories:
-  - 运维
 date: 2021-07-21 18:46:00
 ---
 kustomize是k8s-sig开发的一个用来渲染一些k8s资源文件的工具

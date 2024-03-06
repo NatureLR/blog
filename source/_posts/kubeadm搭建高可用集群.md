@@ -4,8 +4,6 @@ author: Nature丿灵然
 tags:
   - k8s
   - kubeadm
-categories:
-  - 运维
 date: 2021-09-04 21:36:00
 ---
 kubeadm是官方的一个用来管理k8s集群的工具

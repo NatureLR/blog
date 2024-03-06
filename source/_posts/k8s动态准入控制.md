@@ -3,8 +3,6 @@ title: k8s动态准入控制
 author: Nature丿灵然
 tags:
   - k8s
-categories:
-  - 开发
 date: 2021-06-17 11:28:00
 ---
 准入控制是k8s中用来提供安全控制的一个控制器，而动态控制则是用户定制的安全策略

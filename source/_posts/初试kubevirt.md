@@ -4,8 +4,6 @@ author: Nature丿灵然
 tags:
   - 虚拟化
   - k8s
-categories:
-  - 运维
 date: 2022-07-17 16:26:00
 ---
 kubevirt是一个可以在k8s上管理虚拟机的应用

@@ -2,8 +2,6 @@ title: Apache Guacamole
 author: Nature丿灵然
 tags:
   - 终端
-categories:
-  - 运维
 date: 2020-10-29 14:35:00
 ---
 Apache Guacamole是一个基于web的远程终端支持ssh,vnc,rdp等协议

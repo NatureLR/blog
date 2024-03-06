@@ -4,8 +4,6 @@ author: Nature丿灵然
 tags:
   - 网络
   - 负载均衡
-categories:
-  - 运维
 date: 2022-11-07 15:20:00
 ---
 ipvs是个4层负载均衡器，常常用于服务的高可用

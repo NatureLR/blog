@@ -2,8 +2,6 @@ layout: draft
 title: osquery
 author: Nature丿灵然
 tags: []
-categories:
-  - 运维
 date: 2021-05-23 00:17:00
 ---
 osquery是一个由FaceBook开源用于对系统进行查询、监控以及分析的一款软件，其最意思的地方是使用sql来查询系统的一些信息

@@ -3,8 +3,6 @@ title: argocd
 author: Nature丿灵然
 tags:
   - gitops
-categories:
-  - 运维
 date: 2022-03-04 10:46:00
 ---
 argocd 是个有可视化界面的git-ops工具

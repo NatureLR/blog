@@ -4,8 +4,6 @@ author: Nature丿灵然
 tags:
   - cni
   - 网络
-categories:
-  - 运维
 date: 2023-06-16 19:00:00
 ---
 k8s的cni一般只创建一个网卡，有些时候我需要多个网卡，`multus-cni`

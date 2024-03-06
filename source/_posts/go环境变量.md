@@ -2,8 +2,6 @@ title: go环境变量
 author: Nature丿灵然
 tags:
   - go
-categories:
-  - 开发
 date: 2020-09-14 20:21:00
 ---
 go 有很多的环境变量记录一下常用的变量

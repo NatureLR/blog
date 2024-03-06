@@ -3,8 +3,6 @@ title: 使用kubespray部署k8s集群
 author: Nature丿灵然
 tags:
   - k8s
-categories:
-  - 运维
 date: 2023-05-25 17:35:00
 ---
 [kubespray](https://github.com/kubernetes-sigs/kubespray.git)是k8s兴趣小组开发的一个使用ansible的部署脚本,和kubeadm需要再每个节点上操作是去中心化的,这样会很麻烦

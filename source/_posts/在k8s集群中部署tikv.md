@@ -5,8 +5,6 @@ tags:
   - k8s
   - tikv
   - 数据库
-categories:
-  - 运维
 date: 2023-11-10 01:43:00
 ---
 [tidb](https://github.com/pingcap/tidb)是[pingcap](https://www.pingcap.com/)开发的开源数据库

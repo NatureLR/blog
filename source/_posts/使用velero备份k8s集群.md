@@ -4,8 +4,6 @@ author: Nature丿灵然
 tags:
   - 备份
   - k8s
-categories:
-  - 运维
 date: 2022-12-12 16:28:00
 ---
 velero是k8s的备份还原工具，他不同于etcd的数据库级备份是一个应用级的备份

@@ -3,8 +3,6 @@ author: Nature丿灵然
 tags:
   - ssh
   - 内网穿透
-categories:
-  - 运维
 date: 2020-11-12 11:55:00
 ---
 通过ssh端口转发，穿透内网或绕过防火墙，以及tcp流量加密保护

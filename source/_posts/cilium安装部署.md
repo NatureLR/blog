@@ -5,8 +5,6 @@ tags:
   - cni
   - 网络
   - k8s
-categories:
-  - 运维
 date: 2023-06-21 17:01:00
 ---
 clium是一个使用ebpf实现的cni

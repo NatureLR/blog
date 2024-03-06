@@ -2,8 +2,6 @@ title: hexo搭建博客
 author: Nature丿灵然
 tags:
   - hexo
-categories:
-  - 运维
 date: 2020-09-16 18:20:00
 ---
 记录一下用hexo搭建博客的过程和一些坑

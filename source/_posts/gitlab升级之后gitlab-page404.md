@@ -3,8 +3,6 @@ title: gitlab升级之后gitlab-page404
 author: Nature丿灵然
 tags:
   - gitlab
-categories:
-  - 运维
 date: 2022-08-13 22:45:00
 ---
 

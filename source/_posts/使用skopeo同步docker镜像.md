@@ -3,8 +3,6 @@ title: 使用skopeo同步docker镜像
 author: Nature丿灵然
 tags:
   - 镜像
-categories:
-  - 运维
 date: 2022-12-19 17:42:00
 ---
 在大部分场景下我们内部都会有一个镜像仓库来保证k8s活着cicd在拉镜像下的体验,以往我们需要使用docker pull

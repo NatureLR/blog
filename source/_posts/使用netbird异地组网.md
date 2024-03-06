@@ -3,8 +3,6 @@ title: 使用netbird异地组网
 author: Nature丿灵然
 tags:
   - 网络
-categories:
-  - 运维
 date: 2024-01-12 17:36:00
 ---
 

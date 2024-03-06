@@ -4,8 +4,6 @@ author: Nature丿灵然
 tags:
   - helm
   - k8s
-categories:
-  - 运维
 date: 2021-07-07 16:46:00
 ---
 helm是cncf基金会下的一个云原生管理程序

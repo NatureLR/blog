@@ -2,8 +2,6 @@ title: kubectl多集群管理
 author: Nature丿灵然
 tags:
   - k8s
-categories:
-  - 运维
 date: 2020-09-14 19:56:00
 ---
 大部分情况我们不只一个k8s集群，这个时候我们需要快速的在各个集群之间进行切换。且省去每次都要申明namespace

@@ -3,8 +3,6 @@ title: openvswitch
 author: Nature丿灵然
 tags:
   - 网络
-categories:
-  - 运维
 date: 2021-08-24 17:46:00
 ---
 ovs是一个开源的虚拟交换机，具有强大的功能

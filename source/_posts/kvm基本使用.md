@@ -4,8 +4,6 @@ author: Nature丿灵然
 tags:
   - kvm
   - 虚拟化
-categories:
-  - 运维
 date: 2021-05-22 22:00:00
 ---
 kvm基于linux内核的虚拟化

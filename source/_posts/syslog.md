@@ -2,8 +2,6 @@ title: syslog
 author: Nature丿灵然
 tags:
   - 日志
-categories:
-  - 运维
 date: 2020-12-08 14:14:00
 ---
 syslog是linux系统中常见得日志系统配合systemd-Journal使用

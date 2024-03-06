@@ -3,8 +3,6 @@ title: tcpdump
 author: Nature丿灵然
 tags:
   - 网络
-categories:
-  - 运维
 date: 2021-08-10 18:20:00
 ---
 tcpdump是linux下的一个网络抓包工具

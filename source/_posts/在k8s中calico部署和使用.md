@@ -4,8 +4,6 @@ tags:
   - k8s
   - cni
   - 网络
-categories:
-  - 运维
 date: 2023-05-10 16:41:00
 ---
 [calico](https://github.com/projectcalico/calico)是k8s中常见的网络插件,非常灵活,支持ipip,vxlan隧道bgp路由以及ebpf,虚机k8s均可使用

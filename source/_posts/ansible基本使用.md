@@ -2,8 +2,6 @@ title: ansible基本使用
 author: Nature丿灵然
 tags:
   - ansible
-categories:
-  - 运维
 date: 2020-12-16 13:26:00
 ---
 Ansible是一个自动化运维工具，可以实现批量配置，部署，命令等功能

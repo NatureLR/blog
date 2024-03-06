@@ -3,8 +3,6 @@ title: ipset
 author: Nature丿灵然
 tags:
   - 网络
-categories:
-  - 运维
 date: 2021-07-28 13:56:00
 ---
 ipset是iptables的一个扩展，可以动态的修改规则的地址

@@ -2,8 +2,6 @@ title: Centos8 web console(cockpit)
 author: Nature丿灵然
 tags:
   - linux
-categories:
-  - 运维
 date: 2020-08-03 17:35:00
 ---
 有些时候我们不想登录上centos的服务器执行一些操作这个时候就需要一个图形化界面

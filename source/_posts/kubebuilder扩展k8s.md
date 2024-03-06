@@ -4,8 +4,6 @@ author: Nature丿灵然
 tags:
   - k8s
   - go
-categories:
-  - 开发
 date: 2021-11-02 11:39:00
 ---
 kubebuilder是个专门用于开发k8s的框架

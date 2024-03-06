@@ -3,8 +3,6 @@ title: linux内核升级
 author: Nature丿灵然
 tags:
   - 内核
-categories:
-  - 运维
 date: 2022-05-02 16:23:00
 ---
 centos内核升级

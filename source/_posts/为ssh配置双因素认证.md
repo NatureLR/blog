@@ -3,8 +3,6 @@ title: 为ssh配置双因素认证
 author: Nature丿灵然
 tags:
   - 安全
-categories:
-  - 运维
 date: 2022-12-30 15:48:00
 ---
 双因素认证使用totp算法来生成动态的验证码来验证

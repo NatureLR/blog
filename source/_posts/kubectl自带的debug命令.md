@@ -3,8 +3,6 @@ title: kubectl自带的debug命令
 author: Nature丿灵然
 tags:
   - k8s
-categories:
-  - 运维
 date: 2022-09-16 15:22:00
 ---
 在使用k8s的时候需要调试的时候我们一般都是exec -it 命令登录上去执行一些调试命令，但是很多镜像为了体积和安全都不内置这些命令，导致我们需要手动安装调试麻烦

@@ -1,8 +1,6 @@
 title: pod管理
 tags:
   - k8s
-categories:
-  - 运维
 date: 2020-01-17 15:33:00
 ---
 k8s pod常见操作

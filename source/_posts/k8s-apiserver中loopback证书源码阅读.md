@@ -3,8 +3,6 @@ title: k8s-apiserver中loopback证书源码阅读
 author: Nature丿灵然
 tags:
   - k8s
-categories:
-  - 开发
 date: 2023-07-10 02:06:00
 ---
 apiserver因为loopback证书过期导致一些功能无法使用,

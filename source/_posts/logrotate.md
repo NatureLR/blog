@@ -2,8 +2,6 @@ title: logrotate
 author: Nature丿灵然
 tags:
   - log
-categories:
-  - 运维
 date: 2020-12-14 15:20:00
 ---
 Linux系统随着时间日志越来越大，我们需要日志转储和处理以免导致磁盘爆满

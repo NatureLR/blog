@@ -2,8 +2,6 @@ title: 使用buildx编译多平台镜像
 author: Nature丿灵然
 tags:
   - docker
-categories:
-  - 运维
 date: 2023-06-16 15:15:00
 ---
 目前大部分使用docker的场景中不单单只是amd64平台了有时我们需要再arm和adm64上都能运行

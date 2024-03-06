@@ -2,8 +2,6 @@ title: 记一次k8s节点网络重传排查
 author: Nature丿灵然
 tags:
   - 网络
-categories:
-  - 运维
 date: 2024-03-05 15:05:00
 ---
 

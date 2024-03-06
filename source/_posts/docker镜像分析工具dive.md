@@ -2,8 +2,6 @@ title: docker镜像分析工具dive
 author: Nature丿灵然
 tags:
   - docker
-categories:
-  - 运维
 date: 2020-09-29 15:59:00
 ---
 通过可视化分析docker镜像

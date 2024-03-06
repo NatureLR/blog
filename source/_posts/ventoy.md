@@ -3,8 +3,6 @@ title: ventoy
 author: Nature丿灵然
 tags:
   - 重装系统
-categories:
-  - 运维
 date: 2022-03-16 10:41:00
 ---
 ventoy是一个国人开发的使用usb安装系统的工具

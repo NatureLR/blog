@@ -4,8 +4,6 @@ author: Nature丿灵然
 tags:
   - 存储
   - k8s
-categories:
-  - 运维
 date: 2022-12-12 14:19:00
 ---
 minio是一个对象存储服务,兼容s3协议

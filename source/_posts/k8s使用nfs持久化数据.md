@@ -4,8 +4,6 @@ author: Nature丿灵然
 tags:
   - k8s
   - 存储
-categories:
-  - 运维
 date: 2022-07-16 22:45:00
 ---
 nfs是们常用的远程存储，这里记录下k8s安装nfs

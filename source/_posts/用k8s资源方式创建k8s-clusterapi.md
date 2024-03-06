@@ -4,8 +4,6 @@ author: Nature丿灵然
 tags:
   - 部署
   - k8s
-categories:
-  - 运维
 date: 2022-12-19 14:08:00
 ---
 cluster-api是k8s的一个子项目隶属于SIG Cluster Lifecycle,主要使用类似k8s风格的资源对象来管理k8s集群的生命周期

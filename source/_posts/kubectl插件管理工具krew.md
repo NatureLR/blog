@@ -3,8 +3,6 @@ title: kubectl插件管理工具krew
 author: Nature丿灵然
 tags:
   - k8s
-categories:
-  - 运维
 date: 2021-04-18 16:27:00
 ---
 krew是一个kubectl的插件管理系统

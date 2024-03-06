@@ -2,8 +2,6 @@ layout: draft
 title: nsenter命令使用
 author: Nature丿灵然
 tags: []
-categories:
-  - 运维
 date: 2021-04-26 17:14:00
 ---
 nsenter在不同的命名空间中执行命令

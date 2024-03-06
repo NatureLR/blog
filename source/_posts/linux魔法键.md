@@ -2,8 +2,6 @@ title: linux魔法键
 author: Nature丿灵然
 tags:
   - linux
-categories:
-  - 运维
 date: 2020-09-29 17:34:00
 ---
 利用`/proc/sys/kernel/sysrq`处理Linux系统不能正常响应用户请求，比如不能重启这时可以使用

@@ -2,8 +2,6 @@ title: rpm包构建
 author: Nature丿灵然
 tags:
   - rpm
-categories:
-  - 运维
 date: 2020-11-16 16:57:00
 ---
 RPM（Redhat Package Manager）是Rhel，Centos，Fedora等系统的软件包管理格式

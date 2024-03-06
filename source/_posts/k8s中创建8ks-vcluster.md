@@ -4,8 +4,6 @@ author: Nature丿灵然
 tags:
   - k8s
   - 部署
-categories:
-  - 运维
 date: 2022-12-19 14:07:00
 ---
 vcluster是一个kink(k8s in k8s)程序即在k8s里创建k8s,和ns相比主要可以随便安装crd等资源且可以获得类似完整的集群体验

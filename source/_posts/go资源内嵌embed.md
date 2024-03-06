@@ -3,8 +3,6 @@ title: go资源内嵌embed
 author: Nature丿灵然
 tags: 
   - go
-categories:
-  - 开发
 date: 2021-03-19 11:30:00
 ---
 Go官方在1.16版本发布了官方内嵌资源到二进制的功能，使得部署更加简单

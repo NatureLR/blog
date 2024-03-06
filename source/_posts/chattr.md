@@ -2,8 +2,6 @@ title: chattr
 author: Nature丿灵然
 tags:
   - lsattr
-categories:
-  - 运维
 date: 2022-05-21 13:00:00
 ---
 chattr是一个可以修改文件属性的命令

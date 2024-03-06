@@ -4,8 +4,6 @@ author: Nature丿灵然
 tags:
   - k8s
   - 网络
-categories:
-  - 运维
 date: 2022-12-14 18:04:00
 ---
 k8s service是对一组pod进行抽象的方法

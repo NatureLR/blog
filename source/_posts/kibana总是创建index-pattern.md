@@ -2,8 +2,6 @@ title: kibana总是创建index-pattern
 author: Nature丿灵然
 tags:
   - kibana
-categories:
-  - 运维
 date: 2022-01-13 18:59:00
 ---
 

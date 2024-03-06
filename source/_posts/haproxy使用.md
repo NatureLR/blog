@@ -3,8 +3,6 @@ author: Nature丿灵然
 tags:
   - 网络
   - 负载均衡
-categories:
-  - 运维
 date: 2023-08-22 15:46:00
 ---
 [haproxy](https://www.haproxy.org)是一个负载均衡程序支持L4和L7,和ipvs不同的是他的实现在用户空间

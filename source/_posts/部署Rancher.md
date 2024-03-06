@@ -3,8 +3,6 @@ author: Nature丿灵然
 tags:
   - k8s
   - rancher
-categories:
-  - 运维
 date: 2020-11-02 14:20:00
 ---
 rancer是一个多k8s集群管理工具

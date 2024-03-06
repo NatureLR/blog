@@ -3,8 +3,6 @@ title: docker部署frp内网穿透
 author: Nature丿灵然
 tags:
   - 网络
-categories:
-  - 运维
 date: 2023-11-27 18:57:00
 ---
 

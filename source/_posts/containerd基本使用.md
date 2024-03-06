@@ -4,8 +4,6 @@ author: Nature丿灵然
 tags:
   - containerd
   - k8s
-categories:
-  - 运维
 date: 2023-10-24 23:35:00
 ---
 

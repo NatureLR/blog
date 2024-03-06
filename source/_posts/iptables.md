@@ -3,8 +3,6 @@ author: Nature丿灵然
 tags:
   - linux
   - 网络
-categories:
-  - 运维
 date: 2020-12-03 17:16:00
 ---
 
