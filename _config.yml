@@ -12,9 +12,8 @@ language: zh-CN
 timezone: 'Asia/Shanghai'
 
 # URL
-## If your site is put in a subdirectory, set url as 'http://example.com/child' and root as '/child/'
+## Set your site url here. For example, if you use GitHub Page, set url as 'https://username.github.io/project'
 url: http://blog.naturelr.cc
-root: /
 permalink: :year/:month/:day/:title/
 permalink_defaults:
 pretty_urls:
@@ -49,8 +48,8 @@ post_asset_folder: false
 relative_link: false
 future: true
 ## 代码高亮设置
+syntax_highlighter: prismjs
 highlight:
-  enable: false
   line_number: true
   auto_detect: true
   tab_replace: ''
@@ -59,7 +58,6 @@ highlight:
   exclude_languages:
     - mermaid
 prismjs:
-  enable: true
   preprocess: true
   line_number: true
   tab_replace: ''
