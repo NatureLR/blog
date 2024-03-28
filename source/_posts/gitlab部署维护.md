@@ -51,7 +51,7 @@ gitlab_rails['backup_upload_connection'] = {
 gitlab_rails['backup_upload_remote_directory'] = 'gitlab-backups'
 ```
 
-- 执行`gitalb-ctl reconfigure`生效
+- 执行`gitlab-ctl reconfigure`生效
 
 #### 还原
 
@@ -80,6 +80,34 @@ gitlab-backup restore BACKUP=1684312462_2023_05_17_14.9.5
 wget --content-disposition https://packages.gitlab.com/gitlab/gitlab-ce/packages/el/7/gitlab-ce-13.12.12-ce.0.el7.x86_64.rpm/download.rpm
 yum -y install gitlab-ce-13.12.12-ce.0.el7.x86_64.rpm
 ```
+
+#### runner
+
+- <https://docs.gitlab.com/runner/install/linux-repository.html>
+
+- 安装对应系统的源头
+
+```shell
+# apt
+curl -L "https://packages.gitlab.com/install/repositories/runner/gitlab-runner/script.deb.sh" | sudo bash
+
+# apt
+curl -L "https://packages.gitlab.com/install/repositories/runner/gitlab-runner/script.rpm.sh" | sudo bash
+```
+
+- 安装gitlab runner
+
+```shell
+# apt
+sudo apt-get install gitlab-runner
+
+# yum
+sudo yum install gitlab-runner
+```
+
+- 注册 管理区域->cicd->runenr添加一个，然后会出现类似`gitlab-runner register --url http://gitlab.naturelr.cc  --token glrt-94ZmmuqybyyGdPW_kbSJ`
+
+- 启动，将注册的时候出现的命令执行一下，会询问你一些信息一步一步操作即可
 
 #### gitalb-pages
 
