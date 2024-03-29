@@ -22,7 +22,7 @@ yum install -y gitlab-ce
 
 #### 备份
 
-#### 设置定时备份
+##### 设置定时备份
 
 - crobjob设置定时备份
 
@@ -30,7 +30,7 @@ yum install -y gitlab-ce
 0 23 * * * /opt/gitlab/bin/gitlab-backup create SKIP=builds,artifacts,lfs,terraform_state
 ```
 
-#### 设置备份保留时间
+##### 设置备份保留时间
 
 - 保留三天
 
@@ -38,7 +38,7 @@ yum install -y gitlab-ce
 gitlab_rails['backup_keep_time'] = 259200
 ```
 
-#### 备份到挂载在本地的存储
+##### 备份到挂载在本地的存储
 
 - 修改配置文件，/mnt/nfs为nfs挂载点
 
