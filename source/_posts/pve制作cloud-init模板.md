@@ -48,7 +48,21 @@ qm set $id --agent enabled=1,fstrim_cloned_disks=1 #optional but recommended
 
 > 此时pve界面中已经可以看到这个虚拟机，启动他，然后设置这个虚拟机，后面就不用每次都要设置一些东西了
 
-- 换源：更新apt源为国内源
+- 换源：更新apt源为国内源，这里有坑有些cloudinit官方镜像（debian）使用了cloudinit代管了apt源，这就导致修改源的时候会被cloudinit给改回去
+正确的做法是修改cloudinit配置
+
+```shell
+vim /etc/cloud/cloud.cfg
+```
+
+```yaml
+   package_mirrors:
+     - arches: [default]
+      # 修改这里
+       failsafe:
+         primary: https://deb.debian.org/debian 
+         security: https://deb.debian.org/debian-security
+```
 
 - 升级并安装qga
 
