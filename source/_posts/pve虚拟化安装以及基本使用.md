@@ -8,6 +8,8 @@ date: 2024-04-01 17:34:00
 ---
 pve是一个虚拟化平台，基于debian
 
+<!--more-->
+
 #### pve下载地址
 
 <https://www.proxmox.com/en/downloads>
