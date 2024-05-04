@@ -25,7 +25,7 @@
     "hexo-renderer-marked": "^6.3.0",
     "hexo-renderer-stylus": "^3.0.1",
     "hexo-server": "^3.0.0",
-    "hexo-theme-next": "^8.19.2",
+    "hexo-theme-next": "^8.20.0",
     "highlight.js": "^11.9.0",
     "js-yaml": "^4.1.0",
     "live2d-widget-model-shizuku": "^1.0.5",
