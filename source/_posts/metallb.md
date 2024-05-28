@@ -25,11 +25,11 @@ kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.13.10/conf
 
 ##### 配置
 
-- 获取minik的网段
+- 获取minikube的网段
 
 ```shell
 docker network inspect minikube  |grep -i Subnet
-                    "Subnet": "192.168.49.0/24",
+#                    "Subnet": "192.168.49.0/24",
 ```
 
 - 配置lb地址范围
