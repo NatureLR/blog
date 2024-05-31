@@ -132,6 +132,26 @@ juicefs summary ./jfs/
 juicefs bench ./jfs
 ```
 
+#### 使用webdav和mysql
+
+- 创建一个文件系统，元数据选择mysql存储选择webdav
+
+```shell
+juicefs format \
+--storage webdav \
+--bucket http://home.naturelr.cc:6089/dav/nas/zxz \
+--access-key <webdav账号> \
+--secret-key <webdav密码> \ 
+mysql://<mysql账号>:<mysql密码>@(<mysql地址>:3306)/<mysql数据库> \
+juicefs
+```
+
+- 挂载目录
+
+```shell
+juicefs mount "mysql://<mysql账号>:<mysql密码>@(<mysql地址>:3306)/juicefs" <挂载路径>
+```
+
 #### 参考资料
 
 <https://mp.weixin.qq.com/s/Uar9hlaLdlAL6IIhMWNotw>
