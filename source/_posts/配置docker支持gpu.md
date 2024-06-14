@@ -6,6 +6,8 @@ date: 2024-06-14 17:25:00
 ---
 现在很多ai相关的程序会跑在docker当中，默认docker是不支持gpu的，所以需要使其支持gpu
 
+<!--more-->
+
 #### 安装驱动
 
 - 打开nvidia官网的[驱动下载界面](https://www.nvidia.cn/Download/index.aspx?lang=cn)根据显卡和操作系统的类型下载对应的驱动
