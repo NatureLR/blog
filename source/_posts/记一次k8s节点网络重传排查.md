@@ -76,7 +76,7 @@ nohup  tcpdump -i any src host <src_ip> and dst host <dest_ip> -w test.pcap &
 
 我问他为啥 他说内核在执行oom的时候会放下其他工作专注杀死oom的进程，但是杀死的进程时间太长了就可能导致网络收发包出问题
 
-![alt text](../images/记一次k8s节点网络重传排查-2.png.png)
+![alt text](../images/记一次k8s节点网络重传排查-2.png)
 
 没错就是那个oom的logstash！！！
 
