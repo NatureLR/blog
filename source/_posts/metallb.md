@@ -1,7 +1,6 @@
 title: metallb
 author: Nature丿灵然
 tags:
-  - 模版
   - k8s
   - 负载均衡
 date: 2023-08-18 11:45:00

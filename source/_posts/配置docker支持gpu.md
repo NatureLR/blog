@@ -14,7 +14,7 @@ date: 2024-06-14 17:25:00
 
 - 安装驱动,可能会报错缺少一些依赖，把缺少的安装即可
 
-- centos7可能会遇到类似找不到kernel-source累死的报错需要手动添加`--kernel-source-path /usr/src/kernels/3.10.0-1160.119.1.el7.x86_64/`来配置内核源码路径
+- centos7可能会遇到类似找不到kernel-source类似的报错需要手动添加`--kernel-source-path /usr/src/kernels/3.10.0-1160.119.1.el7.x86_64/`来配置内核源码路径
 
 ```shell
 # 安装需要gcc支持
@@ -125,5 +125,4 @@ sudo systemctl restart containerd
 
 #### 参考资料
 
-<http://blog.naturelr.cc>
 <https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html>
