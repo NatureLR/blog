@@ -1,5 +1,5 @@
 layout: draft
-title: 部署私有docker加速仓库
+title: 使用docker-registry部署docker加速仓库
 author: Nature丿灵然
 tags:
   - docker
