@@ -9,7 +9,7 @@ help: ## 显示make帮助
 
 ##@ build
 
-build: build-local## 本地原生编译
+build: build-image build-env-image## 编译所有
 
 build-local: ## 本地原生编译
 	@hexo g
@@ -20,8 +20,6 @@ build-image:## 编译docker
 build-env-image:## 编译本地运行的镜像
 	@docker build --target build -t $(env-image) .
 
-build-all: build build-image build-env-image ## 编译所有
-	
 ##@ run
 
 run:## 本地原生运行(用于写作)
