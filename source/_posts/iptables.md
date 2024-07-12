@@ -39,6 +39,10 @@ Iptables是大多数发型版本中支持的防火墙
 
 ![iptables](../images/iptables_traverse.jpeg)
 
+- 全局来看,[原地址](https://upload.wikimedia.org/wikipedia/commons/3/37/Netfilter-packet-flow.svg)
+
+![iptables](../images/Netfilter-packet-flow.svg)
+
 #### 查看规则
 
 ![iptables](../images/iptables-2.png)
