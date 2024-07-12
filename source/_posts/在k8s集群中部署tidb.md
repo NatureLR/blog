@@ -1,5 +1,5 @@
 layout: draft
-title: 在k8s集群中部署tikv
+title: 在k8s集群中部署tidb
 author: Nature丿灵然
 tags:
   - k8s
