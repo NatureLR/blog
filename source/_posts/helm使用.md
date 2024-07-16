@@ -53,7 +53,37 @@ helm install <名字> <仓库>
 helm install <名字> <仓库> --namespace <namespace>
 ```
 
-##### 显示应用
+- 指定ns并创建
+
+```shell
+ helm install <名字> <仓库>  --namespace <namespace> --create-namespace 
+```
+
+- 查看helm chart的values文件
+
+```shell
+helm show values <仓库> > values.yaml
+```
+
+- 通过values来设置参数
+
+```shell
+helm install <名字> <仓库> --namespace <namespace> --create-namespace -f values.yaml
+```
+
+- 通过命令行来设置参数,--set参数可以有多个用户指定多个参数，其指定的参数就是values里的
+
+```shell
+ helm install <名字> <仓库> --namespace <namespace> --create-namespace --set <key>:<value>
+```
+
+- --dry-run参数不执行安装可以将要安装yaml打印出来
+
+```shell
+helm install <名字> <仓库> --namespace <namespace>  --create-namespace --debug --dry-run > resource.yaml
+```
+
+##### 查看应用
 
 显示当前ns下
 
@@ -120,6 +150,14 @@ helm uninstall <名字>
 helm fetch <应用仓库>
 ```
 
+#### 本地直接生成模版
+
+- 常常用在离线安装或者本地开发当中
+
+```shell
+helm template <解压后chart包> -f <values文件>
+```
+
 #### 仓库操作
 
 ##### 添加仓库
@@ -140,7 +178,7 @@ helm repo list
 helm repo update
 ```
 
-##### 卸载仓库
+##### 删除仓库
 
 ```shell
 helm remove <仓库名字>
