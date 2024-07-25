@@ -349,7 +349,7 @@ kubectl -n kube-system set env ds/calico-node -c calico-node CALICO_IPV4POOL_IPI
 kubectl -n kube-system set env ds/calico-node -c calico-node CALICO_IPV4POOL_VXLAN=Always
 ```
 
-- 关闭关闭bird
+- 关闭bird
 
 ```shell
 # 将calico_backend修改为vxlan
@@ -458,7 +458,7 @@ tcpdump -i vxlan.calico -eenn
 > BGP是一个使用广泛的路由协议，分为2种一种是不同as号的ebgp已经同as号的ibgp，这里使用的是ibgp
 
 {% note warning %}
-注意此模式节点只能在同一个子网中进行，如果节点不在同一个子网请参与[](#跨)
+注意此模式节点只能在同一个子网中进行，如果节点不在同一个子网请参考[IPIP/VXLAN跨子网模式](#IPIP/VXLAN跨子网模式)
 {% endnote %}
 
 ##### 开启BGP模式

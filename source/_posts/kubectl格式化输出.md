@@ -10,8 +10,8 @@ date: 2020-07-21 14:16:00
 
 ```shell
 cat << EOF >> template.txt
-名字       数量            保留内存              保留cpu        最大内存  最大cpu
-metadata.name  spec.replicas   spec.template.spec.containers[*].resources.requests.memory  spec.template.spec.containers[*].resources.requests.memory   spec.template.spec.containers[*].resources.limits.memory  spec.template.spec.containers[*].resources.limits.cpu
+命名空间              名字           保留内存              保留cpu        最大内存  最大cpu
+metadata.namespace   metadata.name spec.containers[*].resources.requests.memory  spec.containers[*].resources.requests.memory   spec.containers[*].resources.limits.memory  spec.containers[*].resources.limits.cpu
 EOF
 ```
 

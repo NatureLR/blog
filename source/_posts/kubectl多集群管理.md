@@ -49,4 +49,6 @@ kubectl config view --raw > $HOME/.kube/config
 unset KUBECONFIG
 ```
 
-添加集群就只需要把集群的config文件保存到`$HOME/.kube/configs`下，名字为xxx.yaml，然后执行脚本，删除同理只需要将该集群的yaml文件从`$HOME/.kube/configs`中移除在执行脚本
+- 添加集群就只需要把集群的config文件保存到`$HOME/.kube/configs`下，名字为xxx.yaml，然后执行脚本，删除同理只需要将该集群的yaml文件从`$HOME/.kube/configs`中移除在执行脚本
+
+- 该方案有个问题就是如果集群中所有的名字一样就无法区分,随意随后开发了一个脚本使用链接kubeconfig到~/config来切换，参考<https://github.com/NatureLR/kubectl-cc>
