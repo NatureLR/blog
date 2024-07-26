@@ -4,7 +4,6 @@ author: Nature丿灵然
 tags:
   - docker
   - 镜像仓库
-categories: []
 date: 2024-06-26 00:42:00
 ---
 最近个国内各大docker镜像仓库都无法访问，我们可以在海外自己部署一个镜像仓库
@@ -44,6 +43,8 @@ storage:
     rootdirectory: /var/lib/registry
   #tag:
   #  concurrencylimit: 8
+  #delete: #配置删除权限,默认安装的Registry不支持删除
+  #  enabled: true
 http:
   addr: :5000
   headers:
@@ -51,7 +52,7 @@ http:
 #auth:
 #  htpasswd:
 #    realm: basic-realm
-#    path: /etc/registry
+#    path: /etc/docker/registry/htpasswd
 health:
   storagedriver:
     enabled: true
@@ -75,6 +76,16 @@ proxy:
 ```shell
 systemctl restart docker
 ```
+
+##### 认证
+
+- 生成密码
+
+```shell
+docker run --rm --entrypoint htpasswd httpd:2 -Bbn <账号密码> <密码> > htpasswd
+```
+
+- 将生成的文件放在上面配置的路径
 
 #### 参考资料
 
