@@ -11,7 +11,7 @@ date: 2020-07-21 14:16:00
 ```shell
 cat << EOF >> template.txt
 命名空间              名字           保留内存              保留cpu        最大内存  最大cpu
-metadata.namespace   metadata.name spec.containers[*].resources.requests.memory  spec.containers[*].resources.requests.memory   spec.containers[*].resources.limits.memory  spec.containers[*].resources.limits.cpu
+metadata.namespace   metadata.name spec.containers[*].resources.requests.memory  spec.containers[*].resources.requests.cpu   spec.containers[*].resources.limits.memory  spec.containers[*].resources.limits.cpu
 EOF
 ```
 
