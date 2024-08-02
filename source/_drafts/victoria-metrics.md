@@ -46,7 +46,7 @@ kubectl -n victoria-metrics port-forward svc/vm-grafana 3000:80
 - 访问vmui
 
 ```shell
-kubectl -n victoria-metrics port-forward svc/vmsingle-vm-victoria-metrics-k8s-stack 8429:8429          
+kubectl -n victoria-metrics port-forward svc/vmsingle-vm-victoria-metrics-k8s-stack 8429:8429
 ```
 
 #### 集群模式
