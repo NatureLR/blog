@@ -1,3 +1,4 @@
+---
 layout: draft
 title: pve虚拟化安装以及基本使用
 author: Nature丿灵然

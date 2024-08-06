@@ -1,3 +1,4 @@
+---
 layout: draft
 title: 使用minio-operator部署minio
 author: Nature丿灵然

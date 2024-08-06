@@ -1,3 +1,4 @@
+---
 layout: draft
 title: pve环境制作cloud-init模板
 author: Nature丿灵然

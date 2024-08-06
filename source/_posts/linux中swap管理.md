@@ -1,3 +1,4 @@
+---
 layout: draft
 title: linux中swap管理
 author: Nature丿灵然

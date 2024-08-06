@@ -1,3 +1,4 @@
+---
 title: linux魔法键
 author: Nature丿灵然
 tags:

@@ -1,3 +1,4 @@
+---
 title: kubectl格式化输出
 author: Nature丿灵然
 tags:

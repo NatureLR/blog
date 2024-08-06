@@ -1,3 +1,4 @@
+---
 layout: draft
 title: lvm使用
 author: Nature丿灵然

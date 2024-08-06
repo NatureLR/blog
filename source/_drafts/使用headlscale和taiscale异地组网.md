@@ -1,3 +1,4 @@
+---
 layout: draft
 title: 使用headscale和tailscale异地组网
 author: Nature丿灵然

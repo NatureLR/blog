@@ -1,3 +1,4 @@
+---
 title: kubectl多集群管理
 author: Nature丿灵然
 tags:

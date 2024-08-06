@@ -1,3 +1,4 @@
+---
 title: k8s中安装gitlab-runner
 author: Nature丿灵然
 tags:

@@ -1,3 +1,4 @@
+---
 layout: draft
 title: kubeadm搭建高可用集群
 author: Nature丿灵然

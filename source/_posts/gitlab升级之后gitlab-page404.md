@@ -1,3 +1,4 @@
+---
 layout: draft
 title: gitlab升级之后gitlab-page404
 author: Nature丿灵然

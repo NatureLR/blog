@@ -1,3 +1,4 @@
+---
 title: go环境变量
 author: Nature丿灵然
 tags:

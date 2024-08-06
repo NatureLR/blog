@@ -1,3 +1,4 @@
+---
 layout: draft
 title: 使用kubespray部署k8s集群
 author: Nature丿灵然

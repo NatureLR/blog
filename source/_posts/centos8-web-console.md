@@ -1,3 +1,4 @@
+---
 title: Centos8 web console(cockpit)
 author: Nature丿灵然
 tags:

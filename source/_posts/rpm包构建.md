@@ -1,3 +1,4 @@
+---
 title: rpm包构建
 author: Nature丿灵然
 tags:

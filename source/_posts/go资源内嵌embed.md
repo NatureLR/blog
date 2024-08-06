@@ -1,3 +1,4 @@
+---
 layout: draft
 title: go资源内嵌embed
 author: Nature丿灵然

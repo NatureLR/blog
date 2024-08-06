@@ -1,3 +1,4 @@
+---
 layout: draft
 title: rsync使用
 author: Nature丿灵然

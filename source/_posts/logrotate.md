@@ -1,3 +1,4 @@
+---
 title: logrotate
 author: Nature丿灵然
 tags:

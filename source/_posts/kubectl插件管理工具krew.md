@@ -1,3 +1,4 @@
+---
 layout: draft
 title: kubectl插件管理工具krew
 author: Nature丿灵然

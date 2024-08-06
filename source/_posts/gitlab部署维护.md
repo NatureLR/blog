@@ -1,3 +1,4 @@
+---
 title: gitlab部署配置
 author: Nature丿灵然
 tags:

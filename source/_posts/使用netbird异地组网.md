@@ -1,3 +1,4 @@
+---
 layout: draft
 title: 使用netbird异地组网
 author: Nature丿灵然

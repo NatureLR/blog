@@ -1,3 +1,4 @@
+---
 layout: draft
 title: 使用skopeo同步docker镜像
 author: Nature丿灵然

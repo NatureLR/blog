@@ -1,3 +1,4 @@
+---
 layout: draft
 title: gomod使用私有仓库
 author: Nature丿灵然

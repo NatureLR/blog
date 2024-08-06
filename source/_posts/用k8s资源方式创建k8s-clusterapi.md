@@ -1,3 +1,4 @@
+---
 layout: draft
 title: 用k8s资源方式创建k8s-clusterapi
 author: Nature丿灵然

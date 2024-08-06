@@ -1,3 +1,4 @@
+---
 layout: draft
 title: 为ssh配置双因素认证
 author: Nature丿灵然
