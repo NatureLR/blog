@@ -130,24 +130,24 @@ yum -y install libosinfo
 
 ##### virsh常用命令
 
-命令|说明
--|-|
-virsh start xxx       |启动名字为x的非活动虚拟机  
-virsh list  --all     |列出虚拟机
-virsh create xxx.xml  |创建虚拟机，没有持久化
-virsh suspend xxx     |暂停虚拟机
-virsh resume xxxx     |启动暂停的虚拟机
-virsh shutdown xxxx   |正常关闭虚拟机
-virsh destroy xxxx    |强制关闭虚拟机
-virsh undefine xxx    |删除虚拟机，只是从列表中删除，且不会删除活动的虚拟机
-virsh dominfo xxx     |显示虚拟机的基本信息
-virsh domname 2       |显示id号为2的虚拟机名
-virsh domid xxx       |显示虚拟机id号
-virsh domuuid xxx     |显示虚拟机的uuid
-virsh domstate xxx    |显示虚拟机的当前状态
-virsh dumpxml xxx     |显示虚拟机的当前配置文件（可能和定义虚拟机时的配置不同，因为当虚拟机启动时，需要给虚拟机 分配id号、uuid、vnc端口号等等）
-virsh setmem x 512000 |给不活动虚拟机设置内存大小
-virsh edit xxx        |编辑配置文件（一般是在刚定义完虚拟机之后）
+|命令|说明|
+|-|-|
+|virsh start xxx       |启动名字为x的非活动虚拟机  |
+|virsh list  --all     |列出虚拟机|
+|virsh create xxx.xml  |创建虚拟机，没有持久化|
+|virsh suspend xxx     |暂停虚拟机|
+|virsh resume xxxx     |启动暂停的虚拟机|
+|virsh shutdown xxxx   |正常关闭虚拟机|
+|virsh destroy xxxx    |强制关闭虚拟机|
+|virsh undefine xxx    |删除虚拟机，只是从列表中删除，且不会删除活动的虚拟机|
+|virsh dominfo xxx     |显示虚拟机的基本信息|
+|virsh domname 2       |显示id号为2的虚拟机名|
+|virsh domid xxx       |显示虚拟机id号|
+|virsh domuuid xxx     |显示虚拟机的uuid|
+|virsh domstate xxx    |显示虚拟机的当前状态|
+|virsh dumpxml xxx     |显示虚拟机的当前配置文件（可能和定义虚拟机时的配置不同，因为当虚拟机启动时，需要给虚拟机 分配id号、uuid、vnc端口号等等）|
+|virsh setmem x 512000 |给不活动虚拟机设置内存大小|
+|virsh edit xxx        |编辑配置文件（一般是在刚定义完虚拟机之后）|
 
 #### 参考资料
 

@@ -37,14 +37,14 @@ rpmbuild
 └── SRPMS
 ```
 
-目录位置|宏代码|说明|用途|
--|-|-|-|
-BUILD    |%_builddir    |编译目录|`%build`阶段在此目录执行编译
-BUILDROOT|%_buildrootdir|安装虚拟目录|`%install`阶段在此目录执行安装脚本
-RPMS     |%_rpmdir      |rpm目录|生成的rpm包所在目录
-SOURCES  |%_sourcedir   |源码目录|源码包目录,`%prep`阶段从此目录找需要解压的包
-SRPMS    |%_srcrpmdir   |源码rpm目录|生成的rpm源码包所在目录
-SPECS    |%_specdir     |Spec目录|spec文件存放的目录
+|目录位置|宏代码|说明|用途|
+|-|-|-|-|
+|BUILD    |%_builddir    |编译目录|`%build`阶段在此目录执行编译|
+|BUILDROOT|%_buildrootdir|安装虚拟目录|`%install`阶段在此目录执行安装脚本|
+|RPMS     |%_rpmdir      |rpm目录|生成的rpm包所在目录|
+|SOURCES  |%_sourcedir   |源码目录|源码包目录,`%prep`阶段从此目录找需要解压的包|
+|SRPMS    |%_srcrpmdir   |源码rpm目录|生成的rpm源码包所在目录|
+|SPECS    |%_specdir     |Spec目录|spec文件存放的目录|
 
 ##### 编写spec文件
 

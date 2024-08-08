@@ -191,6 +191,7 @@ ip netns add test
 # 删除一个叫test的网络命名空间
 ip netns del test
 ```
+
 ##### 操作
 
 ```shell

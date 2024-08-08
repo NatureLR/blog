@@ -58,13 +58,13 @@ velero install \
 - 备份指定命名空间,可以多个ns，`*`为所有的命名空间,默认备份所有命名空间
 
 |参数|说明|
-|--------------------|-----------------
-|-w(--wait)          |可以实时查看备份进度
-|--ttl               |备份回收的时间
-|-l(--selector)      |使用标签来选择备份资源
-|--include-namespaces|包含的ns
-|--exclude-namespaces|不包含的ns
-|--storage-location  |备份的位置
+|--------------------|-----------------|
+|-w(--wait)          |可以实时查看备份进度|
+|--ttl               |备份回收的时间|
+|-l(--selector)      |使用标签来选择备份资源|
+|--include-namespaces|包含的ns|
+|--exclude-namespaces|不包含的ns|
+|--storage-location  |备份的位置|
 
 ```shell
 velero backup create <备份的名字> --include-namespaces <指定命名空间>
