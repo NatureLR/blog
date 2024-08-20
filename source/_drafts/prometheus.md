@@ -52,6 +52,34 @@ helm install prometheus  prometheus-community/kube-prometheus-stack
 
 - 默认的一些监控规则说明 <https://runbooks.prometheus-operator.dev/runbooks>
 
+#### ServiceMonitor
+
+```yaml
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  labels:
+    app: demo
+  name: demo
+spec:
+  endpoints:
+  - port: "http" # metrics端口
+    path: /metrics # metrics的路径
+    metricRelabelings:
+    - action: replace
+      sourceLabels: [__name__]
+      regex: .*
+      targetLabel: model_id # 自定义标签key
+      replacement: xxxxxxxx # 自定义标签value
+  jobLabel: jobLabel
+  namespaceSelector: # namespace选择
+    matchNames:
+    - default
+  selector:  # svc选择
+    matchLabels:
+      app: demo
+```
+
 #### 参考资料
 
 <https://prometheus.io/docs/introduction/overview/>
