@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport"
+    content="width=device-width, initial-scale=1, minimum-scale=1.0, shrink-to-fit=no, viewport-fit=cover">
+
+  <!-- Replace with your own title and description. -->
+  <title>文档</title>
+  <meta name="description" content="文档">
+
+  <!-- Default Theme (see https://docsify.js.org/#/themes) -->
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/docsify@4/lib/themes/vue.css">
+</head>
+
+<body>
+  <div id="app"></div>
+
+  <script>
+    // Docsify Configuration (see https://docsify.js.org/#/configuration)
+    window.$docsify = {
+      name: 'Nature丿灵然',
+
+      // Sidebar Configuration
+      auto2top: true,
+      loadSidebar: true,
+      maxLevel: 0,
+      // Set subMaxLevel to 0 to remove automatic display of page table of contents (TOC) in Sidebar
+      subMaxLevel: 3,
+
+      // Search Plugin Configuration
+      search: {
+        placeholder: '搜索',
+        noData: '没找到',
+        // Headline depth, 1 - 6
+        depth: 2,
+      },
+
+      mermaidConfig: {
+        querySelector: ".mermaid"
+      },
+
+      plugins: [
+        // 删除frontMatte格式的的表头
+        function frontMatte(hook, vm) {
+          const rPrefixSep = /^(-{3,}|;{3,})/;
+          const rFrontMatter = /^(-{3,}|;{3,})\n([\s\S]+?)\n\1\n?([\s\S]*)/;
+          const rFrontMatterNew = /^([\s\S]+?)\n(-{3,}|;{3,})\n?([\s\S]*)/;
+          function split(str) {
+            if (typeof str !== 'string')
+              throw new TypeError('str is required!');
+            const matchOld = str.match(rFrontMatter);
+
+            if (matchOld) {
+              return {
+                data: matchOld[2],
+                content: matchOld[3] || '',
+                separator: matchOld[1],
+                prefixSeparator: true
+              };
+            }
+
+            if (rPrefixSep.test(str))
+              return { content: str };
+
+            const matchNew = str.match(rFrontMatterNew);
+            if (matchNew) {
+              return {
+                data: matchNew[1],
+                content: matchNew[3] || '',
+                separator: matchNew[2],
+                prefixSeparator: false
+              };
+            }
+            return { content: str };
+          }
+
+          hook.beforeEach(function (content) {
+            //console.log(content);
+            //console.log("-----分割线--------");
+            //console.log(split(content).content);
+            return split(content).content;
+          });
+        },
+      ],
+
+    };
+  </script>
+
+  <!-- Required -->
+  <script src="https://cdn.jsdelivr.net/npm/docsify@4/lib/docsify.min.js"></script>
+
+  <!-- Recommended -->
+  <script src="https://cdn.jsdelivr.net/npm/docsify@4/lib/plugins/zoom-image.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/docsify@4/lib/plugins/search.js"></script>
+
+  <!-- mermaid -->
+  <script type="module">
+    import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs";
+    mermaid.initialize({ startOnLoad: true });
+    window.mermaid = mermaid;
+  </script>
+  <script src="//unpkg.com/docsify-mermaid@2.0.1/dist/docsify-mermaid.js"></script>
+
+  <!-- bash代码高亮 -->
+  <script src="//cdn.jsdelivr.net/npm/prismjs@1/components/prism-bash.min.js"></script>
+  <!-- go代码高亮 -->
+  <script src="//cdn.jsdelivr.net/npm/prismjs@1/components/prism-go.min.js"></script>
+  <!-- 复制按钮 -->
+  <script src="//cdn.jsdelivr.net/npm/docsify-copy-code/dist/docsify-copy-code.min.js"></script>
+</body>
+
+</html>
