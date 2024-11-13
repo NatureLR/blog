@@ -84,4 +84,4 @@ spec:
 
 <https://prometheus.io/docs/introduction/overview/>
 
-比较好看的报表：16098，13105
+grafana比较好看的报表：16098，13105

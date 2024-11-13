@@ -15,10 +15,10 @@ build-local: ## 本地原生编译
 	@hexo g
 
 build-image:## 编译docker
-	@docker build -t $(image) .
+	@docker buildx build --platform linux/amd64,linux/arm64 -t $(image) -o type=registry . 
 
 build-env-image:## 编译本地运行的镜像
-	@docker build --target build -t $(env-image) .
+	@docker buildx build --platform linux/amd64,linux/arm64 --target build -t $(env-image) -o type=registry .
 
 ##@ run
 
