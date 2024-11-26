@@ -67,7 +67,7 @@ gitlab-backup restore BACKUP=1684312462_2023_05_17_14.9.5
 
 #### 升级
 
-- 查看升级计划 <https://docs.gitlab.com/ee/update/index.html#upgrade-paths>
+- 查看升级计划 <https://docs.gitlab.com/ee/update/index.html#upgrade-paths>,新版本有个工具来确定升级计划<https://gitlab-com.gitlab.io/support/toolbox/upgrade-path/>
 
 - 根据升级计划下载中间版本和目标版本的二进制文件<https://packages.gitlab.com/gitlab/gitlab-ce>
 
