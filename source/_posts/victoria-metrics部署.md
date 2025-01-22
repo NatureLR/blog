@@ -1,11 +1,11 @@
 ---
 layout: draft
-title: victoria-metrics
+title: victoria-metrics部署
 author: Nature丿灵然
 tags:
   - 监控
   - k8s
-date: 2024-07-15 19:07:00
+date: 2025-01-22 19:07:00
 ---
 victoria-metrics是一个兼容Prometheus的监控，和Prometheus性能优于Prometheus同时支持集群模式横向扩容
 

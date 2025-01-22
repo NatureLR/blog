@@ -1,13 +1,13 @@
 ---
 layout: draft
-title: prometheus
+title: pprometheus-operator使用
 author: Nature丿灵然
 tags:
   - 监控
   - k8s
-date: 2024-07-15 19:06:00
+date: 2025-01-22 19:06:00
 ---
-prometheus是一个监控系统，是k8s中最常用的监控，prometheus比较灵活通过各种export采集metrics然后再prometheus中处理数据并在grafana中展示
+prometheus operator可以是cr的形式在k8s部署Prometheus
 
 <!--more-->
 
@@ -84,4 +84,4 @@ spec:
 
 <https://prometheus.io/docs/introduction/overview/>
 
-grafana比较好看的报表：16098，13105
+grafana好看的报表：16098，13105
