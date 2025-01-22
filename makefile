@@ -1,5 +1,10 @@
-image     := naturelingran/blog:latest
-env-image := naturelingran/blog-env:latest
+repo                   := naturelingran
+image-name             := $(repo)/blog
+env-image-name         := $(repo)/blog-env
+image-name-latest      := $(image-name):latest
+env-image-name-latest  := $(env-image-name):latest
+image-name-current     := $(image-name):$(shell date +%Y%m%d)
+env-image-name-current := $(env-image-name):$(shell date +%Y%m%d)
 
 ##@ General
 
@@ -15,10 +20,10 @@ build-local: ## 本地原生编译
 	@hexo g
 
 build-image:## 编译docker
-	@docker buildx build --platform linux/amd64,linux/arm64 -t $(image) -o type=registry . 
+	@docker buildx build --platform linux/amd64,linux/arm64 -t $(image-name-latest) -t $(image-name-current) -o type=registry . 
 
 build-env-image:## 编译本地运行的镜像
-	@docker buildx build --platform linux/amd64,linux/arm64 --target build -t $(env-image) -o type=registry .
+	@docker buildx build --platform linux/amd64,linux/arm64 --target build -t $(env-image-name-latest) -t $(image-name-current) -o type=registry .
 
 ##@ run
 
