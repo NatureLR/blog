@@ -187,7 +187,32 @@ ServerAddr: 10.23.8.140
 
 ##### 指定后端Endpoints
 
-- 可以手动创建可以svc同名的ep来指定一个svc的对应的ep
+- 可以手动创建可以svc同名的ep来指定一个svc的对应的ep，不需要`selector`字段且ports名字要一致
+
+```yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: my-external-service
+spec:
+  ports:
+    - name: http # 和下面的ep的name要一致
+      protocol: TCP
+      port: 80
+      targetPort: 80
+---
+apiVersion: v1
+kind: Endpoints
+metadata:
+  name: my-external-service
+subsets:
+  - addresses:
+      - ip: 1.1.1.1
+    ports:
+      - port: 80
+        protocol: TCP
+        name: http # 和上面的svc的port名字要一致
+```
 
 #### 流量策略
 
