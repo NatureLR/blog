@@ -1,4 +1,4 @@
-repo                   := naturelingran
+repo                   := naturelr
 image-name             := $(repo)/blog
 env-image-name         := $(repo)/blog-env
 image-name-latest      := $(image-name):latest
