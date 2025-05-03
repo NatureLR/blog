@@ -40,6 +40,7 @@
 - [knative-serving](./source/_posts/knative-serving.md)
 - [kubeadm搭建高可用集群](./source/_posts/kubeadm搭建高可用集群.md)
 - [kubeadm修改证书过期时间](./source/_posts/kubeadm修改证书过期时间.md)
+- [kubebuilder创建webhook](./source/_posts/kubebuilder创建webhook.md)
 - [kubebuilder扩展k8s](./source/_posts/kubebuilder扩展k8s.md)
 - [kubectl插件管理工具krew](./source/_posts/kubectl插件管理工具krew.md)
 - [kubectl多集群管理](./source/_posts/kubectl多集群管理.md)
