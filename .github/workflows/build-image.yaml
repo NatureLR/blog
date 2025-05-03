@@ -46,7 +46,8 @@ jobs:
           push: true
           tags: ${{ env.REPO }}:${{ env.TAG_NAME }},${{ env.REPO }}:latest
           file: ./Dockerfile
-          platforms: linux/amd64,linux/arm64
+          #platforms: linux/amd64,linux/arm64
+          platforms: linux/amd64
 
       - name: Update repo description
         uses: peter-evans/dockerhub-description@v3
