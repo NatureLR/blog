@@ -11,8 +11,6 @@ COPY . .
 
 RUN npm install && npm install hexo-cli -g
 
-RUN ls
-
 RUN hexo g
 
 FROM nginx:alpine
