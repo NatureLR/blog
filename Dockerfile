@@ -6,7 +6,7 @@ LABEL MAINTAINER="naturelr"
 RUN npm config set registry http://registry.npm.taobao.org/ && \
     apk add make git  openssh-client
 
-RUN npm install --force
+RUN npm install
 
 RUN npm install hexo-cli -g
 
