@@ -5,14 +5,11 @@ LABEL MAINTAINER="naturelr"
 
 RUN npm config set registry http://registry.npm.taobao.org/ && \
     apk add make git  openssh-client
-
-RUN npm install
-
-RUN npm install hexo-cli -g
-
 WORKDIR /data
 
 COPY . .
+
+RUN npm install && npm install hexo-cli -g
 
 RUN ls
 
