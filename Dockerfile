@@ -3,8 +3,10 @@ FROM node:alpine AS build
 LABEL blog.naturelr.cc="good"
 LABEL MAINTAINER="naturelr"
 
-RUN npm config set registry http://registry.npm.taobao.org/ && \
-    apk add make git  openssh-client
+#RUN npm config set registry http://registry.npm.taobao.org/ 
+
+RUN apk add make git openssh-client
+
 WORKDIR /data
 
 COPY . .
