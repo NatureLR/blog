@@ -12,6 +12,8 @@ WORKDIR /data
 
 COPY . .
 
+RUN ls
+
 RUN hexo g
 
 FROM nginx:alpine
