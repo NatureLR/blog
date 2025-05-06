@@ -31,10 +31,10 @@ run:## 本地原生运行(用于写作)
 	@hexo clean && hexo g && hexo s
 
 run-docker:## 使用编译好的docker镜像运行(用于生产)
-	@docker run -d --name blog -p 4000:80 $(image)
+	@docker run -d --name blog -p 4000:80 $(image-name)
 
 run-local-docker:## 使用持久化docker镜像来跑(用于环境不友好写作)
-	@docker run -d --name blog-persistent -v `pwd`:/data -v $$HOME/.ssh/:/root/.ssh -v $$HOME/.gitconfig:/root/.gitconfig -p 4000:4000 $(env-image) make run
+	@docker run -d --name blog-persistent -v `pwd`:/data -v $$HOME/.ssh/:/root/.ssh -v $$HOME/.gitconfig:/root/.gitconfig -p 4000:4000 $(env-image-name) make run
 
 ##@ push
 
