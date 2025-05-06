@@ -198,7 +198,7 @@ make docker-buildx
 
 #### 5.部署测试
 
-- 部署到集群中，
+- 部署到集群中
 
 ```shell
 make deploy
@@ -208,6 +208,18 @@ make deploy
 
 ```shell
 make undeploy
+```
+
+- 生成部署的yaml,如果是webhook需要添加`--force`
+
+```shell
+make build-installer IMG=naturelr/lxcfs-admission-webhook:latest --force
+```
+
+- 生成helm文件,
+
+```shell
+kubebuilder edit --plugins=helm/v1-alpha
 ```
 
 #### 参考资料
