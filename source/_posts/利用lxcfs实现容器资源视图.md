@@ -135,6 +135,12 @@ helm install \
 
 - webhook，[lxcfs-admission-webhook](https://github.com/denverdino/lxcfs-admission-webhook)这个项目测试太老了新的没发部署，自己写了个：<https://github.com/NatureLR/lxcfs-admission-webhook>
 
+```shell
+git clone https://github.com/NatureLR/lxcfs-admission-webhook.git
+cd lxcfs-admission-webhook
+make deploy 
+```
+
 #### 参考资料
 
 <https://github.com/lxc/lxcfs>
