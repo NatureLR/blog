@@ -1,0 +1,37 @@
+name: Hexo Deploy
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      with:
+        submodules: true
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: 20
+
+    - name: Install Dependencies
+      run: |
+        npm install hexo-cli -g
+        npm install
+
+    - name: Generate Static Files
+      run: hexo generate
+
+    - name: Deploy to GitHub Pages
+      uses: peaceiris/actions-gh-pages@v3
+      with:
+        personal_token: ${{ secrets.PERSONAL_TOKEN }}
+        publish_dir: ./public
+        commit_message: 'Deploy via GitHub Actions'
+        external_repository: NatureLR/NatureLR.github.io
