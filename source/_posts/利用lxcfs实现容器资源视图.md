@@ -14,6 +14,8 @@ date: 2025-04-27 17:49:00
 
 lxcfs是一个使用FUSE实现的一个文件系统，可以让容器的资源显示被限制的资源
 
+![alt text](../images/lxcfs-1.png)
+
 #### 安装
 
 ```shell
