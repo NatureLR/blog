@@ -33,3 +33,4 @@ jobs:
         publish_dir: ./public
         commit_message: 'Deploy via GitHub Actions'
         external_repository: NatureLR/NatureLR.github.io
+        publish_branch: master
