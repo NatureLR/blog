@@ -12,18 +12,16 @@ jobs:
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
-      with:
-        submodules: true
 
     - name: Setup Node.js
       uses: actions/setup-node@v4
       with:
-        node-version: 20
+        node-version: latest
 
     - name: Install Dependencies
       run: |
-        npm install hexo-cli -g
         npm install
+        npm install hexo-cli -g
 
     - name: Generate Static Files
       run: hexo generate
