@@ -16,15 +16,15 @@ date: 2023-05-10 16:41:00
 ![calico](../images/calico.svg)
 
 |组件              |作用       |
-|-----------------|----------|
-|felix            |状态报告，路由规划，接口管理，acl|
-|bird             |负责路由宣告，以及路由反射|
-|confd            |监控bgp变更，配置和更新bird的配置|
+|------------------|-----------|
+|felix             |状态报告，路由规划，接口管理，acl|
+|bird              |负责路由宣告，以及路由反射|
+|confd             |监控bgp变更，配置和更新bird的配置|
 |储存插件          |存储配置,有etcd和k8s两种选择|
 |CNI插件           |为pod配置网络|
-|typha            |为confd和felix和后端存储之间提供缓存等增加性能服务|
-|calicoctl        |命令行工具|
-|dikastes         |配合istio|
+|typha             |为confd和felix和后端存储之间提供缓存等增加性能服务|
+|calicoctl         |命令行工具|
+|dikastes          |配合istio|
 
 ##### 术语
 

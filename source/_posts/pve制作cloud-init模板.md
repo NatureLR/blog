@@ -16,9 +16,9 @@ cloudinit模版可以让我们在通过模板创建系统的时候设置好ip，
 - cloudimages下载地址
 
 |名字|地址|
-|-----------|-----|
-|centos7|<http://cloud.centos.org/centos/7/images/CentOS-7-x86_64-GenericCloud-2211.qcow2>|
-|debian12|<https://cloud.debian.org/images/cloud/bookworm/20230802-1460/debian-12-genericcloud-amd64-20230802-1460.qcow2>|
+|----|----|
+|centos7    |<http://cloud.centos.org/centos/7/images/CentOS-7-x86_64-GenericCloud-2211.qcow2>|
+|debian12   |<https://cloud.debian.org/images/cloud/bookworm/20230802-1460/debian-12-genericcloud-amd64-20230802-1460.qcow2>|
 |ubuntu22.04|<http://cloud-images.ubuntu.com/releases/22.04/release/ubuntu-22.04-server-cloudimg-amd64.vmdk>|
 
 #### 导入pve中

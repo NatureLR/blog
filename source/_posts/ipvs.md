@@ -29,12 +29,12 @@ yum install ipvsadm
 
 |缩写|全写|说明|
 |---|------------------|--------------|
-|CIP|Client IP         |客户端ip
-|VIP|Virtual IP        |虚拟ip
-|DIP|Director Server IP|负载均衡ip
-|RIP|Real Servier IP   |真正的后端服务ip
-|DS |Director Server   |部署负载均衡的服务器
-|RS |Real Server       |后端服务器
+|CIP|Client IP         |客户端ip|
+|VIP|Virtual IP        |虚拟ip|
+|DIP|Director Server IP|负载均衡ip|
+|RIP|Real Servier IP   |真正的后端服务ip|
+|DS |Director Server   |部署负载均衡的服务器|
+|RS |Real Server       |后端服务器|
 
 #### 三种模式
 

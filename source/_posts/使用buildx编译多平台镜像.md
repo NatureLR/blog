@@ -42,8 +42,8 @@ default   docker
   default default                     running  23.0.5   linux/amd64, linux/amd64/v2, linux/amd64/v3, linux/386
 ```
 
-|参数         |说明    |
-|------------|-------|
+|参数        |说明     |
+|------------|---------|
 |--name      | 实例名字|
 |--drive     | 使用的驱动:docker,docker-contran,k8s,remote|
 |--driver-op | 设置各个驱动的参数，比如docker-contran的镜像，k8s驱动的副本数等|
