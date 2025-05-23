@@ -1,7 +1,9 @@
 # blog
 
-使用hexo的next主题,生成的web资源上传到github另一个[pages项目](https://github.com/NatureLR/NatureLR.github.io)
+* 使用hexo的next主题,生成的web资源上传到github另一个[pages项目](https://github.com/NatureLR/NatureLR.github.io)
 效果预览<https://blog.naturelr.cc>
+
+* 同时项目本身使用[docsify](https://github.com/docsifyjs/docsify/)提供了一个文档形式的网页: <https://docs.naturelr.cc>
 
 ## 安装
 
