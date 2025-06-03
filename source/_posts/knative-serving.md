@@ -5,7 +5,6 @@ author: Nature丿灵然
 tags:
   - knative
   - serverless
-categories: []
 date: 2024-05-15 14:05:00
 ---
 
