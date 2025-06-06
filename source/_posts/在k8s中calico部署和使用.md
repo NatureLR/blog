@@ -459,7 +459,7 @@ tcpdump -i vxlan.calico -eenn
 > BGP是一个使用广泛的路由协议，分为2种一种是不同as号的ebgp已经同as号的ibgp，这里使用的是ibgp
 
 {% note warning %}
-注意此模式节点只能在同一个子网中进行，如果节点不在同一个子网请参考[IPIP/VXLAN跨子网模式](#IPIP/VXLAN跨子网模式)
+注意此模式节点只能在同一个子网中进行，如果节点不在同一个子网请参考[IPIP/VXLAN跨子网模式](#ipipvxlan跨子网模式)
 {% endnote %}
 
 ##### 开启BGP模式
@@ -774,6 +774,8 @@ IPv4 BGP status
 - 需要硬件交换机和路由器中整体部署bgp网络，然后宣告给这个网络
 
 #### IPIP/VXLAN跨子网模式
+
+> 这里所说的子网是指定是节点所在的网络
 
 - 当跨子网时使用`ipip/vxlan`来进行通讯
 - 将ippool中的`IPIPMODE`或`VXLANMODE`修改为`CrossSubnet`即可
