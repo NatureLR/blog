@@ -1,0 +1,219 @@
+<mxfile host="65bd71144e">
+    <diagram id="RFY-quH2ZzWZb_Mu-Uy1" name="第 1 页">
+        <mxGraphModel dx="1362" dy="3312" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="3300" pageHeight="2339" background="#BFF0CD" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="32" value="" style="group" vertex="1" connectable="0" parent="1">
+                    <mxGeometry x="100" y="-2201" width="320" height="580" as="geometry"/>
+                </mxCell>
+                <mxCell id="4" value="" style="group;fillColor=#60a917;strokeColor=#2D7600;fontColor=#ffffff;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;connectable=1;locked=0;container=0;" vertex="1" connectable="0" parent="32">
+                    <mxGeometry width="320" height="580" as="geometry"/>
+                </mxCell>
+                <mxCell id="31" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeColor=#18141D;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;connectable=1;locked=0;" edge="1" parent="32" source="25">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="160" y="321.1034482758621" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="5" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#1ba1e2;fontColor=#ffffff;strokeColor=#006EAF;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;connectable=1;locked=0;container=0;" vertex="1" parent="32">
+                    <mxGeometry width="320" height="580" as="geometry"/>
+                </mxCell>
+                <mxCell id="6" style="edgeStyle=none;html=1;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;connectable=1;locked=0;" edge="1" parent="32" source="10" target="5">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="7" style="edgeStyle=none;html=1;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;connectable=1;locked=0;" edge="1" parent="32" source="10" target="5">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="8" style="edgeStyle=none;html=1;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;connectable=1;locked=0;" edge="1" parent="32" source="10" target="5">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="9" style="edgeStyle=none;html=1;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;connectable=1;locked=0;" edge="1" parent="32" source="10" target="5">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="10" value="pod" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fa6800;fontColor=#000000;strokeColor=#C73500;dashed=1;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;connectable=1;locked=0;container=0;" vertex="1" parent="32">
+                    <mxGeometry width="110" height="193.33333333333331" as="geometry"/>
+                </mxCell>
+                <mxCell id="11" value="路由表" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#e3c800;fontColor=#000000;strokeColor=#B09500;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;connectable=1;locked=0;container=0;" vertex="1" parent="32">
+                    <mxGeometry x="100" y="320" width="120" height="60.416666666666664" as="geometry"/>
+                </mxCell>
+                <mxCell id="12" value="flannel.1 vxlan网卡" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#e3c800;fontColor=#000000;strokeColor=#B09500;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;connectable=1;locked=0;container=0;" vertex="1" parent="32">
+                    <mxGeometry x="100" y="429.99666666666667" width="120" height="60.416666666666664" as="geometry"/>
+                </mxCell>
+                <mxCell id="13" style="edgeStyle=orthogonalEdgeStyle;html=1;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;connectable=1;locked=0;" edge="1" parent="32" source="11" target="12">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="14" value="eth0物理网卡" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#e3c800;fontColor=#000000;strokeColor=#B09500;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;connectable=1;locked=0;container=0;" vertex="1" parent="32">
+                    <mxGeometry x="100" y="519.5833333333333" width="120" height="60.416666666666664" as="geometry"/>
+                </mxCell>
+                <mxCell id="15" style="edgeStyle=orthogonalEdgeStyle;html=1;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;connectable=1;locked=0;" edge="1" parent="32" source="12" target="14">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="16" style="edgeStyle=orthogonalEdgeStyle;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;strokeColor=#18141D;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;connectable=1;locked=0;" edge="1" parent="32" source="17" target="11">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="17" value="vethxxx" style="rounded=0;whiteSpace=wrap;html=1;dashed=1;fillColor=#008a00;fontColor=#ffffff;strokeColor=#005700;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;connectable=1;locked=0;container=0;" vertex="1" parent="32">
+                    <mxGeometry x="15" y="230" width="80" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="18" style="edgeStyle=orthogonalEdgeStyle;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;strokeColor=#18141D;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;connectable=1;locked=0;" edge="1" parent="32" source="20" target="17">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="19" value="veth" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=1;points=[];movable=1;rotatable=1;deletable=1;editable=1;connectable=1;locked=0;container=0;" vertex="1" connectable="0" parent="18">
+                    <mxGeometry x="-0.0932" y="2" relative="1" as="geometry">
+                        <mxPoint as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="20" value="eth0" style="rounded=0;whiteSpace=wrap;html=1;dashed=1;fillColor=#008a00;strokeColor=#005700;fontColor=#ffffff;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;connectable=1;locked=0;container=0;" vertex="1" parent="32">
+                    <mxGeometry x="15" y="156.66000000000008" width="80" height="36.67" as="geometry"/>
+                </mxCell>
+                <mxCell id="21" value="pod" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fa6800;fontColor=#000000;strokeColor=#C73500;dashed=1;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;connectable=1;locked=0;container=0;" vertex="1" parent="32">
+                    <mxGeometry x="210" width="110" height="193.33333333333331" as="geometry"/>
+                </mxCell>
+                <mxCell id="22" style="edgeStyle=orthogonalEdgeStyle;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;strokeColor=#18141D;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;connectable=1;locked=0;" edge="1" parent="32" source="24" target="25">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="23" value="veth" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=1;points=[];movable=1;rotatable=1;deletable=1;editable=1;connectable=1;locked=0;container=0;" vertex="1" connectable="0" parent="22">
+                    <mxGeometry x="-0.1553" y="-1" relative="1" as="geometry">
+                        <mxPoint as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="24" value="eth0" style="rounded=0;whiteSpace=wrap;html=1;dashed=1;fillColor=#008a00;strokeColor=#005700;fontColor=#ffffff;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;connectable=1;locked=0;container=0;" vertex="1" parent="32">
+                    <mxGeometry x="225" y="156.66000000000008" width="80" height="36.67" as="geometry"/>
+                </mxCell>
+                <mxCell id="25" value="&lt;span style=&quot;color: rgb(255, 255, 255);&quot;&gt;vethxxx&lt;/span&gt;" style="rounded=0;whiteSpace=wrap;html=1;dashed=1;fillColor=#008a00;fontColor=#ffffff;strokeColor=#005700;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;connectable=1;locked=0;container=0;" vertex="1" parent="32">
+                    <mxGeometry x="225" y="230" width="80" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="26" value="所有pod内路由" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;dashed=1;fontSize=13;fillColor=#f0a30a;fontColor=#000000;strokeColor=#BD7000;container=0;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;" vertex="1" parent="32">
+                    <mxGeometry x="15" width="290" height="90" as="geometry"/>
+                </mxCell>
+                <mxCell id="27" value="" style="endArrow=classic;html=1;edgeStyle=orthogonalEdgeStyle;strokeColor=#CCCC00;strokeWidth=4;fillColor=#e3c800;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;" edge="1" parent="32">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="102.5" y="108" as="sourcePoint"/>
+                        <mxPoint x="217.5" y="108" as="targetPoint"/>
+                        <Array as="points">
+                            <mxPoint x="103" y="312"/>
+                            <mxPoint x="217" y="312"/>
+                            <mxPoint x="217" y="123"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="28" value="pod在同一node" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=1;points=[];container=0;movable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;" vertex="1" connectable="0" parent="27">
+                    <mxGeometry x="0.6457" relative="1" as="geometry">
+                        <mxPoint x="-1" y="16" as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="33" value="" style="group" vertex="1" connectable="0" parent="1">
+                    <mxGeometry x="600" y="-2200" width="320" height="580" as="geometry"/>
+                </mxCell>
+                <mxCell id="34" value="" style="group;fillColor=#60a917;strokeColor=#2D7600;fontColor=#ffffff;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;connectable=1;locked=0;container=0;" vertex="1" connectable="0" parent="33">
+                    <mxGeometry width="320" height="580" as="geometry"/>
+                </mxCell>
+                <mxCell id="35" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeColor=#18141D;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;connectable=1;locked=0;" edge="1" parent="33" source="56">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="160" y="321.1034482758621" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="36" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#1ba1e2;fontColor=#ffffff;strokeColor=#006EAF;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;connectable=1;locked=0;container=0;" vertex="1" parent="33">
+                    <mxGeometry width="320" height="580" as="geometry"/>
+                </mxCell>
+                <mxCell id="37" style="edgeStyle=none;html=1;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;connectable=1;locked=0;" edge="1" parent="33" source="41" target="36">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="38" style="edgeStyle=none;html=1;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;connectable=1;locked=0;" edge="1" parent="33" source="41" target="36">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="39" style="edgeStyle=none;html=1;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;connectable=1;locked=0;" edge="1" parent="33" source="41" target="36">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="40" style="edgeStyle=none;html=1;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;connectable=1;locked=0;" edge="1" parent="33" source="41" target="36">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="41" value="pod" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fa6800;fontColor=#000000;strokeColor=#C73500;dashed=1;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;connectable=1;locked=0;container=0;" vertex="1" parent="33">
+                    <mxGeometry width="110" height="193.33333333333331" as="geometry"/>
+                </mxCell>
+                <mxCell id="42" value="路由表" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#e3c800;fontColor=#000000;strokeColor=#B09500;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;connectable=1;locked=0;container=0;" vertex="1" parent="33">
+                    <mxGeometry x="100" y="320" width="120" height="60.416666666666664" as="geometry"/>
+                </mxCell>
+                <mxCell id="43" value="flannel.1 vxlan网卡" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#e3c800;fontColor=#000000;strokeColor=#B09500;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;connectable=1;locked=0;container=0;" vertex="1" parent="33">
+                    <mxGeometry x="100" y="429.99666666666667" width="120" height="60.416666666666664" as="geometry"/>
+                </mxCell>
+                <mxCell id="44" style="edgeStyle=orthogonalEdgeStyle;html=1;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;connectable=1;locked=0;" edge="1" parent="33" source="42" target="43">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="45" value="eth0物理网卡" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#e3c800;fontColor=#000000;strokeColor=#B09500;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;connectable=1;locked=0;container=0;" vertex="1" parent="33">
+                    <mxGeometry x="100" y="519.5833333333333" width="120" height="60.416666666666664" as="geometry"/>
+                </mxCell>
+                <mxCell id="46" style="edgeStyle=orthogonalEdgeStyle;html=1;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;connectable=1;locked=0;" edge="1" parent="33" source="43" target="45">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="47" style="edgeStyle=orthogonalEdgeStyle;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;strokeColor=#18141D;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;connectable=1;locked=0;" edge="1" parent="33" source="48" target="42">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="48" value="vethxxx" style="rounded=0;whiteSpace=wrap;html=1;dashed=1;fillColor=#008a00;fontColor=#ffffff;strokeColor=#005700;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;connectable=1;locked=0;container=0;" vertex="1" parent="33">
+                    <mxGeometry x="15" y="230" width="80" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="49" style="edgeStyle=orthogonalEdgeStyle;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;strokeColor=#18141D;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;connectable=1;locked=0;" edge="1" parent="33" source="51" target="48">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="50" value="veth" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=1;points=[];movable=1;rotatable=1;deletable=1;editable=1;connectable=1;locked=0;container=0;" vertex="1" connectable="0" parent="49">
+                    <mxGeometry x="-0.0932" y="2" relative="1" as="geometry">
+                        <mxPoint as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="51" value="eth0" style="rounded=0;whiteSpace=wrap;html=1;dashed=1;fillColor=#008a00;strokeColor=#005700;fontColor=#ffffff;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;connectable=1;locked=0;container=0;" vertex="1" parent="33">
+                    <mxGeometry x="15" y="156.66000000000008" width="80" height="36.67" as="geometry"/>
+                </mxCell>
+                <mxCell id="52" value="pod" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fa6800;fontColor=#000000;strokeColor=#C73500;dashed=1;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;connectable=1;locked=0;container=0;" vertex="1" parent="33">
+                    <mxGeometry x="210" width="110" height="193.33333333333331" as="geometry"/>
+                </mxCell>
+                <mxCell id="53" style="edgeStyle=orthogonalEdgeStyle;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;strokeColor=#18141D;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;connectable=1;locked=0;" edge="1" parent="33" source="55" target="56">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="54" value="veth" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=1;points=[];movable=1;rotatable=1;deletable=1;editable=1;connectable=1;locked=0;container=0;" vertex="1" connectable="0" parent="53">
+                    <mxGeometry x="-0.1553" y="-1" relative="1" as="geometry">
+                        <mxPoint as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="55" value="eth0" style="rounded=0;whiteSpace=wrap;html=1;dashed=1;fillColor=#008a00;strokeColor=#005700;fontColor=#ffffff;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;connectable=1;locked=0;container=0;" vertex="1" parent="33">
+                    <mxGeometry x="225" y="156.66000000000008" width="80" height="36.67" as="geometry"/>
+                </mxCell>
+                <mxCell id="56" value="&lt;span style=&quot;color: rgb(255, 255, 255);&quot;&gt;vethxxx&lt;/span&gt;" style="rounded=0;whiteSpace=wrap;html=1;dashed=1;fillColor=#008a00;fontColor=#ffffff;strokeColor=#005700;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;connectable=1;locked=0;container=0;" vertex="1" parent="33">
+                    <mxGeometry x="225" y="230" width="80" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="57" value="所有pod内路由" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;dashed=1;fontSize=13;fillColor=#f0a30a;fontColor=#000000;strokeColor=#BD7000;container=0;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;" vertex="1" parent="33">
+                    <mxGeometry x="15" width="290" height="90" as="geometry"/>
+                </mxCell>
+                <mxCell id="58" value="" style="endArrow=classic;html=1;edgeStyle=orthogonalEdgeStyle;strokeColor=#CCCC00;strokeWidth=4;fillColor=#e3c800;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;" edge="1" parent="33">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="102.5" y="108" as="sourcePoint"/>
+                        <mxPoint x="217.5" y="108" as="targetPoint"/>
+                        <Array as="points">
+                            <mxPoint x="103" y="312"/>
+                            <mxPoint x="217" y="312"/>
+                            <mxPoint x="217" y="123"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="59" value="pod在同一node" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=1;points=[];container=0;movable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;" vertex="1" connectable="0" parent="58">
+                    <mxGeometry x="0.6457" relative="1" as="geometry">
+                        <mxPoint x="-1" y="16" as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="69" style="edgeStyle=none;html=1;entryX=0.5;entryY=1;entryDx=0;entryDy=0;strokeWidth=3;startArrow=classic;startFill=1;" edge="1" parent="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="760" y="-1619" as="targetPoint"/>
+                        <mxPoint x="263.7477384337037" y="-1620" as="sourcePoint"/>
+                        <Array as="points">
+                            <mxPoint x="264" y="-1489"/>
+                            <mxPoint x="760" y="-1489"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="70" value="vxlan" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="69">
+                    <mxGeometry x="-0.0611" y="-2" relative="1" as="geometry">
+                        <mxPoint as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+</mxfile>
