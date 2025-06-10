@@ -15,6 +15,7 @@
 - [determined-ai代码分析](./source/_posts/determined-ai代码分析.md)
 - [docker部署frp内网穿透](./source/_posts/docker部署frp内网穿透.md)
 - [docker镜像分析工具dive](./source/_posts/docker镜像分析工具dive.md)
+- [flannel](./source/_posts/flannel.md)
 - [gitlab部署维护](./source/_posts/gitlab部署维护.md)
 - [gitlab升级之后gitlab-page404](./source/_posts/gitlab升级之后gitlab-page404.md)
 - [gomod使用私有仓库](./source/_posts/gomod使用私有仓库.md)
