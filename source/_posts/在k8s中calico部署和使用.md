@@ -117,6 +117,8 @@ calicoctl get ippool -o wide
 
 #### IPIP模式
 
+> ipip模式需要使用bgp来下发路由
+
 calico的网络模式`默认`是IPIP模式
 
 - 通过calicoctl查看ippool的`IPIPMODE`字段，如下
@@ -150,7 +152,7 @@ k get po -l app=nginx -o wide
 kubectl exec -it nginx-7fc57c59f7-4nxhh -- ping 10.244.205.195
 ```
 
-###### ipip-pod到pod所在的node
+###### ipip pod到pod所在的node
 
 - 查看容器的网卡和路由信息
 
@@ -204,7 +206,7 @@ cat /proc/sys/net/ipv4/conf/cali1143a22bb0c/proxy_arp
 # ...
 ```
 
-###### ipip-pod所在的node到目标所在的node的pod
+###### ipip pod所在的node到目标所在的node的pod
 
 - 查看minikube上的路由
 
@@ -422,12 +424,12 @@ calicoctl ipam show --ip=10.244.120.70
 #  type: vxlanTunnelAddress
 ```
 
-###### vxlan-pod到node
+###### vxlan pod到node
 
 - 从上面的网卡和路由信息可以看到calico只是修改了到其他节点pod的通讯方式，从ipip隧道改为vlxan隧道然后修改路由
 - 所以后pod到node的方式其实没有变化和[ipip](#ipip-pod到pod所在的node)模式是一样的
 
-###### vxlan-pod到另一个node的pod
+###### vxlan pod到另一个node的pod
 
 - 依然开始长ping
 
@@ -449,7 +451,7 @@ tcpdump -i vxlan.calico -eenn
 
 ##### vxlan-小结
 
-- vxlan模式下知识变换了从一个node到另一个node的方式，从之前的ipip变为vxlan
+- vxlan模式下只是变换了从一个node到另一个node的方式，从之前的ipip变为vxlan
 - pod到node没有变化
 
 ![calico-ipip](../images/calico-vxlan-1.png)
