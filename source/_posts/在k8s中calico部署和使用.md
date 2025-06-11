@@ -1180,3 +1180,4 @@ kubectl -n kube-system set env ds/calico-node -c calico-node FELIX_IPV6SUPPORT=t
 #### 参考资料
 
 <https://docs.tigera.io/calico/latest/about>
+<https://blog.mygraphql.com/zh/notes/cloud/calico/>
