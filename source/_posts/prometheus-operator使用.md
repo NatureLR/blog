@@ -1,6 +1,6 @@
 ---
 layout: draft
-title: pprometheus-operator使用
+title: prometheus-operator使用
 author: Nature丿灵然
 tags:
   - 监控
