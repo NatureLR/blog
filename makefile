@@ -28,7 +28,7 @@ build-env-image:## 编译本地运行的镜像
 ##@ run
 
 run:## 本地原生运行(用于写作)
-	@hexo clean && hexo g && hexo s
+	@hexo s
 
 run-docker:## 使用编译好的docker镜像运行(用于生产)
 	@docker run -d --name blog -p 4000:80 $(image-name)
