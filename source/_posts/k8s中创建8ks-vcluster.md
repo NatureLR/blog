@@ -1,6 +1,6 @@
 ---
 layout: draft
-title: k8s中创建8ks-vcluster
+title: k8s中创建k8s-vcluster
 author: Nature丿灵然
 tags:
   - k8s
