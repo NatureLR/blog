@@ -3,8 +3,6 @@
 * 使用hexo的next主题,生成的web资源上传到github另一个[pages项目](https://github.com/NatureLR/NatureLR.github.io)
 效果预览<https://blog.naturelr.cc>
 
-* 同时项目本身使用[docsify](https://github.com/docsifyjs/docsify/)提供了一个文档形式的网页: <https://docs.naturelr.cc>
-
 ## 安装
 
 1. 安装npm 根据各个平台具体查看我写的[blog](https://blog.naturelr.cc/2020/09/22/nodejs%E5%9F%BA%E6%9C%AC%E4%BD%BF%E7%94%A8/)
